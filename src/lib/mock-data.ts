@@ -1,0 +1,342 @@
+import type { Property, PropertyFilters } from './types';
+
+// Curated Unsplash imagery (luxury interiors / Budapest) for the mock phase.
+const img = (id: string, w = 1600) =>
+  `https://images.unsplash.com/photo-${id}?auto=format&fit=crop&w=${w}&q=80`;
+
+const GALLERY = {
+  penthouse: [
+    img('1512917774080-9991f1c4c750'),
+    img('1493809842364-78817add7ffb'),
+    img('1502672260266-1c1ef2d93688'),
+    img('1560448204-e02f11c3d0e2'),
+  ],
+  villa: [
+    img('1613490493576-7fde63acd811'),
+    img('1564013799919-ab600027ffc6'),
+    img('1605276374104-dee2a0ed3cd6'),
+    img('1600585154340-be6161a56a0c'),
+  ],
+  apartment: [
+    img('1502005229762-cf1b2da7c5d6'),
+    img('1493809842364-78817add7ffb'),
+    img('1556909114-f6e7ad7d3136'),
+    img('1567767292278-a4f21aa2d36e'),
+  ],
+  house: [
+    img('1568605114967-8130f3a36994'),
+    img('1570129477492-45c003edd2be'),
+    img('1576941089067-2de3c901e126'),
+    img('1600596542815-ffad4c1539a9'),
+  ],
+  classic: [
+    img('1600607687939-ce8a6c25118c'),
+    img('1600566753086-00f18fb6b3ea'),
+    img('1600210492486-724fe5c67fb0'),
+    img('1600585154526-990dced4db0d'),
+  ],
+};
+
+export const MOCK_PROPERTIES: Property[] = [
+  {
+    id: 'p1',
+    title_hu: 'Panorámás penthouse a Várhegy lábánál',
+    title_en: 'Panoramic penthouse at the foot of Castle Hill',
+    description_hu:
+      'Diszkrét, tetőteraszos penthouse a Várnegyed szívében, egyedülálló Duna- és Parlament-panorámával. Privát lift, prémium burkolatok, okosotthon rendszer. Az ingatlan nem szerepel nyilvános portálokon.',
+    description_en:
+      'A discreet rooftop penthouse in the heart of the Castle District with an unrivalled view of the Danube and Parliament. Private lift, premium finishes, full smart-home system. Not listed on any public portal.',
+    price: 890_000_000,
+    currency: 'HUF',
+    size_m2: 214,
+    rooms: 4,
+    floor: 6,
+    district: 'I. kerület',
+    type: 'penthouse',
+    status: 'active',
+    featured: true,
+    images: GALLERY.penthouse,
+    video_url: null,
+    lat: 47.4979,
+    lng: 19.0402,
+    reference_number: 'MH-1042',
+    year_built: 2021,
+    parking: true,
+    condition: 'új',
+    created_at: '2026-06-10T09:00:00Z',
+  },
+  {
+    id: 'p2',
+    title_hu: 'Klasszikus villa a Rózsadombon',
+    title_en: 'Classic villa on Rózsadomb',
+    description_hu:
+      'Igényesen felújított, kertes villa Budapest legexkluzívabb negyedében. Úszómedence, dupla garázs, gondozott örökzöld kert, panorámás teraszok. Kiemelt diszkréció biztosított.',
+    description_en:
+      'A meticulously renovated garden villa in Budapest’s most exclusive neighbourhood. Swimming pool, double garage, mature landscaped garden and panoramic terraces. Full discretion guaranteed.',
+    price: 4_200_000,
+    currency: 'EUR',
+    size_m2: 410,
+    rooms: 6,
+    floor: null,
+    district: 'II. kerület',
+    type: 'villa',
+    status: 'active',
+    featured: true,
+    images: GALLERY.villa,
+    video_url: null,
+    lat: 47.5285,
+    lng: 19.022,
+    reference_number: 'MH-1043',
+    year_built: 2009,
+    parking: true,
+    condition: 'felújított',
+    created_at: '2026-06-12T11:30:00Z',
+  },
+  {
+    id: 'p3',
+    title_hu: 'Eleganciás polgári lakás a Lipótvárosban',
+    title_en: 'Elegant period apartment in Lipótváros',
+    description_hu:
+      'Magas belmagasságú, eredeti stukkókkal és parkettával rendelkező polgári lakás az V. kerület csendes utcájában. Műemléki környezet, prémium felújítás.',
+    description_en:
+      'A high-ceilinged period apartment with original stucco and parquet on a quiet street in District V. Listed-building surroundings, premium renovation throughout.',
+    price: 295_000_000,
+    currency: 'HUF',
+    size_m2: 138,
+    rooms: 3,
+    floor: 2,
+    district: 'V. kerület',
+    type: 'lakás',
+    status: 'active',
+    featured: true,
+    images: GALLERY.classic,
+    video_url: null,
+    lat: 47.5018,
+    lng: 19.0512,
+    reference_number: 'MH-1044',
+    year_built: 1898,
+    parking: false,
+    condition: 'felújított',
+    created_at: '2026-06-14T08:15:00Z',
+  },
+  {
+    id: 'p4',
+    title_hu: 'Modern családi ház Hegyvidéken',
+    title_en: 'Modern family house in Hegyvidék',
+    description_hu:
+      'Letisztult, energiatakarékos családi ház erdőszéli telken a XII. kerületben. Nagy üvegfelületek, kétszintes nappali, wellness részleg.',
+    description_en:
+      'A clean-lined, energy-efficient family house on a forest-edge plot in District XII. Large glazing, double-height living room and a wellness suite.',
+    price: 2_650_000,
+    currency: 'EUR',
+    size_m2: 320,
+    rooms: 5,
+    floor: null,
+    district: 'XII. kerület',
+    type: 'ház',
+    status: 'active',
+    featured: false,
+    images: GALLERY.house,
+    video_url: null,
+    lat: 47.4925,
+    lng: 18.9899,
+    reference_number: 'MH-1045',
+    year_built: 2018,
+    parking: true,
+    condition: 'új',
+    created_at: '2026-06-09T14:45:00Z',
+  },
+  {
+    id: 'p5',
+    title_hu: 'Dunai panorámás lakás az Újlipótvárosban',
+    title_en: 'Danube-view apartment in Újlipótváros',
+    description_hu:
+      'Tágas, erkélyes lakás közvetlen Duna-panorámával, a XIII. kerület patinás Bauhaus tömbjében. Világos terek, igényes konyha.',
+    description_en:
+      'A spacious balconied apartment with a direct Danube view in a fine Bauhaus block in District XIII. Bright spaces and a high-end kitchen.',
+    price: 235_000_000,
+    currency: 'HUF',
+    size_m2: 112,
+    rooms: 3,
+    floor: 4,
+    district: 'XIII. kerület',
+    type: 'lakás',
+    status: 'active',
+    featured: false,
+    images: GALLERY.apartment,
+    video_url: null,
+    lat: 47.5266,
+    lng: 19.0503,
+    reference_number: 'MH-1046',
+    year_built: 1936,
+    parking: false,
+    condition: 'felújított',
+    created_at: '2026-06-05T10:00:00Z',
+  },
+  {
+    id: 'p6',
+    title_hu: 'Tetőtéri penthouse a Belvárosban',
+    title_en: 'Top-floor penthouse in Downtown',
+    description_hu:
+      'Kétszintes, panorámateraszos penthouse a Belváros szívében. Privát lift, klimatizált terek, exkluzív közös tetőkert.',
+    description_en:
+      'A two-storey penthouse with a panoramic terrace in the heart of Downtown. Private lift, climate-controlled spaces and an exclusive shared roof garden.',
+    price: 1_950_000,
+    currency: 'EUR',
+    size_m2: 186,
+    rooms: 4,
+    floor: 7,
+    district: 'V. kerület',
+    type: 'penthouse',
+    status: 'active',
+    featured: false,
+    images: GALLERY.penthouse,
+    video_url: null,
+    lat: 47.4956,
+    lng: 19.0533,
+    reference_number: 'MH-1047',
+    year_built: 2016,
+    parking: true,
+    condition: 'új',
+    created_at: '2026-06-01T16:20:00Z',
+  },
+  {
+    id: 'p7',
+    title_hu: 'Erdőszéli villatelek a Hűvösvölgyben',
+    title_en: 'Forest-edge villa plot in Hűvösvölgy',
+    description_hu:
+      'Beépíthető, közművesített villatelek panorámás fekvéssel a II. kerület zöldövezetében. Kiváló befektetés diszkrét értékesítéssel.',
+    description_en:
+      'A buildable, fully serviced villa plot with a panoramic setting in the green belt of District II. An excellent investment with discreet handling.',
+    price: 480_000_000,
+    currency: 'HUF',
+    size_m2: 1450,
+    rooms: 0,
+    floor: null,
+    district: 'II. kerület',
+    type: 'telek',
+    status: 'active',
+    featured: false,
+    images: GALLERY.villa,
+    video_url: null,
+    lat: 47.5403,
+    lng: 18.965,
+    reference_number: 'MH-1048',
+    year_built: null,
+    parking: false,
+    condition: 'felújítandó',
+    created_at: '2026-05-28T12:00:00Z',
+  },
+  {
+    id: 'p8',
+    title_hu: 'Design lakás az Óbudai Duna-parton',
+    title_en: 'Design apartment on the Óbuda riverfront',
+    description_hu:
+      'Új építésű, prémium minőségű lakás a III. kerület rakparti társasházában, panorámás közös kerttel és mélygarázzsal.',
+    description_en:
+      'A newly built, premium-quality apartment in a riverfront residence in District III, with a landscaped shared garden and underground parking.',
+    price: 178_000_000,
+    currency: 'HUF',
+    size_m2: 96,
+    rooms: 3,
+    floor: 3,
+    district: 'III. kerület',
+    type: 'lakás',
+    status: 'active',
+    featured: false,
+    images: GALLERY.apartment,
+    video_url: null,
+    lat: 47.5615,
+    lng: 19.0445,
+    reference_number: 'MH-1049',
+    year_built: 2023,
+    parking: true,
+    condition: 'új',
+    created_at: '2026-05-20T09:30:00Z',
+  },
+  {
+    id: 'p9',
+    title_hu: 'Mediterrán villa medencével Újbudán',
+    title_en: 'Mediterranean villa with pool in Újbuda',
+    description_hu:
+      'Napfényes, mediterrán hangulatú villa gondozott kerttel és fűtött medencével a XI. kerület csendes villanegyedében.',
+    description_en:
+      'A sun-filled, Mediterranean-style villa with a manicured garden and heated pool in a quiet villa quarter of District XI.',
+    price: 1_480_000,
+    currency: 'EUR',
+    size_m2: 278,
+    rooms: 5,
+    floor: null,
+    district: 'XI. kerület',
+    type: 'villa',
+    status: 'active',
+    featured: false,
+    images: GALLERY.house,
+    video_url: null,
+    lat: 47.4621,
+    lng: 19.0312,
+    reference_number: 'MH-1050',
+    year_built: 2012,
+    parking: true,
+    condition: 'felújított',
+    created_at: '2026-05-15T13:10:00Z',
+  },
+  {
+    id: 'p10',
+    title_hu: 'Polgári otthon a Terézvárosban',
+    title_en: 'Period home in Terézváros',
+    description_hu:
+      'Reprezentatív, körfolyosós polgári lakás az Andrássy út közelében. Magas belmagasság, eredeti részletek, csendes belső udvar.',
+    description_en:
+      'A representative period apartment near Andrássy Avenue. High ceilings, original details and a quiet inner courtyard.',
+    price: 156_000_000,
+    currency: 'HUF',
+    size_m2: 124,
+    rooms: 3,
+    floor: 1,
+    district: 'VI. kerület',
+    type: 'lakás',
+    status: 'active',
+    featured: false,
+    images: GALLERY.classic,
+    video_url: null,
+    lat: 47.5045,
+    lng: 19.0662,
+    reference_number: 'MH-1051',
+    year_built: 1905,
+    parking: false,
+    condition: 'felújítandó',
+    created_at: '2026-05-10T11:00:00Z',
+  },
+];
+
+/** Filter + sort mock properties — mirrors the future Supabase query. */
+export function queryProperties(
+  filters: PropertyFilters = {},
+  opts: { onlyActive?: boolean } = { onlyActive: true },
+): Property[] {
+  return MOCK_PROPERTIES.filter((p) => {
+    if (opts.onlyActive && p.status !== 'active') return false;
+    if (filters.type && p.type !== filters.type) return false;
+    if (filters.district && p.district !== filters.district) return false;
+    if (filters.rooms && p.rooms < filters.rooms) return false;
+    if (filters.minSize && p.size_m2 < filters.minSize) return false;
+    if (filters.maxSize && p.size_m2 > filters.maxSize) return false;
+    if (filters.reference && !p.reference_number.toLowerCase().includes(filters.reference.toLowerCase()))
+      return false;
+    // Price filters only compare within the same currency in the mock phase.
+    if (filters.minPrice && filters.currency === p.currency && p.price < filters.minPrice) return false;
+    if (filters.maxPrice && filters.currency === p.currency && p.price > filters.maxPrice) return false;
+    return true;
+  });
+}
+
+export function getPropertyByReference(reference: string): Property | undefined {
+  return MOCK_PROPERTIES.find(
+    (p) => p.reference_number.toLowerCase() === reference.toLowerCase(),
+  );
+}
+
+export function getFeaturedProperties(): Property[] {
+  return MOCK_PROPERTIES.filter((p) => p.featured && p.status === 'active');
+}

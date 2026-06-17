@@ -1,0 +1,73 @@
+{
+  "brand": {
+    "name": "My Home",
+    "tagline": "PREMIUM REAL ESTATE",
+    "city": "Budapest"
+  },
+  "nav": {
+    "home": "Home",
+    "properties": "Properties",
+    "about": "About",
+    "contact": "Contact",
+    "favorites": "Favorites"
+  },
+  "hero": {
+    "eyebrow": "Discreet, off-market portfolio",
+    "title": "Budapest’s most exceptional homes",
+    "subtitle": "Exclusive properties that never appear on public portals — reserved solely for our discerning buyers.",
+    "scroll": "Scroll to explore"
+  },
+  "search": {
+    "title": "Search the portfolio",
+    "type": "Property type",
+    "typeAny": "Any type",
+    "district": "District",
+    "districtAny": "All districts",
+    "minPrice": "Min. price",
+    "maxPrice": "Max. price",
+    "minSize": "Min. m²",
+    "maxSize": "Max. m²",
+    "rooms": "Rooms",
+    "roomsAny": "Any",
+    "reference": "Reference number",
+    "referencePlaceholder": "e.g. MH-1042",
+    "submit": "Search",
+    "roomsPlus": "{count}+"
+  },
+  "types": {
+    "lakás": "Apartment",
+    "ház": "House",
+    "villa": "Villa",
+    "penthouse": "Penthouse",
+    "telek": "Plot"
+  },
+  "sections": {
+    "latestTitle": "Latest listings",
+    "latestSubtitle": "Newly added to our portfolio",
+    "featuredTitle": "Featured properties",
+    "featuredSubtitle": "Carefully selected, exceptional homes",
+    "viewAll": "View all properties"
+  },
+  "about": {
+    "eyebrow": "About us",
+    "title": "Discretion you can rely on",
+    "body": "My Home Budapest is an exclusive real estate agency dealing solely in premium, off-market properties. Our clients are Hungarian and international buyers who value discretion, personal attention and impeccable quality. Our portfolio holds homes that never appear on public listing portals.",
+    "cta": "Get in touch"
+  },
+  "card": {
+    "featured": "Featured",
+    "rooms": "rooms",
+    "reference": "Ref."
+  },
+  "footer": {
+    "tagline": "Discreet, off-market luxury real estate in Budapest.",
+    "contact": "Contact",
+    "navigation": "Pages",
+    "follow": "Follow us",
+    "rights": "© 2026 My Home Ingatlan Iroda Budapest. All rights reserved."
+  },
+  "lang": {
+    "hu": "Magyar",
+    "en": "English"
+  }
+}

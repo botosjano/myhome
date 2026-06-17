@@ -1,0 +1,73 @@
+{
+  "brand": {
+    "name": "My Home",
+    "tagline": "PRÉMIUM INGATLAN",
+    "city": "Budapest"
+  },
+  "nav": {
+    "home": "Főoldal",
+    "properties": "Ingatlanok",
+    "about": "Rólunk",
+    "contact": "Kapcsolat",
+    "favorites": "Kedvencek"
+  },
+  "hero": {
+    "eyebrow": "Diszkrét, off-market portfólió",
+    "title": "Budapest legkivételesebb otthonai",
+    "subtitle": "Exkluzív ingatlanok, amelyek nem szerepelnek nyilvános portálokon — kizárólag igényes vevőink számára.",
+    "scroll": "Görgessen tovább"
+  },
+  "search": {
+    "title": "Keresés a portfólióban",
+    "type": "Ingatlan típusa",
+    "typeAny": "Bármilyen típus",
+    "district": "Kerület",
+    "districtAny": "Összes kerület",
+    "minPrice": "Min. ár",
+    "maxPrice": "Max. ár",
+    "minSize": "Min. m²",
+    "maxSize": "Max. m²",
+    "rooms": "Szobák",
+    "roomsAny": "Mindegy",
+    "reference": "Referenciaszám",
+    "referencePlaceholder": "pl. MH-1042",
+    "submit": "Keresés",
+    "roomsPlus": "{count}+"
+  },
+  "types": {
+    "lakás": "Lakás",
+    "ház": "Ház",
+    "villa": "Villa",
+    "penthouse": "Penthouse",
+    "telek": "Telek"
+  },
+  "sections": {
+    "latestTitle": "Friss ajánlataink",
+    "latestSubtitle": "Frissen a portfólióba érkezett ingatlanok",
+    "featuredTitle": "Kiemelt ingatlanok",
+    "featuredSubtitle": "Gondosan válogatott, kivételes otthonok",
+    "viewAll": "Összes ingatlan"
+  },
+  "about": {
+    "eyebrow": "Rólunk",
+    "title": "Diszkréció, amelyre számíthat",
+    "body": "A My Home Budapest egy exkluzív ingatlanügynökség, amely kizárólag prémium kategóriás, off-market ingatlanokkal foglalkozik. Ügyfeleink magyar és nemzetközi vevők, akik értékelik a diszkréciót, a személyre szabott figyelmet és a kifogástalan minőséget. Portfóliónk olyan otthonokat tartalmaz, amelyek soha nem jelennek meg nyilvános hirdetési oldalakon.",
+    "cta": "Vegye fel velünk a kapcsolatot"
+  },
+  "card": {
+    "featured": "Kiemelt",
+    "rooms": "szoba",
+    "reference": "Ref."
+  },
+  "footer": {
+    "tagline": "Diszkrét, off-market luxusingatlanok Budapesten.",
+    "contact": "Kapcsolat",
+    "navigation": "Oldalak",
+    "follow": "Kövessen minket",
+    "rights": "© 2026 My Home Ingatlan Iroda Budapest. Minden jog fenntartva."
+  },
+  "lang": {
+    "hu": "Magyar",
+    "en": "English"
+  }
+}

@@ -1,0 +1,65 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --navy: #0a1628;
+    --gold: #c9a96e;
+    --cream: #f5f5f5;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-white text-navy font-sans antialiased;
+  }
+
+  h1, h2, h3, h4 {
+    @apply font-serif;
+  }
+
+  ::selection {
+    @apply bg-gold/30 text-navy;
+  }
+}
+
+@layer components {
+  /* Gold-on-navy primary button */
+  .btn-gold {
+    @apply inline-flex items-center justify-center gap-2 rounded-sm bg-gold px-7 py-3
+           font-sans text-sm font-medium uppercase tracking-widest text-navy
+           transition-all duration-300 hover:bg-gold-light hover:shadow-luxe
+           focus:outline-none focus-visible:ring-2 focus-visible:ring-gold/60;
+  }
+
+  .btn-outline {
+    @apply inline-flex items-center justify-center gap-2 rounded-sm border border-gold/70
+           px-7 py-3 font-sans text-sm font-medium uppercase tracking-widest text-gold
+           transition-all duration-300 hover:bg-gold hover:text-navy
+           focus:outline-none focus-visible:ring-2 focus-visible:ring-gold/60;
+  }
+
+  /* Thin gold divider used under section eyebrows */
+  .gold-rule {
+    @apply h-px w-16 bg-gold;
+  }
+
+  .eyebrow {
+    @apply font-sans text-xs font-medium uppercase tracking-widest text-gold;
+  }
+}
+
+/* Custom thin scrollbar in brand colors */
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-track {
+  background: #0a1628;
+}
+::-webkit-scrollbar-thumb {
+  background: #c9a96e;
+  border-radius: 9999px;
+}
