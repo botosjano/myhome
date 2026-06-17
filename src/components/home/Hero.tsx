@@ -22,7 +22,7 @@ export default function Hero() {
       {/* Content */}
       <div className="relative z-10 mx-auto flex w-full max-w-5xl flex-col items-center px-5 pt-28 text-center">
         <p className="eyebrow mb-4">{t('eyebrow')}</p>
-        <h1 className="max-w-3xl font-serif text-4xl leading-tight text-white sm:text-5xl lg:text-6xl">
+        <h1 className="max-w-4xl font-serif text-5xl font-light leading-[1.1] tracking-wide text-white sm:text-6xl lg:text-7xl">
           {t('title')}
         </h1>
         <p className="mx-auto mt-5 max-w-2xl font-sans text-base leading-relaxed text-white/80 sm:text-lg">

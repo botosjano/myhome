@@ -23,8 +23,9 @@ const config: Config = {
         cream: '#F5F5F5',
       },
       fontFamily: {
-        serif: ['var(--font-playfair)', 'Georgia', 'serif'],
-        sans: ['var(--font-inter)', 'system-ui', 'sans-serif'],
+        // Cormorant Garamond everywhere — headings and body share one typeface.
+        serif: ['var(--font-cormorant)', 'Georgia', 'serif'],
+        sans: ['var(--font-cormorant)', 'Georgia', 'serif'],
       },
       letterSpacing: {
         widest: '0.25em',

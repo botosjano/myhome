@@ -14,7 +14,8 @@
   }
 
   body {
-    @apply bg-white text-navy font-sans antialiased;
+    /* Cormorant Garamond runs light at UI sizes — medium keeps small text legible */
+    @apply bg-white text-navy font-sans font-medium antialiased;
   }
 
   h1, h2, h3, h4 {
