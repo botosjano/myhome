@@ -1,21 +1,40 @@
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
-import type { Currency, Property, PropertyType } from './types';
+import type { Currency, ListingType, Property, PropertyType } from './types';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-/** Format a price in HUF (as MFt) or EUR with locale-aware grouping. */
-export function formatPrice(price: number, currency: Currency, locale: string): string {
+/**
+ * Format a price. Sale prices show as MFt (HUF) or €. Rent prices (listingType
+ * = 'kiado') show the full monthly amount with a "/hó" (HU) or "/mo" (EN) suffix.
+ */
+export function formatPrice(
+  price: number,
+  currency: Currency,
+  locale: string,
+  listingType?: ListingType,
+): string {
+  const loc = locale === 'hu' ? 'hu-HU' : 'en-US';
+
+  if (listingType === 'kiado') {
+    const perMonth = locale === 'hu' ? ' / hó' : ' / mo';
+    const amount =
+      currency === 'HUF'
+        ? `${new Intl.NumberFormat(loc).format(price)} Ft`
+        : new Intl.NumberFormat(loc, { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(price);
+    return `${amount}${perMonth}`;
+  }
+
   if (currency === 'HUF') {
     const mft = price / 1_000_000;
-    const num = new Intl.NumberFormat(locale === 'hu' ? 'hu-HU' : 'en-US', {
+    const num = new Intl.NumberFormat(loc, {
       maximumFractionDigits: mft % 1 === 0 ? 0 : 1,
     }).format(mft);
     return `${num} MFt`;
   }
-  return new Intl.NumberFormat(locale === 'hu' ? 'hu-HU' : 'en-US', {
+  return new Intl.NumberFormat(loc, {
     style: 'currency',
     currency: 'EUR',
     maximumFractionDigits: 0,

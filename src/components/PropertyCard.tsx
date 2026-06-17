@@ -67,7 +67,7 @@ export default function PropertyCard({
           {/* Price overlay */}
           <div className="absolute inset-x-0 bottom-0 p-4">
             <p className="font-serif text-2xl font-semibold text-white drop-shadow">
-              {formatPrice(property.price, property.currency, locale)}
+              {formatPrice(property.price, property.currency, locale, property.listing_type)}
             </p>
           </div>
         </div>

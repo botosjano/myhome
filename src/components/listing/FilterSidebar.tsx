@@ -1,14 +1,13 @@
 'use client';
 
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import { X } from 'lucide-react';
 import { DISTRICTS, PROPERTY_TYPES, ROOM_OPTIONS } from '@/lib/districts';
 import {
-  PRICE_MAX_MFT,
-  PRICE_MIN_MFT,
   SIZE_MAX,
   SIZE_MIN,
   activeFilterCount,
+  priceConfig,
   type ListingState,
 } from '@/lib/listing';
 import type { PropertyType } from '@/lib/types';
@@ -26,7 +25,14 @@ export default function FilterSidebar({
 }) {
   const t = useTranslations('listing');
   const tTypes = useTranslations('types');
+  const locale = useLocale();
   const count = activeFilterCount(state);
+
+  const rent = state.listingType === 'kiado';
+  const pc = priceConfig(state.listingType);
+  const priceUnit = rent ? (locale === 'hu' ? 'Ft / hó' : 'HUF / mo') : 'MFt';
+  const formatPriceTick = (v: number) =>
+    rent ? `${new Intl.NumberFormat(locale === 'hu' ? 'hu-HU' : 'en-US').format(v)} Ft` : `${v} MFt`;
 
   const toggle = <T extends string>(arr: T[], value: T): T[] =>
     arr.includes(value) ? arr.filter((v) => v !== value) : [...arr, value];
@@ -70,7 +76,12 @@ export default function FilterSidebar({
         <p className={legend}>{t('transaction')}</p>
         <div className="flex gap-2">
           {txnOpts.map((o) => (
-            <button key={o.v || 'all'} type="button" onClick={() => onChange({ listingType: o.v })} className={seg(state.listingType === o.v)}>
+            <button
+              key={o.v || 'all'}
+              type="button"
+              onClick={() => onChange({ listingType: o.v, minPrice: priceConfig(o.v).min, maxPrice: priceConfig(o.v).max })}
+              className={seg(state.listingType === o.v)}
+            >
               {t(o.k)}
             </button>
           ))}
@@ -121,19 +132,20 @@ export default function FilterSidebar({
         </div>
       </fieldset>
 
-      {/* Price */}
+      {/* Price (scale depends on sale vs rent) */}
       <div>
         <p className="mb-3 font-sans text-xs font-semibold uppercase tracking-widest text-navy/50">
-          {t('priceRange')} (MFt)
+          {t('priceRange')} ({priceUnit})
         </p>
         <DualRange
-          min={PRICE_MIN_MFT}
-          max={PRICE_MAX_MFT}
-          step={10}
-          low={state.minPriceMft}
-          high={state.maxPriceMft}
-          onChange={(low, high) => onChange({ minPriceMft: low, maxPriceMft: high })}
-          format={(v) => `${v} MFt`}
+          key={rent ? 'rent' : 'sale'}
+          min={pc.min}
+          max={pc.max}
+          step={pc.step}
+          low={state.minPrice}
+          high={state.maxPrice}
+          onChange={(low, high) => onChange({ minPrice: low, maxPrice: high })}
+          format={formatPriceTick}
         />
       </div>
 

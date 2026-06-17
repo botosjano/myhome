@@ -109,7 +109,7 @@ export const MOCK_PROPERTIES: Property[] = [
       'Magas belmagasságú, eredeti stukkókkal és parkettával rendelkező polgári lakás az V. kerület csendes utcájában. Műemléki környezet, prémium felújítás.',
     description_en:
       'A high-ceilinged period apartment with original stucco and parquet on a quiet street in District V. Listed-building surroundings, premium renovation throughout.',
-    price: 295_000_000,
+    price: 1_200_000,
     currency: 'HUF',
     size_m2: 138,
     rooms: 3,
@@ -169,7 +169,7 @@ export const MOCK_PROPERTIES: Property[] = [
       'Tágas, erkélyes lakás közvetlen Duna-panorámával, a XIII. kerület patinás Bauhaus tömbjében. Világos terek, igényes konyha.',
     description_en:
       'A spacious balconied apartment with a direct Danube view in a fine Bauhaus block in District XIII. Bright spaces and a high-end kitchen.',
-    price: 235_000_000,
+    price: 850_000,
     currency: 'HUF',
     size_m2: 112,
     rooms: 3,
@@ -199,7 +199,7 @@ export const MOCK_PROPERTIES: Property[] = [
       'Kétszintes, panorámateraszos penthouse a Belváros szívében. Privát lift, klimatizált terek, exkluzív közös tetőkert.',
     description_en:
       'A two-storey penthouse with a panoramic terrace in the heart of Downtown. Private lift, climate-controlled spaces and an exclusive shared roof garden.',
-    price: 1_950_000,
+    price: 4_500,
     currency: 'EUR',
     size_m2: 186,
     rooms: 4,
@@ -259,7 +259,7 @@ export const MOCK_PROPERTIES: Property[] = [
       'Új építésű, prémium minőségű lakás a III. kerület rakparti társasházában, panorámás közös kerttel és mélygarázzsal.',
     description_en:
       'A newly built, premium-quality apartment in a riverfront residence in District III, with a landscaped shared garden and underground parking.',
-    price: 178_000_000,
+    price: 650_000,
     currency: 'HUF',
     size_m2: 96,
     rooms: 3,
@@ -319,7 +319,7 @@ export const MOCK_PROPERTIES: Property[] = [
       'Reprezentatív, körfolyosós polgári lakás az Andrássy út közelében. Magas belmagasság, eredeti részletek, csendes belső udvar.',
     description_en:
       'A representative period apartment near Andrássy Avenue. High ceilings, original details and a quiet inner courtyard.',
-    price: 156_000_000,
+    price: 550_000,
     currency: 'HUF',
     size_m2: 124,
     rooms: 3,
@@ -379,7 +379,7 @@ export const MOCK_PROPERTIES: Property[] = [
       'Hangulatos, kertes ház a szentendrei óváros macskaköves utcáiban, a Duna közelében. Egyedi, művészi belső terek, kandalló, csendes udvar.',
     description_en:
       'A charming garden house in the cobbled streets of Szentendre old town, near the Danube. Unique artistic interiors, a fireplace and a quiet courtyard.',
-    price: 210_000_000,
+    price: 900_000,
     currency: 'HUF',
     size_m2: 180,
     rooms: 4,

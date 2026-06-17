@@ -31,7 +31,7 @@ export default function KeyStats({ property }: { property: Property }) {
     <div className="rounded-sm border border-navy/10 bg-white p-6 shadow-card">
       <p className="eyebrow mb-1">{t('price')}</p>
       <p className="font-serif text-3xl font-semibold text-navy">
-        {formatPrice(property.price, property.currency, locale)}
+        {formatPrice(property.price, property.currency, locale, property.listing_type)}
       </p>
 
       <dl className="mt-6 divide-y divide-navy/10">

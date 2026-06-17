@@ -116,7 +116,7 @@ export default async function PropertyDetailPage({ params }: { params: Params })
             {/* Quick facts strip */}
             <div className="mt-8 grid grid-cols-2 gap-px overflow-hidden rounded-sm border border-navy/10 bg-navy/10 sm:grid-cols-3">
               {[
-                [t('price'), formatPrice(property.price, property.currency, params.locale)],
+                [t('price'), formatPrice(property.price, property.currency, params.locale, property.listing_type)],
                 [t('size'), formatSize(property.size_m2, params.locale)],
                 ...(property.type !== 'telek' ? [[t('rooms'), String(property.rooms)]] : []),
                 [property.region === 'videk' ? t('location') : t('district'), locationLabel(property)],
