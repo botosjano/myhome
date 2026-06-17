@@ -14,6 +14,8 @@ export default function SearchBox() {
   const router = useRouter();
 
   const [currency, setCurrency] = useState<Currency>('HUF');
+  const [listingType, setListingType] = useState<'' | 'elado' | 'kiado'>('');
+  const [region, setRegion] = useState<'' | 'budapest' | 'videk'>('');
   const [values, setValues] = useState<Record<string, string>>({});
 
   const set = (k: string, v: string) => setValues((p) => ({ ...p, [k]: v }));
@@ -24,6 +26,11 @@ export default function SearchBox() {
     Object.entries(values).forEach(([k, v]) => {
       if (v) params.set(k, v);
     });
+    if (listingType) params.set('listingType', listingType);
+    if (region) params.set('region', region);
+    // Only send the location field relevant to the chosen region.
+    if (region === 'videk') params.delete('district');
+    else params.delete('city');
     params.set('currency', currency);
     router.push(`/ingatlanok?${params.toString()}`);
   };
@@ -32,6 +39,22 @@ export default function SearchBox() {
     'w-full rounded-sm border border-navy/15 bg-white px-3 py-2.5 font-sans text-sm text-navy ' +
     'focus:border-gold focus:outline-none focus:ring-1 focus:ring-gold';
   const label = 'mb-1.5 block font-sans text-xs font-medium uppercase tracking-wide text-navy/60';
+  const pill = (active: boolean) =>
+    cn(
+      'rounded-full px-4 py-1.5 font-sans text-xs uppercase tracking-wide transition-colors',
+      active ? 'bg-gold text-navy' : 'border border-navy/15 text-navy/60 hover:border-gold',
+    );
+
+  const txnOpts = [
+    { v: '', l: t('both') },
+    { v: 'elado', l: t('forSale') },
+    { v: 'kiado', l: t('forRent') },
+  ] as const;
+  const regionOpts = [
+    { v: '', l: t('locAll') },
+    { v: 'budapest', l: t('locBudapest') },
+    { v: 'videk', l: t('locVidek') },
+  ] as const;
 
   return (
     <form
@@ -58,6 +81,30 @@ export default function SearchBox() {
         </div>
       </div>
 
+      {/* Transaction + location pill toggles */}
+      <div className="mb-6 flex flex-col gap-4 border-b border-navy/10 pb-5 sm:flex-row sm:items-center sm:gap-10">
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="mr-1 font-sans text-xs font-medium uppercase tracking-wide text-navy/45">
+            {t('transaction')}
+          </span>
+          {txnOpts.map((o) => (
+            <button key={o.v || 'all'} type="button" onClick={() => setListingType(o.v)} className={pill(listingType === o.v)}>
+              {o.l}
+            </button>
+          ))}
+        </div>
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="mr-1 font-sans text-xs font-medium uppercase tracking-wide text-navy/45">
+            {t('location')}
+          </span>
+          {regionOpts.map((o) => (
+            <button key={o.v || 'all'} type="button" onClick={() => setRegion(o.v)} className={pill(region === o.v)}>
+              {o.l}
+            </button>
+          ))}
+        </div>
+      </div>
+
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <div>
           <label className={label}>{t('type')}</label>
@@ -71,20 +118,31 @@ export default function SearchBox() {
           </select>
         </div>
 
+        {/* District (Budapest) ↔ free-text city/region (vidék) */}
         <div>
-          <label className={label}>{t('district')}</label>
-          <select
-            className={field}
-            value={values.district ?? ''}
-            onChange={(e) => set('district', e.target.value)}
-          >
-            <option value="">{t('districtAny')}</option>
-            {DISTRICTS.map((d) => (
-              <option key={d.label} value={d.label}>
-                {d.label}
-              </option>
-            ))}
-          </select>
+          <label className={label}>{region === 'videk' ? t('cityPlaceholder') : t('district')}</label>
+          {region === 'videk' ? (
+            <input
+              type="text"
+              placeholder={t('cityPlaceholder')}
+              className={field}
+              value={values.city ?? ''}
+              onChange={(e) => set('city', e.target.value)}
+            />
+          ) : (
+            <select
+              className={field}
+              value={values.district ?? ''}
+              onChange={(e) => set('district', e.target.value)}
+            >
+              <option value="">{t('districtAny')}</option>
+              {DISTRICTS.map((d) => (
+                <option key={d.label} value={d.label}>
+                  {d.label}
+                </option>
+              ))}
+            </select>
+          )}
         </div>
 
         <div>

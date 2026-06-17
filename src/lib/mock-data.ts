@@ -40,6 +40,9 @@ const GALLERY = {
 export const MOCK_PROPERTIES: Property[] = [
   {
     id: 'p1',
+    listing_type: 'elado',
+    region: 'budapest',
+    city: null,
     title_hu: 'Panorámás penthouse a Várhegy lábánál',
     title_en: 'Panoramic penthouse at the foot of Castle Hill',
     description_hu:
@@ -67,6 +70,9 @@ export const MOCK_PROPERTIES: Property[] = [
   },
   {
     id: 'p2',
+    listing_type: 'elado',
+    region: 'budapest',
+    city: null,
     title_hu: 'Klasszikus villa a Rózsadombon',
     title_en: 'Classic villa on Rózsadomb',
     description_hu:
@@ -94,6 +100,9 @@ export const MOCK_PROPERTIES: Property[] = [
   },
   {
     id: 'p3',
+    listing_type: 'kiado',
+    region: 'budapest',
+    city: null,
     title_hu: 'Eleganciás polgári lakás a Lipótvárosban',
     title_en: 'Elegant period apartment in Lipótváros',
     description_hu:
@@ -121,6 +130,9 @@ export const MOCK_PROPERTIES: Property[] = [
   },
   {
     id: 'p4',
+    listing_type: 'elado',
+    region: 'budapest',
+    city: null,
     title_hu: 'Modern családi ház Hegyvidéken',
     title_en: 'Modern family house in Hegyvidék',
     description_hu:
@@ -148,6 +160,9 @@ export const MOCK_PROPERTIES: Property[] = [
   },
   {
     id: 'p5',
+    listing_type: 'kiado',
+    region: 'budapest',
+    city: null,
     title_hu: 'Dunai panorámás lakás az Újlipótvárosban',
     title_en: 'Danube-view apartment in Újlipótváros',
     description_hu:
@@ -175,6 +190,9 @@ export const MOCK_PROPERTIES: Property[] = [
   },
   {
     id: 'p6',
+    listing_type: 'kiado',
+    region: 'budapest',
+    city: null,
     title_hu: 'Tetőtéri penthouse a Belvárosban',
     title_en: 'Top-floor penthouse in Downtown',
     description_hu:
@@ -202,6 +220,9 @@ export const MOCK_PROPERTIES: Property[] = [
   },
   {
     id: 'p7',
+    listing_type: 'elado',
+    region: 'budapest',
+    city: null,
     title_hu: 'Erdőszéli villatelek a Hűvösvölgyben',
     title_en: 'Forest-edge villa plot in Hűvösvölgy',
     description_hu:
@@ -229,6 +250,9 @@ export const MOCK_PROPERTIES: Property[] = [
   },
   {
     id: 'p8',
+    listing_type: 'kiado',
+    region: 'budapest',
+    city: null,
     title_hu: 'Design lakás az Óbudai Duna-parton',
     title_en: 'Design apartment on the Óbuda riverfront',
     description_hu:
@@ -256,6 +280,9 @@ export const MOCK_PROPERTIES: Property[] = [
   },
   {
     id: 'p9',
+    listing_type: 'elado',
+    region: 'budapest',
+    city: null,
     title_hu: 'Mediterrán villa medencével Újbudán',
     title_en: 'Mediterranean villa with pool in Újbuda',
     description_hu:
@@ -283,6 +310,9 @@ export const MOCK_PROPERTIES: Property[] = [
   },
   {
     id: 'p10',
+    listing_type: 'kiado',
+    region: 'budapest',
+    city: null,
     title_hu: 'Polgári otthon a Terézvárosban',
     title_en: 'Period home in Terézváros',
     description_hu:
@@ -308,6 +338,96 @@ export const MOCK_PROPERTIES: Property[] = [
     condition: 'felújítandó',
     created_at: '2026-05-10T11:00:00Z',
   },
+  {
+    id: 'p11',
+    listing_type: 'elado',
+    region: 'videk',
+    city: 'Balaton (Tihany)',
+    title_hu: 'Tóparti villa Tihanyban, közvetlen vízparttal',
+    title_en: 'Lakeside villa in Tihany with direct waterfront',
+    description_hu:
+      'Közvetlen vízparti, panorámás villa a tihanyi félszigeten, saját stéggel és gondozott mediterrán kerttel. Prémium nyaraló vagy egész éves otthon a Balaton legszebb pontján.',
+    description_en:
+      'A waterfront panoramic villa on the Tihany peninsula with a private jetty and a manicured Mediterranean garden. A premium holiday home or year-round residence at the finest spot on Lake Balaton.',
+    price: 1_850_000,
+    currency: 'EUR',
+    size_m2: 240,
+    rooms: 5,
+    floor: null,
+    district: '',
+    type: 'villa',
+    status: 'active',
+    featured: true,
+    images: GALLERY.villa,
+    video_url: null,
+    lat: 46.9136,
+    lng: 17.8889,
+    reference_number: 'MH-1052',
+    year_built: 2015,
+    parking: true,
+    condition: 'új',
+    created_at: '2026-06-15T10:00:00Z',
+  },
+  {
+    id: 'p12',
+    listing_type: 'kiado',
+    region: 'videk',
+    city: 'Szentendre',
+    title_hu: 'Művészvilla a szentendrei óvárosban',
+    title_en: 'Artist’s villa in Szentendre old town',
+    description_hu:
+      'Hangulatos, kertes ház a szentendrei óváros macskaköves utcáiban, a Duna közelében. Egyedi, művészi belső terek, kandalló, csendes udvar.',
+    description_en:
+      'A charming garden house in the cobbled streets of Szentendre old town, near the Danube. Unique artistic interiors, a fireplace and a quiet courtyard.',
+    price: 210_000_000,
+    currency: 'HUF',
+    size_m2: 180,
+    rooms: 4,
+    floor: null,
+    district: '',
+    type: 'ház',
+    status: 'active',
+    featured: false,
+    images: GALLERY.house,
+    video_url: null,
+    lat: 47.6694,
+    lng: 19.0708,
+    reference_number: 'MH-1053',
+    year_built: 1992,
+    parking: true,
+    condition: 'felújított',
+    created_at: '2026-06-08T13:00:00Z',
+  },
+  {
+    id: 'p13',
+    listing_type: 'elado',
+    region: 'videk',
+    city: 'Eger',
+    title_hu: 'Polgári lakás Eger történelmi belvárosában',
+    title_en: 'Period apartment in Eger’s historic centre',
+    description_hu:
+      'Felújított, boltíves polgári lakás Eger barokk belvárosában, a vár és a bazilika közelében. Eredeti részletek, magas belmagasság.',
+    description_en:
+      'A renovated, vaulted period apartment in Eger’s baroque centre, near the castle and basilica. Original details and high ceilings.',
+    price: 95_000_000,
+    currency: 'HUF',
+    size_m2: 102,
+    rooms: 3,
+    floor: 1,
+    district: '',
+    type: 'lakás',
+    status: 'active',
+    featured: false,
+    images: GALLERY.classic,
+    video_url: null,
+    lat: 47.9026,
+    lng: 20.3772,
+    reference_number: 'MH-1054',
+    year_built: 1910,
+    parking: false,
+    condition: 'felújított',
+    created_at: '2026-06-03T09:00:00Z',
+  },
 ];
 
 /** Filter + sort mock properties — mirrors the future Supabase query. */
@@ -318,6 +438,9 @@ export function queryProperties(
   return MOCK_PROPERTIES.filter((p) => {
     if (opts.onlyActive && p.status !== 'active') return false;
     if (filters.type && p.type !== filters.type) return false;
+    if (filters.listingType && p.listing_type !== filters.listingType) return false;
+    if (filters.region && p.region !== filters.region) return false;
+    if (filters.city && !(p.city ?? '').toLowerCase().includes(filters.city.toLowerCase())) return false;
     if (filters.district && p.district !== filters.district) return false;
     if (filters.rooms && p.rooms < filters.rooms) return false;
     if (filters.minSize && p.size_m2 < filters.minSize) return false;

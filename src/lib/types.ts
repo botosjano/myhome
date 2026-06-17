@@ -8,6 +8,12 @@ export type PropertyStatus = 'active' | 'hidden' | 'sold';
 
 export type Condition = 'új' | 'felújított' | 'felújítandó';
 
+// Transaction type: for sale / for rent
+export type ListingType = 'elado' | 'kiado';
+
+// Region bucket: Budapest (district-based) vs. countryside (free city/region)
+export type Region = 'budapest' | 'videk';
+
 export interface Property {
   id: string;
   title_hu: string;
@@ -19,7 +25,10 @@ export interface Property {
   size_m2: number;
   rooms: number;
   floor: number | null;
-  district: string; // e.g. "II. kerület"
+  listing_type: ListingType;
+  region: Region;
+  district: string; // Budapest kerület, e.g. "II. kerület" (empty for vidék)
+  city: string | null; // city/region name for vidék, e.g. "Balaton (Tihany)"
   type: PropertyType;
   status: PropertyStatus;
   featured: boolean;
@@ -36,6 +45,9 @@ export interface Property {
 
 export interface PropertyFilters {
   type?: PropertyType | '';
+  listingType?: ListingType | '';
+  region?: Region | '';
+  city?: string;
   district?: string;
   minPrice?: number;
   maxPrice?: number;

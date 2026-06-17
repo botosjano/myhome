@@ -2,7 +2,7 @@
 
 import { useLocale, useTranslations } from 'next-intl';
 import type { Property } from '@/lib/types';
-import { formatPrice, formatSize } from '@/lib/utils';
+import { formatPrice, formatSize, locationLabel } from '@/lib/utils';
 
 export default function KeyStats({ property }: { property: Property }) {
   const t = useTranslations('detail');
@@ -19,7 +19,7 @@ export default function KeyStats({ property }: { property: Property }) {
       ? ([[t('rooms'), String(property.rooms)]] as Array<[string, string]>)
       : []),
     ...(property.type !== 'telek' ? ([[t('floor'), floorLabel]] as Array<[string, string]>) : []),
-    [t('district'), property.district],
+    [property.region === 'videk' ? t('location') : t('district'), locationLabel(property)],
     [t('type'), tTypes(property.type)],
     [t('reference'), property.reference_number],
     ...(property.year_built ? ([[t('yearBuilt'), String(property.year_built)]] as Array<[string, string]>) : []),

@@ -38,10 +38,22 @@ export function formatSize(size: number, locale: string): string {
   return `${new Intl.NumberFormat(locale === 'hu' ? 'hu-HU' : 'en-US').format(size)} m²`;
 }
 
-/** Build the SEO-friendly detail URL slug: [reference]-[district]-[type]. */
-export function propertySlug(p: Pick<Property, 'reference_number' | 'district' | 'type'>): string {
-  const district = p.district.replace(/\.\s*/g, '').replace(/\s+/g, '-').toLowerCase();
-  return `${p.reference_number}-${district}-${p.type}`.toLowerCase();
+/** Card/detail location label: Budapest district, or city/region for vidék. */
+export function locationLabel(
+  p: Pick<Property, 'region' | 'district' | 'city'>,
+): string {
+  return p.region === 'videk' ? (p.city ?? '') : p.district;
+}
+
+/** Build the SEO-friendly detail URL slug: [reference]-[location]-[type]. */
+export function propertySlug(
+  p: Pick<Property, 'reference_number' | 'district' | 'type' | 'region' | 'city'>,
+): string {
+  const loc = locationLabel(p)
+    .replace(/[().]/g, '')
+    .replace(/\s+/g, '-')
+    .toLowerCase();
+  return `${p.reference_number}-${loc}-${p.type}`.toLowerCase();
 }
 
 export function localizedType(type: PropertyType, locale: string): string {

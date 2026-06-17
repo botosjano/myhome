@@ -1,10 +1,13 @@
-import type { Property, PropertyType } from './types';
+import type { ListingType, Property, PropertyType, Region } from './types';
 import { EUR_TO_HUF, priceInHuf } from './utils';
 
 export type SortKey = 'newest' | 'priceAsc' | 'priceDesc';
 export type ViewMode = 'list' | 'map';
 
 export interface ListingState {
+  listingType: ListingType | ''; // '' = both
+  region: Region | ''; // '' = everywhere
+  city: string; // free-text for vidék
   districts: string[];
   types: PropertyType[];
   minPriceMft: number;
@@ -27,6 +30,9 @@ const VALID_TYPES: PropertyType[] = ['lakás', 'ház', 'villa', 'penthouse', 'te
 
 export function defaultState(): ListingState {
   return {
+    listingType: '',
+    region: '',
+    city: '',
     districts: [],
     types: [],
     minPriceMft: PRICE_MIN_MFT,
@@ -54,6 +60,15 @@ function list(v: string | null | undefined): string[] {
 export function stateFromParams(get: (k: string) => string | null): ListingState {
   const s = defaultState();
   const currency = get('currency') === 'EUR' ? 'EUR' : 'HUF';
+
+  // Transaction type
+  const lt = get('listingType');
+  if (lt === 'elado' || lt === 'kiado') s.listingType = lt;
+
+  // Region + free-text city (vidék)
+  const region = get('region');
+  if (region === 'budapest' || region === 'videk') s.region = region;
+  s.city = (get('city') ?? '').trim();
 
   // Districts: multi (`districts`) or the homepage single `district`.
   s.districts = list(get('districts'));
@@ -94,6 +109,9 @@ export function stateFromParams(get: (k: string) => string | null): ListingState
 /** Serialise state to URL params, omitting defaults to keep URLs clean. */
 export function paramsFromState(s: ListingState): URLSearchParams {
   const p = new URLSearchParams();
+  if (s.listingType) p.set('listingType', s.listingType);
+  if (s.region) p.set('region', s.region);
+  if (s.city) p.set('city', s.city);
   if (s.districts.length) p.set('districts', s.districts.join(','));
   if (s.types.length) p.set('types', s.types.join(','));
   if (s.minPriceMft > PRICE_MIN_MFT) p.set('minPrice', String(s.minPriceMft));
@@ -113,7 +131,12 @@ export function applyState(properties: Property[], s: ListingState): Property[] 
 
   const filtered = properties.filter((p) => {
     if (p.status !== 'active') return false;
-    if (s.districts.length && !s.districts.includes(p.district)) return false;
+    if (s.listingType && p.listing_type !== s.listingType) return false;
+    if (s.region && p.region !== s.region) return false;
+    if (s.region === 'videk' && s.city && !(p.city ?? '').toLowerCase().includes(s.city.toLowerCase()))
+      return false;
+    // District filter applies only to Budapest listings.
+    if (s.region !== 'videk' && s.districts.length && !s.districts.includes(p.district)) return false;
     if (s.types.length && !s.types.includes(p.type)) return false;
     const huf = priceInHuf(p.price, p.currency);
     if (huf < minHuf || huf > maxHuf) return false;
@@ -132,7 +155,10 @@ export function applyState(properties: Property[], s: ListingState): Property[] 
 
 export function activeFilterCount(s: ListingState): number {
   let n = 0;
-  if (s.districts.length) n += s.districts.length;
+  if (s.listingType) n += 1;
+  if (s.region) n += 1;
+  if (s.city) n += 1;
+  if (s.region !== 'videk' && s.districts.length) n += s.districts.length;
   if (s.types.length) n += s.types.length;
   if (s.minPriceMft > PRICE_MIN_MFT || s.maxPriceMft < PRICE_MAX_MFT) n += 1;
   if (s.minSize > SIZE_MIN || s.maxSize < SIZE_MAX) n += 1;

@@ -4,7 +4,7 @@ import { setRequestLocale, getTranslations } from 'next-intl/server';
 import { ArrowLeft, MapPin } from 'lucide-react';
 import { Link } from '@/navigation';
 import { getPropertyBySlug } from '@/lib/mock-data';
-import { formatPrice, formatSize, localizedType } from '@/lib/utils';
+import { formatPrice, formatSize, localizedType, locationLabel } from '@/lib/utils';
 import Gallery from '@/components/detail/Gallery';
 import KeyStats from '@/components/detail/KeyStats';
 import InquiryForm from '@/components/detail/InquiryForm';
@@ -53,8 +53,8 @@ export default async function PropertyDetailPage({ params }: { params: Params })
     image: property.images,
     address: {
       '@type': 'PostalAddress',
-      addressLocality: 'Budapest',
-      addressRegion: property.district,
+      addressLocality: property.region === 'budapest' ? 'Budapest' : locationLabel(property),
+      addressRegion: property.region === 'budapest' ? property.district : locationLabel(property),
       addressCountry: 'HU',
     },
     floorSize: { '@type': 'QuantitativeValue', value: property.size_m2, unitCode: 'MTK' },
@@ -88,7 +88,7 @@ export default async function PropertyDetailPage({ params }: { params: Params })
           <h1 className="font-serif text-3xl text-navy sm:text-4xl">{title}</h1>
           <p className="mt-2 flex items-center gap-2 font-sans text-navy/60">
             <MapPin className="h-4 w-4 text-gold" />
-            {property.district}, Budapest
+            {property.region === 'budapest' ? `${locationLabel(property)}, Budapest` : locationLabel(property)}
           </p>
         </div>
 
@@ -119,7 +119,7 @@ export default async function PropertyDetailPage({ params }: { params: Params })
                 [t('price'), formatPrice(property.price, property.currency, params.locale)],
                 [t('size'), formatSize(property.size_m2, params.locale)],
                 ...(property.type !== 'telek' ? [[t('rooms'), String(property.rooms)]] : []),
-                [t('district'), property.district],
+                [property.region === 'videk' ? t('location') : t('district'), locationLabel(property)],
                 ...(property.year_built ? [[t('yearBuilt'), String(property.year_built)]] : []),
                 [t('reference'), property.reference_number],
               ].map(([label, value]) => (

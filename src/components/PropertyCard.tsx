@@ -6,7 +6,7 @@ import { motion } from 'framer-motion';
 import { BedDouble, Maximize, MapPin } from 'lucide-react';
 import { Link } from '@/navigation';
 import type { Property } from '@/lib/types';
-import { cn, formatPrice, formatSize, propertySlug } from '@/lib/utils';
+import { cn, formatPrice, formatSize, locationLabel, propertySlug } from '@/lib/utils';
 import FavoriteButton from './FavoriteButton';
 
 export default function PropertyCard({
@@ -45,11 +45,22 @@ export default function PropertyCard({
           />
           <div className="absolute inset-0 bg-gradient-to-t from-navy/70 via-transparent to-transparent" />
 
-          {property.featured && (
-            <span className="absolute left-4 top-4 rounded-sm bg-gold px-3 py-1 font-sans text-[10px] font-semibold uppercase tracking-widest text-navy">
-              {t('featured')}
+          {/* Transaction + featured badges */}
+          <div className="absolute left-4 top-4 flex flex-col items-start gap-2">
+            <span
+              className={cn(
+                'rounded-sm px-3 py-1 font-sans text-[10px] font-semibold uppercase tracking-widest',
+                property.listing_type === 'kiado' ? 'bg-[#2f5d8a] text-white' : 'bg-gold text-navy',
+              )}
+            >
+              {property.listing_type === 'kiado' ? t('forRent') : t('forSale')}
             </span>
-          )}
+            {property.featured && (
+              <span className="rounded-sm bg-navy/85 px-3 py-1 font-sans text-[10px] font-semibold uppercase tracking-widest text-gold backdrop-blur">
+                {t('featured')}
+              </span>
+            )}
+          </div>
 
           <FavoriteButton id={property.id} className="absolute right-3 top-3" />
 
@@ -72,7 +83,7 @@ export default function PropertyCard({
           <div className="mt-4 flex flex-wrap items-center gap-x-5 gap-y-2 font-sans text-sm text-navy/70">
             <span className="flex items-center gap-1.5">
               <MapPin className="h-4 w-4 text-gold" />
-              {property.district}
+              {locationLabel(property)}
             </span>
             <span className="flex items-center gap-1.5">
               <Maximize className="h-4 w-4 text-gold" />

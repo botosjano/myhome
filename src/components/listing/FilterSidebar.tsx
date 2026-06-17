@@ -31,6 +31,24 @@ export default function FilterSidebar({
   const toggle = <T extends string>(arr: T[], value: T): T[] =>
     arr.includes(value) ? arr.filter((v) => v !== value) : [...arr, value];
 
+  const seg = (active: boolean) =>
+    cn(
+      'flex-1 rounded-sm border px-2 py-1.5 font-sans text-xs uppercase tracking-wide transition-colors',
+      active ? 'border-gold bg-gold text-navy' : 'border-navy/15 text-navy/60 hover:border-gold',
+    );
+  const legend = 'mb-3 font-sans text-xs font-semibold uppercase tracking-widest text-navy/50';
+
+  const txnOpts = [
+    { v: '', k: 'both' },
+    { v: 'elado', k: 'forSale' },
+    { v: 'kiado', k: 'forRent' },
+  ] as const;
+  const regionOpts = [
+    { v: '', k: 'locAll' },
+    { v: 'budapest', k: 'locBudapest' },
+    { v: 'videk', k: 'locVidek' },
+  ] as const;
+
   return (
     <div className="space-y-7">
       <div className="flex items-center justify-between">
@@ -47,9 +65,38 @@ export default function FilterSidebar({
         )}
       </div>
 
+      {/* Transaction type */}
+      <div>
+        <p className={legend}>{t('transaction')}</p>
+        <div className="flex gap-2">
+          {txnOpts.map((o) => (
+            <button key={o.v || 'all'} type="button" onClick={() => onChange({ listingType: o.v })} className={seg(state.listingType === o.v)}>
+              {t(o.k)}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Location / region */}
+      <div>
+        <p className={legend}>{t('location')}</p>
+        <div className="flex gap-2">
+          {regionOpts.map((o) => (
+            <button
+              key={o.v || 'all'}
+              type="button"
+              onClick={() => onChange({ region: o.v, ...(o.v === 'videk' ? { districts: [] } : { city: '' }) })}
+              className={seg(state.region === o.v)}
+            >
+              {t(o.k)}
+            </button>
+          ))}
+        </div>
+      </div>
+
       {/* Property type */}
       <fieldset>
-        <legend className="mb-3 font-sans text-xs font-semibold uppercase tracking-widest text-navy/50">
+        <legend className={legend}>
           {t('type')}
         </legend>
         <div className="flex flex-wrap gap-2">
@@ -131,31 +178,42 @@ export default function FilterSidebar({
         </div>
       </div>
 
-      {/* Districts */}
-      <fieldset>
-        <legend className="mb-3 font-sans text-xs font-semibold uppercase tracking-widest text-navy/50">
-          {t('district')}
-        </legend>
-        <div className="grid max-h-64 grid-cols-2 gap-x-4 gap-y-2 overflow-y-auto pr-1">
-          {DISTRICTS.map((d) => {
-            const active = state.districts.includes(d.label);
-            return (
-              <label
-                key={d.label}
-                className="flex cursor-pointer items-center gap-2 font-sans text-sm text-navy/80"
-              >
-                <input
-                  type="checkbox"
-                  checked={active}
-                  onChange={() => onChange({ districts: toggle(state.districts, d.label) })}
-                  className="h-4 w-4 accent-gold"
-                />
-                {d.roman}
-              </label>
-            );
-          })}
+      {/* Vidék → free-text city/region; otherwise Budapest districts */}
+      {state.region === 'videk' ? (
+        <div>
+          <p className={legend}>{t('cityPlaceholder')}</p>
+          <input
+            type="text"
+            placeholder={t('cityPlaceholder')}
+            value={state.city}
+            onChange={(e) => onChange({ city: e.target.value })}
+            className="w-full rounded-sm border border-navy/15 px-3 py-2.5 font-sans text-sm text-navy focus:border-gold focus:outline-none focus:ring-1 focus:ring-gold"
+          />
         </div>
-      </fieldset>
+      ) : (
+        <fieldset>
+          <legend className={legend}>{t('district')}</legend>
+          <div className="grid max-h-64 grid-cols-2 gap-x-4 gap-y-2 overflow-y-auto pr-1">
+            {DISTRICTS.map((d) => {
+              const active = state.districts.includes(d.label);
+              return (
+                <label
+                  key={d.label}
+                  className="flex cursor-pointer items-center gap-2 font-sans text-sm text-navy/80"
+                >
+                  <input
+                    type="checkbox"
+                    checked={active}
+                    onChange={() => onChange({ districts: toggle(state.districts, d.label) })}
+                    className="h-4 w-4 accent-gold"
+                  />
+                  {d.roman}
+                </label>
+              );
+            })}
+          </div>
+        </fieldset>
+      )}
     </div>
   );
 }
