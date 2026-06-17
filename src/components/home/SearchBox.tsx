@@ -36,7 +36,7 @@ export default function SearchBox() {
   return (
     <form
       onSubmit={submit}
-      className="w-full max-w-5xl rounded-sm bg-white/95 p-6 shadow-luxe backdrop-blur-sm md:p-8"
+      className="w-full max-w-5xl rounded-sm bg-white/90 p-6 shadow-luxe backdrop-blur-md md:p-8"
     >
       <div className="mb-5 flex items-center justify-between">
         <h2 className="font-serif text-xl text-navy">{t('title')}</h2>
