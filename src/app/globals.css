@@ -79,6 +79,25 @@
   background: transparent;
 }
 
+/* Print: produce a clean one-page property sheet (used by the PDF button) */
+@media print {
+  header,
+  footer {
+    display: none !important;
+  }
+  article {
+    padding-top: 0 !important;
+  }
+  .gold-rule {
+    background: #c9a96e !important;
+  }
+  /* Print backgrounds/colors as shown on screen */
+  * {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}
+
 /* Custom thin scrollbar in brand colors */
 ::-webkit-scrollbar {
   width: 10px;

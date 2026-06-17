@@ -337,6 +337,12 @@ export function getPropertyByReference(reference: string): Property | undefined 
   );
 }
 
+/** Resolve a property from a detail-page slug ([reference]-[district]-[type]). */
+export function getPropertyBySlug(slug: string): Property | undefined {
+  const ref = slug.match(/^(mh-\d+)/i)?.[1];
+  return ref ? getPropertyByReference(ref) : undefined;
+}
+
 export function getFeaturedProperties(): Property[] {
   return MOCK_PROPERTIES.filter((p) => p.featured && p.status === 'active');
 }
