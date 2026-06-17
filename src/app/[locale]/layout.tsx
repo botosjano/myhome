@@ -6,6 +6,7 @@ import { notFound } from 'next/navigation';
 import { locales } from '@/i18n';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
+import ScrollToTopButton from '@/components/ScrollToTopButton';
 import '../globals.css';
 
 // Single typeface across the whole site for an editorial, haute-couture feel.
@@ -54,6 +55,7 @@ export default async function LocaleLayout({
           <Navbar />
           <main className="flex-1">{children}</main>
           <Footer />
+          <ScrollToTopButton />
         </NextIntlClientProvider>
       </body>
     </html>
