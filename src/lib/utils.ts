@@ -22,6 +22,18 @@ export function formatPrice(price: number, currency: Currency, locale: string): 
   }).format(price);
 }
 
+/**
+ * Approximate FX rate used ONLY for the mock phase so that mixed-currency
+ * listings can be filtered/sorted on a single price scale. Replace with a live
+ * rate (or store everything in one base currency) once the backend is wired.
+ */
+export const EUR_TO_HUF = 400;
+
+/** Normalise any listing's price to HUF for cross-currency compare/sort. */
+export function priceInHuf(price: number, currency: Currency): number {
+  return currency === 'EUR' ? price * EUR_TO_HUF : price;
+}
+
 export function formatSize(size: number, locale: string): string {
   return `${new Intl.NumberFormat(locale === 'hu' ? 'hu-HU' : 'en-US').format(size)} m²`;
 }

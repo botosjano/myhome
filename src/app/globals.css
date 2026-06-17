@@ -52,6 +52,33 @@
   }
 }
 
+/* Dual-range slider thumbs (used by DualRange) */
+.range-thumb::-webkit-slider-thumb {
+  pointer-events: auto;
+  -webkit-appearance: none;
+  appearance: none;
+  height: 18px;
+  width: 18px;
+  border-radius: 9999px;
+  background: #c9a96e;
+  border: 2px solid #fff;
+  box-shadow: 0 1px 4px rgba(10, 22, 40, 0.35);
+  cursor: pointer;
+}
+.range-thumb::-moz-range-thumb {
+  pointer-events: auto;
+  height: 18px;
+  width: 18px;
+  border: 2px solid #fff;
+  border-radius: 9999px;
+  background: #c9a96e;
+  box-shadow: 0 1px 4px rgba(10, 22, 40, 0.35);
+  cursor: pointer;
+}
+.range-thumb::-moz-range-track {
+  background: transparent;
+}
+
 /* Custom thin scrollbar in brand colors */
 ::-webkit-scrollbar {
   width: 10px;
