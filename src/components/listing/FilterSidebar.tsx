@@ -193,17 +193,26 @@ export default function FilterSidebar({
       ) : (
         <fieldset>
           <legend className={legend}>{t('district')}</legend>
-          <div className="grid max-h-64 grid-cols-2 gap-x-4 gap-y-2 overflow-y-auto pr-1">
+          <div
+            className={cn(
+              'grid max-h-64 grid-cols-2 gap-x-4 gap-y-2 overflow-y-auto pr-1',
+              state.region === '' && 'pointer-events-none opacity-50',
+            )}
+          >
             {DISTRICTS.map((d) => {
               const active = state.districts.includes(d.label);
               return (
                 <label
                   key={d.label}
-                  className="flex cursor-pointer items-center gap-2 font-sans text-sm text-navy/80"
+                  className={cn(
+                    'flex items-center gap-2 font-sans text-sm text-navy/80',
+                    state.region === '' ? 'cursor-default' : 'cursor-pointer',
+                  )}
                 >
                   <input
                     type="checkbox"
                     checked={active}
+                    disabled={state.region === ''}
                     onChange={() => onChange({ districts: toggle(state.districts, d.label) })}
                     className="h-4 w-4 accent-gold"
                   />
@@ -212,6 +221,9 @@ export default function FilterSidebar({
               );
             })}
           </div>
+          {state.region === '' && (
+            <p className="mt-2 font-sans text-xs italic text-navy/45">{t('districtBudapestOnly')}</p>
+          )}
         </fieldset>
       )}
     </div>

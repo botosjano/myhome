@@ -135,8 +135,8 @@ export function applyState(properties: Property[], s: ListingState): Property[] 
     if (s.region && p.region !== s.region) return false;
     if (s.region === 'videk' && s.city && !(p.city ?? '').toLowerCase().includes(s.city.toLowerCase()))
       return false;
-    // District filter applies only to Budapest listings.
-    if (s.region !== 'videk' && s.districts.length && !s.districts.includes(p.district)) return false;
+    // District filter applies only when Budapest is explicitly selected.
+    if (s.region === 'budapest' && s.districts.length && !s.districts.includes(p.district)) return false;
     if (s.types.length && !s.types.includes(p.type)) return false;
     const huf = priceInHuf(p.price, p.currency);
     if (huf < minHuf || huf > maxHuf) return false;
@@ -158,7 +158,7 @@ export function activeFilterCount(s: ListingState): number {
   if (s.listingType) n += 1;
   if (s.region) n += 1;
   if (s.city) n += 1;
-  if (s.region !== 'videk' && s.districts.length) n += s.districts.length;
+  if (s.region === 'budapest' && s.districts.length) n += s.districts.length;
   if (s.types.length) n += s.types.length;
   if (s.minPriceMft > PRICE_MIN_MFT || s.maxPriceMft < PRICE_MAX_MFT) n += 1;
   if (s.minSize > SIZE_MIN || s.maxSize < SIZE_MAX) n += 1;

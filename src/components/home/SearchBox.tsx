@@ -28,9 +28,9 @@ export default function SearchBox() {
     });
     if (listingType) params.set('listingType', listingType);
     if (region) params.set('region', region);
-    // Only send the location field relevant to the chosen region.
-    if (region === 'videk') params.delete('district');
-    else params.delete('city');
+    // District applies only to Budapest; free-text city only to vidék.
+    if (region !== 'budapest') params.delete('district');
+    if (region !== 'videk') params.delete('city');
     params.set('currency', currency);
     router.push(`/ingatlanok?${params.toString()}`);
   };
@@ -130,18 +130,26 @@ export default function SearchBox() {
               onChange={(e) => set('city', e.target.value)}
             />
           ) : (
-            <select
-              className={field}
-              value={values.district ?? ''}
-              onChange={(e) => set('district', e.target.value)}
-            >
-              <option value="">{t('districtAny')}</option>
-              {DISTRICTS.map((d) => (
-                <option key={d.label} value={d.label}>
-                  {d.label}
-                </option>
-              ))}
-            </select>
+            <>
+              <select
+                className={cn(field, region === '' && 'cursor-not-allowed opacity-50')}
+                value={values.district ?? ''}
+                disabled={region === ''}
+                onChange={(e) => set('district', e.target.value)}
+              >
+                <option value="">{t('districtAny')}</option>
+                {DISTRICTS.map((d) => (
+                  <option key={d.label} value={d.label}>
+                    {d.label}
+                  </option>
+                ))}
+              </select>
+              {region === '' && (
+                <p className="mt-1.5 font-sans text-[11px] italic text-navy/50">
+                  {t('districtBudapestOnly')}
+                </p>
+              )}
+            </>
           )}
         </div>
 
