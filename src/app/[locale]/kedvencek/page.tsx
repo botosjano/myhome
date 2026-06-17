@@ -1,16 +1,15 @@
+import type { Metadata } from 'next';
 import { setRequestLocale } from 'next-intl/server';
-import ComingSoon from '@/components/ComingSoon';
+import FavoritesClient from '@/components/FavoritesClient';
+
+export function generateMetadata({ params: { locale } }: { params: { locale: string } }): Metadata {
+  return {
+    title: locale === 'hu' ? 'Kedvenceim' : 'My favorites',
+    robots: { index: false, follow: true },
+  };
+}
 
 export default function FavoritesPage({ params: { locale } }: { params: { locale: string } }) {
   setRequestLocale(locale);
-  return (
-    <ComingSoon
-      title={locale === 'hu' ? 'Kedvencek' : 'Favorites'}
-      note={
-        locale === 'hu'
-          ? 'A mentett kedvencek oldala a listázó fázissal együtt készül el.'
-          : 'The saved favorites page is built alongside the listing phase.'
-      }
-    />
-  );
+  return <FavoritesClient />;
 }

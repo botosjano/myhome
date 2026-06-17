@@ -114,6 +114,14 @@
     "felújított": "Felújított",
     "felújítandó": "Felújítandó"
   },
+  "favoritesPage": {
+    "title": "Kedvenceim",
+    "subtitle": "Elmentett ingatlanok",
+    "count": "{count} mentett ingatlan",
+    "empty": "Még nincsenek kedvencei",
+    "emptyHint": "Böngésszen a portfólióban, és a szív ikonra kattintva mentse el kedvenceit.",
+    "browse": "Ingatlanok böngészése"
+  },
   "about": {
     "eyebrow": "Rólunk",
     "title": "Diszkréció, amelyre számíthat",

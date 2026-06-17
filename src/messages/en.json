@@ -114,6 +114,14 @@
     "felújított": "Renovated",
     "felújítandó": "To be renovated"
   },
+  "favoritesPage": {
+    "title": "My favorites",
+    "subtitle": "Saved properties",
+    "count": "{count} saved properties",
+    "empty": "You have no favorites yet",
+    "emptyHint": "Browse the portfolio and tap the heart icon to save your favorites.",
+    "browse": "Browse properties"
+  },
   "about": {
     "eyebrow": "About us",
     "title": "Discretion you can rely on",
