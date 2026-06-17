@@ -39,14 +39,14 @@ export default function FilterSidebar({
   const legend = 'mb-3 font-sans text-xs font-semibold uppercase tracking-widest text-navy/50';
 
   const txnOpts = [
-    { v: '', k: 'both' },
     { v: 'elado', k: 'forSale' },
     { v: 'kiado', k: 'forRent' },
+    { v: '', k: 'both' },
   ] as const;
   const regionOpts = [
-    { v: '', k: 'locAll' },
     { v: 'budapest', k: 'locBudapest' },
     { v: 'videk', k: 'locVidek' },
+    { v: '', k: 'locAll' },
   ] as const;
 
   return (

@@ -46,14 +46,14 @@ export default function SearchBox() {
     );
 
   const txnOpts = [
-    { v: '', l: t('both') },
     { v: 'elado', l: t('forSale') },
     { v: 'kiado', l: t('forRent') },
+    { v: '', l: t('both') },
   ] as const;
   const regionOpts = [
-    { v: '', l: t('locAll') },
     { v: 'budapest', l: t('locBudapest') },
     { v: 'videk', l: t('locVidek') },
+    { v: '', l: t('locAll') },
   ] as const;
 
   return (
