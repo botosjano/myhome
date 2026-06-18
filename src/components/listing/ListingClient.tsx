@@ -153,9 +153,9 @@ export default function ListingClient({ initialState }: { initialState: ListingS
       {drawer && (
         <div className="fixed inset-0 z-[60] lg:hidden">
           <div className="absolute inset-0 bg-navy/50" onClick={() => setDrawer(false)} />
-          <div className="absolute inset-y-0 left-0 w-[85%] max-w-sm overflow-y-auto bg-white p-6 shadow-luxe">
+          <div className="absolute inset-y-0 left-0 w-[85%] max-w-sm overflow-y-auto bg-navy-900 p-4 shadow-luxe">
             <div className="mb-4 flex justify-end">
-              <button type="button" onClick={() => setDrawer(false)} aria-label="Close" className="text-navy">
+              <button type="button" onClick={() => setDrawer(false)} aria-label="Close" className="text-white">
                 <X className="h-6 w-6" />
               </button>
             </div>
