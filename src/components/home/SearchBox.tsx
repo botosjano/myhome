@@ -1,236 +1,438 @@
 'use client';
 
 import { useState } from 'react';
-import { useTranslations } from 'next-intl';
-import { Search } from 'lucide-react';
+import { useLocale, useTranslations } from 'next-intl';
+import { ChevronDown, MapPin, Search, X } from 'lucide-react';
 import { useRouter } from '@/navigation';
-import { DISTRICTS, PROPERTY_TYPES, ROOM_OPTIONS } from '@/lib/districts';
-import type { Currency } from '@/lib/types';
+import {
+  ENERGY_RATINGS,
+  HEATING_OPTIONS,
+  PROPERTY_TYPES,
+  ROOM_OPTIONS,
+} from '@/lib/districts';
 import { cn } from '@/lib/utils';
+import LocationPicker from './LocationPicker';
+
+/** "II. kerület" → "II." for compact chips. */
+const shortDistrict = (label: string) => label.replace(/\s*kerület$/i, '');
+
+type Txn = 'elado' | 'kiado';
+
+/**
+ * A collapsed single box that expands into two min/max inputs when clicked
+ * (ingatlan.com style). Defined outside SearchBox so it keeps focus across the
+ * parent's re-renders.
+ */
+function RangeField({
+  open,
+  setOpen,
+  min,
+  setMin,
+  max,
+  setMax,
+  suffix,
+  placeholder,
+  fieldClass,
+  label,
+}: {
+  open: boolean;
+  setOpen: (v: boolean) => void;
+  min: string;
+  setMin: (v: string) => void;
+  max: string;
+  setMax: (v: string) => void;
+  suffix: string;
+  placeholder: string;
+  fieldClass: string;
+  label: string;
+}) {
+  const hasValue = Boolean(min || max);
+  return (
+    <div
+      className="relative"
+      onBlur={(e) => {
+        if (!e.currentTarget.contains(e.relatedTarget as Node)) setOpen(false);
+      }}
+    >
+      {open ? (
+        <div className="flex items-center gap-1 rounded-sm border border-gold bg-navy-700 px-2 ring-1 ring-gold">
+          <input
+            autoFocus
+            type="number"
+            min={0}
+            placeholder="min."
+            aria-label={`${label} min.`}
+            value={min}
+            onChange={(e) => setMin(e.target.value)}
+            className="w-full min-w-0 bg-transparent px-1 py-3 font-sans text-sm text-white placeholder:text-white/40 focus:outline-none"
+          />
+          <span className="shrink-0 text-white/40">–</span>
+          <input
+            type="number"
+            min={0}
+            placeholder="max."
+            aria-label={`${label} max.`}
+            value={max}
+            onChange={(e) => setMax(e.target.value)}
+            className="w-full min-w-0 bg-transparent px-1 py-3 font-sans text-sm text-white placeholder:text-white/40 focus:outline-none"
+          />
+          <span className="shrink-0 pr-1 font-sans text-xs text-white/45">{suffix}</span>
+        </div>
+      ) : (
+        <button
+          type="button"
+          onClick={() => setOpen(true)}
+          aria-label={label}
+          className={cn(fieldClass, 'flex items-center justify-between text-left')}
+        >
+          <span className={cn('truncate', hasValue ? 'text-white' : 'text-white/40')}>
+            {hasValue ? `${min || 'min.'} – ${max || 'max.'}` : placeholder}
+          </span>
+          <span className="shrink-0 pl-2 font-sans text-xs text-white/45">{suffix}</span>
+        </button>
+      )}
+    </div>
+  );
+}
 
 export default function SearchBox() {
   const t = useTranslations('search');
   const tTypes = useTranslations('types');
+  const tHeating = useTranslations('heating');
+  const locale = useLocale();
   const router = useRouter();
 
-  const [currency, setCurrency] = useState<Currency>('HUF');
-  const [listingType, setListingType] = useState<'' | 'elado' | 'kiado'>('');
-  const [region, setRegion] = useState<'' | 'budapest' | 'videk'>('');
-  const [values, setValues] = useState<Record<string, string>>({});
+  const [listingType, setListingType] = useState<Txn>('elado');
+  const [type, setType] = useState('');
+  const [selDistricts, setSelDistricts] = useState<string[]>([]);
+  const [selCities, setSelCities] = useState<string[]>([]);
+  const [pickerOpen, setPickerOpen] = useState(false);
+  const [priceMin, setPriceMin] = useState('');
+  const [priceMax, setPriceMax] = useState('');
+  const [sizeMin, setSizeMin] = useState('');
+  const [sizeMax, setSizeMax] = useState('');
+  const [priceOpen, setPriceOpen] = useState(false);
+  const [sizeOpen, setSizeOpen] = useState(false);
+  const [yearMin, setYearMin] = useState('');
+  const [yearMax, setYearMax] = useState('');
+  const [rooms, setRooms] = useState(0);
+  const [heating, setHeating] = useState<string[]>([]);
+  const [energy, setEnergy] = useState<string[]>([]);
+  const [garden, setGarden] = useState(false);
+  const [parking, setParking] = useState(false);
+  const [open, setOpen] = useState(false);
 
-  const set = (k: string, v: string) => setValues((p) => ({ ...p, [k]: v }));
+  const toggle = (arr: string[], v: string) =>
+    arr.includes(v) ? arr.filter((x) => x !== v) : [...arr, v];
+
+  const rent = listingType === 'kiado';
+  const priceSuffix = rent ? (locale === 'hu' ? 'Ft / hó' : 'Ft / mo') : 'MFt';
 
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
     const params = new URLSearchParams();
-    Object.entries(values).forEach(([k, v]) => {
-      if (v) params.set(k, v);
-    });
-    if (listingType) params.set('listingType', listingType);
-    if (region) params.set('region', region);
-    // District applies only to Budapest; free-text city only to vidék.
-    if (region !== 'budapest') params.delete('district');
-    if (region !== 'videk') params.delete('city');
-    params.set('currency', currency);
+    params.set('listingType', listingType);
+    if (type) params.set('type', type);
+    if (selDistricts.length) params.set('districts', selDistricts.join(','));
+    if (selCities.length) params.set('cities', selCities.join(','));
+    if (priceMin) params.set('minPrice', priceMin);
+    if (priceMax) params.set('maxPrice', priceMax);
+    if (sizeMin) params.set('minSize', sizeMin);
+    if (sizeMax) params.set('maxSize', sizeMax);
+    if (yearMin) params.set('yearMin', yearMin);
+    if (yearMax) params.set('yearMax', yearMax);
+    if (rooms > 0) params.set('rooms', String(rooms));
+    if (heating.length) params.set('heating', heating.join(','));
+    if (energy.length) params.set('energy', energy.join(','));
+    if (garden) params.set('garden', '1');
+    if (parking) params.set('parking', '1');
     router.push(`/ingatlanok?${params.toString()}`);
   };
 
+  // Shared field styling for the dark navy panel.
   const field =
-    'w-full rounded-sm border border-navy/15 bg-white px-3 py-2.5 font-sans text-sm text-navy ' +
-    'focus:border-gold focus:outline-none focus:ring-1 focus:ring-gold';
-  const label = 'mb-1.5 block font-sans text-xs font-medium uppercase tracking-wide text-navy/60';
+    'w-full rounded-sm border border-white/15 bg-navy-700 px-3.5 py-3 font-sans text-sm text-white ' +
+    'placeholder:text-white/40 focus:border-gold focus:outline-none focus:ring-1 focus:ring-gold';
+  const legend = 'mb-2 block font-sans text-xs font-medium uppercase tracking-wide text-white/55';
   const pill = (active: boolean) =>
     cn(
-      'rounded-full px-4 py-1.5 font-sans text-xs uppercase tracking-wide transition-colors',
-      active ? 'bg-gold text-navy' : 'border border-navy/15 text-navy/60 hover:border-gold',
+      'rounded-sm px-3 py-1.5 font-sans text-xs uppercase tracking-wide transition-colors',
+      active ? 'bg-gold text-navy' : 'border border-white/20 text-white/70 hover:border-gold',
     );
-
-  const txnOpts = [
-    { v: 'elado', l: t('forSale') },
-    { v: 'kiado', l: t('forRent') },
-    { v: '', l: t('both') },
-  ] as const;
-  const regionOpts = [
-    { v: 'budapest', l: t('locBudapest') },
-    { v: 'videk', l: t('locVidek') },
-    { v: '', l: t('locAll') },
-  ] as const;
 
   return (
     <form
       onSubmit={submit}
-      className="w-full max-w-5xl rounded-sm bg-white/95 p-6 shadow-luxe backdrop-blur-sm md:p-8"
+      className="w-full max-w-5xl rounded-sm border border-white/10 bg-navy-900/95 p-5 text-left shadow-luxe backdrop-blur-sm md:p-6"
     >
-      <div className="mb-5 flex items-center justify-between">
-        <h2 className="font-serif text-xl text-navy">{t('title')}</h2>
-        {/* Currency toggle */}
-        <div className="flex overflow-hidden rounded-sm border border-navy/15">
-          {(['HUF', 'EUR'] as const).map((c) => (
-            <button
-              key={c}
-              type="button"
-              onClick={() => setCurrency(c)}
-              className={cn(
-                'px-3 py-1 font-sans text-xs font-medium uppercase tracking-wide transition-colors',
-                currency === c ? 'bg-gold text-navy' : 'bg-white text-navy/50 hover:text-navy',
-              )}
-            >
-              {c === 'HUF' ? 'MFt' : 'EUR'}
-            </button>
-          ))}
-        </div>
+      {/* Transaction toggle */}
+      <div className="mb-4 inline-flex gap-2">
+        {(['elado', 'kiado'] as const).map((v) => (
+          <button
+            key={v}
+            type="button"
+            onClick={() => setListingType(v)}
+            className={cn(
+              'rounded-sm px-6 py-2 font-sans text-sm font-medium uppercase tracking-wide transition-colors',
+              listingType === v
+                ? 'bg-gold text-navy'
+                : 'border border-white/20 text-white/70 hover:border-gold hover:text-white',
+            )}
+          >
+            {v === 'elado' ? t('forSale') : t('forRent')}
+          </button>
+        ))}
       </div>
 
-      {/* Transaction + location pill toggles */}
-      <div className="mb-6 flex flex-col gap-4 border-b border-navy/10 pb-5 sm:flex-row sm:items-center sm:gap-10">
-        <div className="flex flex-wrap items-center gap-2">
-          <span className="mr-1 font-sans text-xs font-medium uppercase tracking-wide text-navy/45">
-            {t('transaction')}
-          </span>
-          {txnOpts.map((o) => (
-            <button key={o.v || 'all'} type="button" onClick={() => setListingType(o.v)} className={pill(listingType === o.v)}>
-              {o.l}
-            </button>
+      {/* Main search row */}
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-[1fr_1.4fr_1fr_1fr_auto]">
+        {/* Type */}
+        <select
+          aria-label={t('type')}
+          className={field}
+          value={type}
+          onChange={(e) => setType(e.target.value)}
+        >
+          <option value="">{t('typeAny')}</option>
+          {PROPERTY_TYPES.map((pt) => (
+            <option key={pt} value={pt}>
+              {tTypes(pt)}
+            </option>
           ))}
-        </div>
-        <div className="flex flex-wrap items-center gap-2">
-          <span className="mr-1 font-sans text-xs font-medium uppercase tracking-wide text-navy/45">
-            {t('location')}
-          </span>
-          {regionOpts.map((o) => (
-            <button key={o.v || 'all'} type="button" onClick={() => setRegion(o.v)} className={pill(region === o.v)}>
-              {o.l}
-            </button>
-          ))}
-        </div>
-      </div>
+        </select>
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <div>
-          <label className={label}>{t('type')}</label>
-          <select className={field} value={values.type ?? ''} onChange={(e) => set('type', e.target.value)}>
-            <option value="">{t('typeAny')}</option>
-            {PROPERTY_TYPES.map((pt) => (
-              <option key={pt} value={pt}>
-                {tTypes(pt)}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        {/* District (Budapest) ↔ free-text city/region (vidék) */}
-        <div>
-          <label className={label}>{region === 'videk' ? t('cityPlaceholder') : t('district')}</label>
-          {region === 'videk' ? (
-            <input
-              type="text"
-              placeholder={t('cityPlaceholder')}
-              className={field}
-              value={values.city ?? ''}
-              onChange={(e) => set('city', e.target.value)}
-            />
+        {/* Location — opens the picker modal; selections show as chips */}
+        <div
+          role="button"
+          tabIndex={0}
+          aria-label={t('location')}
+          onClick={() => setPickerOpen(true)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              setPickerOpen(true);
+            }
+          }}
+          className={cn(field, 'flex min-h-[46px] cursor-pointer flex-wrap items-center gap-1.5')}
+        >
+          {selDistricts.length === 0 && selCities.length === 0 ? (
+            <span className="flex items-center gap-2 text-white/40">
+              <MapPin className="h-4 w-4 text-gold/70" />
+              {t('locationPlaceholder')}
+            </span>
           ) : (
             <>
-              <select
-                className={cn(field, region === '' && 'cursor-not-allowed opacity-50')}
-                value={values.district ?? ''}
-                disabled={region === ''}
-                onChange={(e) => set('district', e.target.value)}
-              >
-                <option value="">{t('districtAny')}</option>
-                {DISTRICTS.map((d) => (
-                  <option key={d.label} value={d.label}>
-                    {d.label}
-                  </option>
-                ))}
-              </select>
-              {region === '' && (
-                <p className="mt-1.5 font-sans text-[11px] italic text-navy/50">
-                  {t('districtBudapestOnly')}
-                </p>
-              )}
+              {selDistricts.map((l) => (
+                <span
+                  key={l}
+                  className="inline-flex items-center gap-1 rounded-sm bg-gold/20 px-2 py-0.5 font-sans text-xs text-white"
+                >
+                  {shortDistrict(l)}
+                  <button
+                    type="button"
+                    aria-label={`${shortDistrict(l)} ✕`}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setSelDistricts((p) => p.filter((x) => x !== l));
+                    }}
+                    className="text-white/60 transition-colors hover:text-gold"
+                  >
+                    <X className="h-3 w-3" />
+                  </button>
+                </span>
+              ))}
+              {selCities.map((c) => (
+                <span
+                  key={c}
+                  className="inline-flex items-center gap-1 rounded-sm bg-gold/20 px-2 py-0.5 font-sans text-xs text-white"
+                >
+                  {c}
+                  <button
+                    type="button"
+                    aria-label={`${c} ✕`}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setSelCities((p) => p.filter((x) => x !== c));
+                    }}
+                    className="text-white/60 transition-colors hover:text-gold"
+                  >
+                    <X className="h-3 w-3" />
+                  </button>
+                </span>
+              ))}
             </>
           )}
         </div>
 
-        <div>
-          <label className={label}>
-            {t('minPrice')} ({currency === 'HUF' ? 'MFt' : 'EUR'})
-          </label>
-          <input
-            type="number"
-            min={0}
-            className={field}
-            value={values.minPrice ?? ''}
-            onChange={(e) => set('minPrice', e.target.value)}
-          />
-        </div>
+        {/* Price (click to expand min/max) */}
+        <RangeField
+          open={priceOpen}
+          setOpen={setPriceOpen}
+          min={priceMin}
+          setMin={setPriceMin}
+          max={priceMax}
+          setMax={setPriceMax}
+          suffix={priceSuffix}
+          placeholder={t('pricePlaceholder')}
+          fieldClass={field}
+          label={t('pricePlaceholder')}
+        />
 
-        <div>
-          <label className={label}>
-            {t('maxPrice')} ({currency === 'HUF' ? 'MFt' : 'EUR'})
-          </label>
-          <input
-            type="number"
-            min={0}
-            className={field}
-            value={values.maxPrice ?? ''}
-            onChange={(e) => set('maxPrice', e.target.value)}
-          />
-        </div>
+        {/* Size (click to expand min/max) */}
+        <RangeField
+          open={sizeOpen}
+          setOpen={setSizeOpen}
+          min={sizeMin}
+          setMin={setSizeMin}
+          max={sizeMax}
+          setMax={setSizeMax}
+          suffix="m²"
+          placeholder={t('sizePlaceholder')}
+          fieldClass={field}
+          label={t('sizePlaceholder')}
+        />
 
-        <div>
-          <label className={label}>{t('minSize')}</label>
-          <input
-            type="number"
-            min={0}
-            className={field}
-            value={values.minSize ?? ''}
-            onChange={(e) => set('minSize', e.target.value)}
-          />
-        </div>
-
-        <div>
-          <label className={label}>{t('maxSize')}</label>
-          <input
-            type="number"
-            min={0}
-            className={field}
-            value={values.maxSize ?? ''}
-            onChange={(e) => set('maxSize', e.target.value)}
-          />
-        </div>
-
-        <div>
-          <label className={label}>{t('rooms')}</label>
-          <select className={field} value={values.rooms ?? ''} onChange={(e) => set('rooms', e.target.value)}>
-            <option value="">{t('roomsAny')}</option>
-            {ROOM_OPTIONS.map((r) => (
-              <option key={r} value={r}>
-                {r === 5 ? t('roomsPlus', { count: 5 }) : r}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <div>
-          <label className={label}>{t('reference')}</label>
-          <input
-            type="text"
-            placeholder={t('referencePlaceholder')}
-            className={field}
-            value={values.reference ?? ''}
-            onChange={(e) => set('reference', e.target.value)}
-          />
-        </div>
-      </div>
-
-      <div className="mt-6 flex justify-center">
-        <button type="submit" className="btn-gold w-full sm:w-auto">
+        {/* Submit */}
+        <button
+          type="submit"
+          className="flex items-center justify-center gap-2 rounded-sm bg-gold px-6 py-3 font-sans text-sm font-semibold uppercase tracking-wide text-navy transition-colors hover:bg-gold-light sm:col-span-2 lg:col-span-1"
+        >
           <Search className="h-4 w-4" />
           {t('submit')}
         </button>
       </div>
+
+      {/* Advanced search toggle */}
+      <button
+        type="button"
+        onClick={() => setOpen((o) => !o)}
+        className="mt-4 inline-flex items-center gap-1.5 font-sans text-sm text-gold transition-colors hover:text-gold-light"
+      >
+        {t('advancedSearch')}
+        <ChevronDown className={cn('h-4 w-4 transition-transform', open && 'rotate-180')} />
+      </button>
+
+      {/* Advanced panel */}
+      {open && (
+        <div className="mt-5 grid grid-cols-1 gap-6 border-t border-white/10 pt-6 sm:grid-cols-2">
+          {/* Year built min / max */}
+          <div>
+            <span className={legend}>{t('yearBuilt')}</span>
+            <div className="flex items-center gap-3">
+              <input
+                type="number"
+                placeholder="1900"
+                className={field}
+                value={yearMin}
+                onChange={(e) => setYearMin(e.target.value)}
+              />
+              <span className="text-white/40">–</span>
+              <input
+                type="number"
+                placeholder="2025"
+                className={field}
+                value={yearMax}
+                onChange={(e) => setYearMax(e.target.value)}
+              />
+            </div>
+          </div>
+
+          {/* Rooms */}
+          <div>
+            <span className={legend}>{t('rooms')}</span>
+            <div className="flex gap-2">
+              {ROOM_OPTIONS.map((r) => (
+                <button
+                  key={r}
+                  type="button"
+                  onClick={() => setRooms(rooms === r ? 0 : r)}
+                  className={cn(
+                    'h-10 flex-1 rounded-sm border font-sans text-sm transition-colors',
+                    rooms === r
+                      ? 'border-gold bg-gold text-navy'
+                      : 'border-white/20 text-white/70 hover:border-gold',
+                  )}
+                >
+                  {r === 5 ? '5+' : r}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Energy rating */}
+          <div>
+            <span className={legend}>{t('energy')}</span>
+            <div className="flex flex-wrap gap-2">
+              {ENERGY_RATINGS.map((er) => (
+                <button
+                  key={er}
+                  type="button"
+                  onClick={() => setEnergy((a) => toggle(a, er))}
+                  className={pill(energy.includes(er))}
+                >
+                  {er}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Heating */}
+          <div className="sm:col-span-2">
+            <span className={legend}>{t('heating')}</span>
+            <div className="flex flex-wrap gap-x-6 gap-y-2">
+              {HEATING_OPTIONS.map((h) => (
+                <label key={h} className="flex cursor-pointer items-center gap-2 font-sans text-sm text-white/80">
+                  <input
+                    type="checkbox"
+                    checked={heating.includes(h)}
+                    onChange={() => setHeating((a) => toggle(a, h))}
+                    className="h-4 w-4 accent-gold"
+                  />
+                  {tHeating(h)}
+                </label>
+              ))}
+            </div>
+          </div>
+
+          {/* Garden toggle */}
+          <div>
+            <span className={legend}>{t('garden')}</span>
+            <div className="flex gap-2">
+              <button type="button" onClick={() => setGarden(true)} className={pill(garden)}>
+                {t('optYes')}
+              </button>
+              <button type="button" onClick={() => setGarden(false)} className={pill(!garden)}>
+                {t('optAny')}
+              </button>
+            </div>
+          </div>
+
+          {/* Parking toggle */}
+          <div>
+            <span className={legend}>{t('parking')}</span>
+            <div className="flex gap-2">
+              <button type="button" onClick={() => setParking(true)} className={pill(parking)}>
+                {t('optYes')}
+              </button>
+              <button type="button" onClick={() => setParking(false)} className={pill(!parking)}>
+                {t('optAny')}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <LocationPicker
+        open={pickerOpen}
+        initialDistricts={selDistricts}
+        initialCities={selCities}
+        onApply={(d, c) => {
+          setSelDistricts(d);
+          setSelCities(c);
+          setPickerOpen(false);
+        }}
+        onClose={() => setPickerOpen(false)}
+      />
     </form>
   );
 }

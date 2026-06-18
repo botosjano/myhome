@@ -53,6 +53,17 @@
   }
 }
 
+/* Remove the up/down spinner from number inputs — values are typed by hand */
+input[type='number']::-webkit-outer-spin-button,
+input[type='number']::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type='number'] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
 /* Dual-range slider thumbs (used by DualRange) */
 .range-thumb::-webkit-slider-thumb {
   pointer-events: auto;

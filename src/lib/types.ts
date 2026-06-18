@@ -14,6 +14,18 @@ export type ListingType = 'elado' | 'kiado';
 // Region bucket: Budapest (district-based) vs. countryside (free city/region)
 export type Region = 'budapest' | 'videk';
 
+// Heating system
+export type HeatingType =
+  | 'gaz'
+  | 'tavfutes'
+  | 'hoszivatyu'
+  | 'elektromos'
+  | 'kandallo'
+  | 'egyeb';
+
+// Energy performance rating
+export type EnergyRating = 'AA' | 'A+' | 'A' | 'B' | 'C' | 'D' | 'E';
+
 export interface Property {
   id: string;
   title_hu: string;
@@ -39,6 +51,9 @@ export interface Property {
   reference_number: string;
   year_built: number | null;
   parking: boolean;
+  garden: boolean;
+  heating: HeatingType;
+  energy_rating: EnergyRating;
   condition: Condition;
   created_at: string; // ISO
 }
@@ -54,6 +69,12 @@ export interface PropertyFilters {
   minSize?: number;
   maxSize?: number;
   rooms?: number;
+  yearMin?: number;
+  yearMax?: number;
+  heating?: HeatingType[];
+  energyRatings?: EnergyRating[];
+  garden?: boolean;
+  parking?: boolean;
   reference?: string;
   currency?: Currency;
 }

@@ -2,7 +2,13 @@
 
 import { useLocale, useTranslations } from 'next-intl';
 import { X } from 'lucide-react';
-import { DISTRICTS, PROPERTY_TYPES, ROOM_OPTIONS } from '@/lib/districts';
+import {
+  DISTRICTS,
+  ENERGY_RATINGS,
+  HEATING_OPTIONS,
+  PROPERTY_TYPES,
+  ROOM_OPTIONS,
+} from '@/lib/districts';
 import {
   SIZE_MAX,
   SIZE_MIN,
@@ -25,8 +31,15 @@ export default function FilterSidebar({
 }) {
   const t = useTranslations('listing');
   const tTypes = useTranslations('types');
+  const tHeating = useTranslations('heating');
   const locale = useLocale();
   const count = activeFilterCount(state);
+
+  const yearStr = (v: number | null) => (v == null ? '' : String(v));
+  const parseYear = (v: string) => {
+    const n = Number(v);
+    return v === '' || !Number.isFinite(n) ? null : n;
+  };
 
   const rent = state.listingType === 'kiado';
   const pc = priceConfig(state.listingType);
@@ -238,6 +251,100 @@ export default function FilterSidebar({
           )}
         </fieldset>
       )}
+
+      {/* ── Advanced filters ─────────────────────────────── */}
+      <div className="border-t border-navy/10 pt-6">
+        <p className="mb-5 font-serif text-lg text-navy">{t('advancedTitle')}</p>
+
+        {/* Year built */}
+        <div className="mb-6">
+          <p className={legend}>{t('yearBuilt')}</p>
+          <div className="flex items-center gap-3">
+            <input
+              type="number"
+              placeholder={t('yearFrom')}
+              value={yearStr(state.yearMin)}
+              onChange={(e) => onChange({ yearMin: parseYear(e.target.value) })}
+              className="w-full rounded-sm border border-navy/15 px-3 py-2 font-sans text-sm text-navy focus:border-gold focus:outline-none focus:ring-1 focus:ring-gold"
+            />
+            <span className="text-navy/40">–</span>
+            <input
+              type="number"
+              placeholder={t('yearTo')}
+              value={yearStr(state.yearMax)}
+              onChange={(e) => onChange({ yearMax: parseYear(e.target.value) })}
+              className="w-full rounded-sm border border-navy/15 px-3 py-2 font-sans text-sm text-navy focus:border-gold focus:outline-none focus:ring-1 focus:ring-gold"
+            />
+          </div>
+        </div>
+
+        {/* Heating */}
+        <fieldset className="mb-6">
+          <legend className={legend}>{t('heating')}</legend>
+          <div className="grid grid-cols-2 gap-x-4 gap-y-2">
+            {HEATING_OPTIONS.map((h) => (
+              <label key={h} className="flex cursor-pointer items-center gap-2 font-sans text-sm text-navy/80">
+                <input
+                  type="checkbox"
+                  checked={state.heating.includes(h)}
+                  onChange={() => onChange({ heating: toggle(state.heating, h) })}
+                  className="h-4 w-4 accent-gold"
+                />
+                {tHeating(h)}
+              </label>
+            ))}
+          </div>
+        </fieldset>
+
+        {/* Energy rating */}
+        <div className="mb-6">
+          <p className={legend}>{t('energy')}</p>
+          <div className="flex flex-wrap gap-2">
+            {ENERGY_RATINGS.map((er) => {
+              const active = state.energyRatings.includes(er);
+              return (
+                <button
+                  key={er}
+                  type="button"
+                  onClick={() => onChange({ energyRatings: toggle(state.energyRatings, er) })}
+                  className={cn(
+                    'rounded-sm border px-3 py-1.5 font-sans text-sm transition-colors',
+                    active ? 'border-gold bg-gold text-navy' : 'border-navy/15 text-navy/70 hover:border-gold',
+                  )}
+                >
+                  {er}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Garden */}
+        <div className="mb-6">
+          <p className={legend}>{t('garden')}</p>
+          <div className="flex gap-2">
+            <button type="button" onClick={() => onChange({ garden: true })} className={seg(state.garden)}>
+              {t('optYes')}
+            </button>
+            <button type="button" onClick={() => onChange({ garden: false })} className={seg(!state.garden)}>
+              {t('optAny')}
+            </button>
+          </div>
+        </div>
+
+        {/* Parking */}
+        <div>
+          <p className={legend}>{t('parking')}</p>
+          <div className="flex gap-2">
+            <button type="button" onClick={() => onChange({ parking: true })} className={seg(state.parking)}>
+              {t('optYes')}
+            </button>
+            <button type="button" onClick={() => onChange({ parking: false })} className={seg(!state.parking)}>
+              {t('optAny')}
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

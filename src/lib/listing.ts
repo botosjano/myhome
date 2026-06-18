@@ -1,4 +1,12 @@
-import type { ListingType, Property, PropertyType, Region } from './types';
+import type {
+  EnergyRating,
+  HeatingType,
+  ListingType,
+  Property,
+  PropertyType,
+  Region,
+} from './types';
+import { ENERGY_RATINGS, HEATING_OPTIONS } from './districts';
 import { EUR_TO_HUF, priceInHuf } from './utils';
 
 export type SortKey = 'newest' | 'priceAsc' | 'priceDesc';
@@ -7,7 +15,8 @@ export type ViewMode = 'list' | 'map';
 export interface ListingState {
   listingType: ListingType | ''; // '' = both
   region: Region | ''; // '' = everywhere
-  city: string; // free-text for vidék
+  city: string; // free-text for vidék (sidebar input)
+  cities: string[]; // structured vidék picks (location picker)
   districts: string[];
   types: PropertyType[];
   minPrice: number; // in the active price scale (see priceConfig)
@@ -15,6 +24,12 @@ export interface ListingState {
   minSize: number;
   maxSize: number;
   rooms: number; // 0 = any, otherwise minimum
+  yearMin: number | null; // construction year (null = no bound)
+  yearMax: number | null;
+  heating: HeatingType[];
+  energyRatings: EnergyRating[];
+  garden: boolean; // true = must have a garden; false = any
+  parking: boolean; // true = must have parking; false = any
   reference: string;
   sort: SortKey;
   view: ViewMode;
@@ -37,12 +52,15 @@ function priceToHuf(value: number, listingType: ListingType | ''): number {
 }
 
 const VALID_TYPES: PropertyType[] = ['lakás', 'ház', 'villa', 'penthouse', 'telek'];
+const VALID_HEATING = HEATING_OPTIONS as readonly string[];
+const VALID_ENERGY = ENERGY_RATINGS as readonly string[];
 
 export function defaultState(): ListingState {
   return {
     listingType: '',
     region: '',
     city: '',
+    cities: [],
     districts: [],
     types: [],
     minPrice: SALE_PRICE.min,
@@ -50,6 +68,12 @@ export function defaultState(): ListingState {
     minSize: SIZE_MIN,
     maxSize: SIZE_MAX,
     rooms: 0,
+    yearMin: null,
+    yearMax: null,
+    heating: [],
+    energyRatings: [],
+    garden: false,
+    parking: false,
     reference: '',
     sort: 'newest',
     view: 'list',
@@ -79,6 +103,7 @@ export function stateFromParams(get: (k: string) => string | null): ListingState
   const region = get('region');
   if (region === 'budapest' || region === 'videk') s.region = region;
   s.city = (get('city') ?? '').trim();
+  s.cities = list(get('cities'));
 
   // Districts: multi (`districts`) or the homepage single `district`.
   s.districts = list(get('districts'));
@@ -112,6 +137,20 @@ export function stateFromParams(get: (k: string) => string | null): ListingState
   const rooms = num(get('rooms'));
   if (rooms != null) s.rooms = rooms;
 
+  // Construction year
+  const yMin = num(get('yearMin'));
+  const yMax = num(get('yearMax'));
+  if (yMin != null) s.yearMin = yMin;
+  if (yMax != null) s.yearMax = yMax;
+
+  // Heating + energy rating (comma-separated multi-select)
+  s.heating = list(get('heating')).filter((h): h is HeatingType => VALID_HEATING.includes(h));
+  s.energyRatings = list(get('energy')).filter((e): e is EnergyRating => VALID_ENERGY.includes(e));
+
+  // Garden / parking toggles (presence = required)
+  if (get('garden') === '1') s.garden = true;
+  if (get('parking') === '1') s.parking = true;
+
   s.reference = (get('reference') ?? '').trim();
 
   const sort = get('sort');
@@ -128,6 +167,7 @@ export function paramsFromState(s: ListingState): URLSearchParams {
   if (s.listingType) p.set('listingType', s.listingType);
   if (s.region) p.set('region', s.region);
   if (s.city) p.set('city', s.city);
+  if (s.cities.length) p.set('cities', s.cities.join(','));
   if (s.districts.length) p.set('districts', s.districts.join(','));
   if (s.types.length) p.set('types', s.types.join(','));
   if (s.minPrice > cfg.min) p.set('minPrice', String(s.minPrice));
@@ -135,6 +175,12 @@ export function paramsFromState(s: ListingState): URLSearchParams {
   if (s.minSize > SIZE_MIN) p.set('minSize', String(s.minSize));
   if (s.maxSize < SIZE_MAX) p.set('maxSize', String(s.maxSize));
   if (s.rooms > 0) p.set('rooms', String(s.rooms));
+  if (s.yearMin != null) p.set('yearMin', String(s.yearMin));
+  if (s.yearMax != null) p.set('yearMax', String(s.yearMax));
+  if (s.heating.length) p.set('heating', s.heating.join(','));
+  if (s.energyRatings.length) p.set('energy', s.energyRatings.join(','));
+  if (s.garden) p.set('garden', '1');
+  if (s.parking) p.set('parking', '1');
   if (s.reference) p.set('reference', s.reference);
   if (s.sort !== 'newest') p.set('sort', s.sort);
   if (s.view !== 'list') p.set('view', s.view);
@@ -149,15 +195,30 @@ export function applyState(properties: Property[], s: ListingState): Property[] 
     if (p.status !== 'active') return false;
     if (s.listingType && p.listing_type !== s.listingType) return false;
     if (s.region && p.region !== s.region) return false;
-    if (s.region === 'videk' && s.city && !(p.city ?? '').toLowerCase().includes(s.city.toLowerCase()))
-      return false;
-    // District filter applies only when Budapest is explicitly selected.
-    if (s.region === 'budapest' && s.districts.length && !s.districts.includes(p.district)) return false;
+    // Unified location selection — districts (Budapest), cities (curated vidék
+    // picks) and the free-text city box are OR-matched. Works region-independent
+    // so the homepage picker can mix Budapest + vidék in one query.
+    const hasLocation = s.districts.length > 0 || s.cities.length > 0 || Boolean(s.city);
+    if (hasLocation) {
+      const cityHay = (p.city ?? '').toLowerCase();
+      const districtMatch = s.districts.length > 0 && s.districts.includes(p.district);
+      const citiesMatch = s.cities.some((c) => cityHay.includes(c.toLowerCase()));
+      const freeMatch = s.city
+        ? `${p.district} ${p.city ?? ''}`.toLowerCase().includes(s.city.toLowerCase())
+        : false;
+      if (!(districtMatch || citiesMatch || freeMatch)) return false;
+    }
     if (s.types.length && !s.types.includes(p.type)) return false;
     const huf = priceInHuf(p.price, p.currency);
     if (huf < minHuf || huf > maxHuf) return false;
     if (p.size_m2 < s.minSize || p.size_m2 > s.maxSize) return false;
     if (s.rooms > 0 && p.rooms < s.rooms) return false;
+    if (s.yearMin != null && (p.year_built == null || p.year_built < s.yearMin)) return false;
+    if (s.yearMax != null && (p.year_built == null || p.year_built > s.yearMax)) return false;
+    if (s.heating.length && !s.heating.includes(p.heating)) return false;
+    if (s.energyRatings.length && !s.energyRatings.includes(p.energy_rating)) return false;
+    if (s.garden && !p.garden) return false;
+    if (s.parking && !p.parking) return false;
     if (s.reference && !p.reference_number.toLowerCase().includes(s.reference.toLowerCase())) return false;
     return true;
   });
@@ -175,11 +236,17 @@ export function activeFilterCount(s: ListingState): number {
   if (s.listingType) n += 1;
   if (s.region) n += 1;
   if (s.city) n += 1;
-  if (s.region === 'budapest' && s.districts.length) n += s.districts.length;
+  if (s.cities.length) n += s.cities.length;
+  if (s.districts.length) n += s.districts.length;
   if (s.types.length) n += s.types.length;
   if (s.minPrice > cfg.min || s.maxPrice < cfg.max) n += 1;
   if (s.minSize > SIZE_MIN || s.maxSize < SIZE_MAX) n += 1;
   if (s.rooms > 0) n += 1;
+  if (s.yearMin != null || s.yearMax != null) n += 1;
+  if (s.heating.length) n += s.heating.length;
+  if (s.energyRatings.length) n += s.energyRatings.length;
+  if (s.garden) n += 1;
+  if (s.parking) n += 1;
   if (s.reference) n += 1;
   return n;
 }
