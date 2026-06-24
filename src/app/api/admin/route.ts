@@ -128,13 +128,16 @@ export async function POST(request: Request) {
         return NextResponse.json({ ok: false, error: 'unknown action' }, { status: 400 });
     }
   } catch (e) {
-    const msg =
+    let msg =
       e instanceof Error
         ? e.message
         : e && typeof e === 'object' && 'message' in e
           ? String((e as { message: unknown }).message)
           : 'error';
-    console.error('[admin]', action, msg);
+    // Surface the low-level reason (e.g. ENOTFOUND/ECONNREFUSED) for "fetch failed".
+    const cause = (e as { cause?: { code?: string; message?: string } })?.cause;
+    if (cause) msg += ` (${cause.code ?? cause.message ?? ''})`;
+    console.error('[admin]', action, msg, cause ?? '');
     return NextResponse.json({ ok: false, error: msg }, { status: 500 });
   }
 }
