@@ -526,20 +526,16 @@ export default function PropertyForm({ initial }: { initial?: Property }) {
       <div className={card}>
         <h2 className="mb-4 font-serif text-lg text-navy">Megjelenítés</h2>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          <div>
-            <label className={label}>Referenciaszám</label>
-            <input
-              className={field + ' bg-navy/5 text-navy/60'}
-              value={form.reference_number}
-              readOnly
-              placeholder={isEdit ? '' : 'Automatikusan generálódik'}
-            />
-            {!isEdit && (
-              <p className="mt-1 font-sans text-xs text-navy/45">
-                A rendszer automatikusan, sorban adja létrehozáskor.
-              </p>
-            )}
-          </div>
+          {isEdit && (
+            <div>
+              <label className={label}>Referenciaszám</label>
+              <input
+                className={field + ' bg-navy/5 text-navy/60'}
+                value={form.reference_number}
+                readOnly
+              />
+            </div>
+          )}
           <div>
             <label className={label}>Státusz</label>
             <select
