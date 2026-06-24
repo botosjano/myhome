@@ -15,6 +15,9 @@ import PropertyLocationMap from '@/components/detail/PropertyLocationMap';
 
 type Params = { locale: string; slug: string };
 
+// CDN-cache the page; refresh property data in the background every 60s.
+export const revalidate = 60;
+
 export async function generateMetadata({ params }: { params: Params }): Promise<Metadata> {
   const p = await fetchPropertyBySlug(params.slug);
   if (!p) return {};

@@ -6,6 +6,9 @@ import ListingClient from '@/components/listing/ListingClient';
 
 type SearchParams = { [key: string]: string | string[] | undefined };
 
+// CDN-cache the page; refresh property data in the background every 60s.
+export const revalidate = 60;
+
 export function generateMetadata({ params: { locale } }: { params: { locale: string } }): Metadata {
   return {
     title: locale === 'hu' ? 'Ingatlanok' : 'Properties',

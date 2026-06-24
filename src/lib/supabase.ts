@@ -16,8 +16,8 @@ export const isSupabaseConfigured = Boolean(url && anonKey);
 export const supabase = isSupabaseConfigured
   ? createClient(url as string, anonKey as string, {
       auth: { persistSession: false },
-      // Bypass Next.js fetch caching so reads always reflect the latest DB state
-      // (admin changes appear immediately; also opts the pages into dynamic rendering).
-      global: { fetch: (input, init) => fetch(input, { ...init, cache: 'no-store' }) },
+      // Cache reads in Next's data cache for 60s (fast, CDN-friendly) even on
+      // dynamic routes like the filterable listing page. Background-refreshed.
+      global: { fetch: (input, init) => fetch(input, { ...init, next: { revalidate: 60 } }) },
     })
   : null;

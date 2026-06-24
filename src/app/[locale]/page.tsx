@@ -5,6 +5,9 @@ import FeaturedSection from '@/components/home/FeaturedSection';
 import About from '@/components/home/About';
 import { fetchActiveProperties } from '@/lib/properties';
 
+// CDN-cache the page; refresh property data in the background every 60s.
+export const revalidate = 60;
+
 export default async function HomePage({ params: { locale } }: { params: { locale: string } }) {
   setRequestLocale(locale);
 
