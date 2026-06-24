@@ -62,8 +62,8 @@ export default function PropertyForm({ initial }: { initial?: Property }) {
   const router = useRouter();
   const isEdit = Boolean(initial);
   const [form, setForm] = useState<PropertyDraft>(initial ?? emptyDraft());
-  const [translating, setTranslating] = useState(false);
-  const [translateNote, setTranslateNote] = useState('');
+  const [translatingField, setTranslatingField] = useState<'title' | 'description' | null>(null);
+  const [errorField, setErrorField] = useState<'title' | 'description' | null>(null);
   const [saving, setSaving] = useState(false);
 
   // Auto-generate a reference number for new listings.
@@ -78,30 +78,49 @@ export default function PropertyForm({ initial }: { initial?: Property }) {
   const num = (v: string): number => (v === '' ? 0 : Number(v));
   const numOrNull = (v: string): number | null => (v === '' ? null : Number(v));
 
-  const translate = async () => {
-    if (!form.description_hu.trim()) return;
-    setTranslating(true);
-    setTranslateNote('');
+  /** Translate the Hungarian title/description to English via the DeepL proxy. */
+  const translateField = async (which: 'title' | 'description') => {
+    const source = (which === 'title' ? form.title_hu : form.description_hu).trim();
+    if (!source) return;
+    const toKey: 'title_en' | 'description_en' = which === 'title' ? 'title_en' : 'description_en';
+    setTranslatingField(which);
+    setErrorField(null);
     try {
       const res = await fetch('/api/translate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ text: form.description_hu, source: 'HU', target: 'EN' }),
+        body: JSON.stringify({ text: source, sourceLang: 'HU', targetLang: 'EN-GB' }),
       });
       const data = await res.json();
-      if (data.configured === false) {
-        setTranslateNote('A DeepL kulcs nincs beállítva (DEEPL_API_KEY). Az angol szöveget kézzel adja meg.');
-      } else if (data.translated) {
-        set('description_en', data.translated);
-      } else {
-        setTranslateNote('A fordítás nem sikerült.');
-      }
+      if (!res.ok || !data.translatedText) throw new Error('translation failed');
+      set(toKey, data.translatedText as string);
     } catch {
-      setTranslateNote('A fordítás nem sikerült.');
+      setErrorField(which);
     } finally {
-      setTranslating(false);
+      setTranslatingField(null);
     }
   };
+
+  const TranslateButton = ({ which }: { which: 'title' | 'description' }) => {
+    const hu = which === 'title' ? form.title_hu : form.description_hu;
+    return (
+      <button
+        type="button"
+        onClick={() => translateField(which)}
+        disabled={translatingField !== null || !hu.trim()}
+        className="flex items-center gap-1.5 rounded-sm border border-gold px-3 py-1 font-sans text-xs uppercase tracking-wide text-gold-dark transition-colors hover:bg-gold hover:text-navy disabled:opacity-40"
+      >
+        {translatingField === which ? (
+          <Loader2 className="h-3.5 w-3.5 animate-spin" />
+        ) : (
+          <Languages className="h-3.5 w-3.5" />
+        )}
+        Fordítás DeepL-lel
+      </button>
+    );
+  };
+
+  const translateError = 'Fordítás sikertelen, próbáld újra';
 
   const save = async (preview: boolean) => {
     setSaving(true);
@@ -163,8 +182,14 @@ export default function PropertyForm({ initial }: { initial?: Property }) {
             <input className={field} value={form.title_hu} onChange={(e) => set('title_hu', e.target.value)} />
           </div>
           <div>
-            <label className={label}>Cím (angol)</label>
+            <div className="mb-1.5 flex items-center justify-between gap-2">
+              <span className={label + ' mb-0'}>Cím (angol)</span>
+              <TranslateButton which="title" />
+            </div>
             <input className={field} value={form.title_en} onChange={(e) => set('title_en', e.target.value)} />
+            {errorField === 'title' && (
+              <p className="mt-1.5 font-sans text-xs text-red-600">{translateError}</p>
+            )}
           </div>
         </div>
 
@@ -179,17 +204,9 @@ export default function PropertyForm({ initial }: { initial?: Property }) {
         </div>
 
         <div className="mt-4">
-          <div className="mb-1.5 flex items-center justify-between">
+          <div className="mb-1.5 flex items-center justify-between gap-2">
             <span className={label + ' mb-0'}>Leírás (angol)</span>
-            <button
-              type="button"
-              onClick={translate}
-              disabled={translating || !form.description_hu.trim()}
-              className="flex items-center gap-1.5 rounded-sm border border-gold px-3 py-1 font-sans text-xs uppercase tracking-wide text-gold-dark transition-colors hover:bg-gold hover:text-navy disabled:opacity-40"
-            >
-              {translating ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Languages className="h-3.5 w-3.5" />}
-              Fordítás angolra
-            </button>
+            <TranslateButton which="description" />
           </div>
           <textarea
             rows={5}
@@ -197,7 +214,9 @@ export default function PropertyForm({ initial }: { initial?: Property }) {
             value={form.description_en}
             onChange={(e) => set('description_en', e.target.value)}
           />
-          {translateNote && <p className="mt-1.5 font-sans text-xs text-navy/55">{translateNote}</p>}
+          {errorField === 'description' && (
+            <p className="mt-1.5 font-sans text-xs text-red-600">{translateError}</p>
+          )}
         </div>
       </div>
 
