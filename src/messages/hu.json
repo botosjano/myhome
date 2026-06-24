@@ -221,6 +221,16 @@
     "body": "A My Home Budapest egy exkluzív ingatlanügynökség, amely prémium kategóriás ingatlanokra specializálódott. Ügyfeleink magyar és nemzetközi vevők és bérlők, valamint eladók és bérbeadók, akik értékelik a diszkréciót, a személyre szabott figyelmet és a kifogástalan minőséget. Portfóliónkban sok olyan ingatlan szerepel, amely nem jelenik meg nyilvános hirdetési oldalakon.",
     "cta": "Vegye fel velünk a kapcsolatot"
   },
+  "contact": {
+    "eyebrow": "Kapcsolat",
+    "title": "Lépjen velünk kapcsolatba",
+    "subtitle": "Írjon nekünk, és diszkréten, személyre szabottan segítünk — vevőként, bérlőként, eladóként vagy bérbeadóként egyaránt.",
+    "infoTitle": "Elérhetőség",
+    "formTitle": "Írjon nekünk",
+    "messagePlaceholder": "Miben segíthetünk? Írja le röviden, mit keres…",
+    "followLabel": "Kövessen minket",
+    "responseNote": "Munkanapokon általában 24 órán belül válaszolunk."
+  },
   "card": {
     "featured": "Kiemelt",
     "forSale": "Eladó",

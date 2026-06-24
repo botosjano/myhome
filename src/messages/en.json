@@ -221,6 +221,16 @@
     "body": "My Home Budapest is an exclusive real estate agency specialising in premium properties. Our clients are Hungarian and international buyers and tenants, as well as sellers and landlords, who value discretion, personal attention and impeccable quality. Many of our properties do not appear on public listing portals.",
     "cta": "Get in touch"
   },
+  "contact": {
+    "eyebrow": "Contact",
+    "title": "Get in touch",
+    "subtitle": "Write to us and we'll help discreetly and personally — whether you are a buyer, tenant, seller or landlord.",
+    "infoTitle": "Contact details",
+    "formTitle": "Write to us",
+    "messagePlaceholder": "How can we help? Briefly describe what you're looking for…",
+    "followLabel": "Follow us",
+    "responseNote": "We usually reply within 24 hours on business days."
+  },
   "card": {
     "featured": "Featured",
     "forSale": "For sale",

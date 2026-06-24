@@ -30,6 +30,7 @@ export default function Navbar() {
     { href: '/', label: t('home') },
     { href: '/ingatlanok', label: t('properties') },
     { href: '/#about', label: t('about') },
+    { href: '/kapcsolat', label: t('contact') },
   ];
 
   return (

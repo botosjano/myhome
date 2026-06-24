@@ -12,6 +12,7 @@ export default function Footer() {
     { href: '/', label: t('nav.home') },
     { href: '/ingatlanok', label: t('nav.properties') },
     { href: '/#about', label: t('nav.about') },
+    { href: '/kapcsolat', label: t('nav.contact') },
     { href: '/kedvencek', label: t('nav.favorites') },
   ];
 
