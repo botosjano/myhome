@@ -1,13 +1,16 @@
 'use client';
 
 import { useRef, useState } from 'react';
-import { ImagePlus, Star, X } from 'lucide-react';
+import { ImagePlus, Loader2, Star, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { optimizeImages } from '@/lib/admin/image';
 
 /**
- * Drag & drop, reorderable image uploader. Images are stored as data URLs for
- * the mock phase (swap for Cloudflare R2 uploads later). The first image is the
- * main/cover photo. Reorder by dragging the thumbnails.
+ * Drag & drop, reorderable image uploader. Dropped images are resized and
+ * re-encoded to WebP (~300 KB) in the browser before storage — see
+ * {@link optimizeImages}. Stored as data URLs for the mock phase (swap for
+ * Supabase Storage uploads later). The first image is the main/cover photo.
+ * Reorder by dragging the thumbnails.
  */
 export default function ImageUploader({
   images,
@@ -18,21 +21,20 @@ export default function ImageUploader({
 }) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [dragOver, setDragOver] = useState(false);
+  const [processing, setProcessing] = useState(false);
   const dragIndex = useRef<number | null>(null);
 
-  const addFiles = (files: FileList | null) => {
+  const addFiles = async (files: FileList | null) => {
     if (!files) return;
-    const readers = Array.from(files)
-      .filter((f) => f.type.startsWith('image/'))
-      .map(
-        (file) =>
-          new Promise<string>((resolve) => {
-            const fr = new FileReader();
-            fr.onload = () => resolve(String(fr.result));
-            fr.readAsDataURL(file);
-          }),
-      );
-    Promise.all(readers).then((urls) => onChange([...images, ...urls]));
+    const imageFiles = Array.from(files).filter((f) => f.type.startsWith('image/'));
+    if (imageFiles.length === 0) return;
+    setProcessing(true);
+    try {
+      const urls = await optimizeImages(imageFiles);
+      onChange([...images, ...urls]);
+    } finally {
+      setProcessing(false);
+    }
   };
 
   const remove = (i: number) => onChange(images.filter((_, idx) => idx !== i));
@@ -65,11 +67,23 @@ export default function ImageUploader({
           dragOver ? 'border-gold bg-gold/5' : 'border-navy/20 hover:border-gold',
         )}
       >
-        <ImagePlus className="h-7 w-7 text-gold" />
+        {processing ? (
+          <Loader2 className="h-7 w-7 animate-spin text-gold" />
+        ) : (
+          <ImagePlus className="h-7 w-7 text-gold" />
+        )}
         <p className="font-sans text-sm text-navy/70">
-          Húzza ide a képeket, vagy <span className="text-gold underline">tallózzon</span>
+          {processing ? (
+            'Képek feldolgozása…'
+          ) : (
+            <>
+              Húzza ide a képeket, vagy <span className="text-gold underline">tallózzon</span>
+            </>
+          )}
         </p>
-        <p className="font-sans text-xs text-navy/40">Több kép is feltölthető · az első a borítókép</p>
+        <p className="font-sans text-xs text-navy/40">
+          Több kép is feltölthető · az első a borítókép · automatikus tömörítés (WebP)
+        </p>
         <input
           ref={inputRef}
           type="file"
