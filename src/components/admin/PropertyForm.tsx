@@ -69,6 +69,7 @@ export default function PropertyForm({ initial }: { initial?: Property }) {
   const [geocoding, setGeocoding] = useState(false);
   const [geoError, setGeoError] = useState('');
   const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState('');
 
   // Auto-generate a reference number for new listings.
   useEffect(() => {
@@ -151,18 +152,25 @@ export default function PropertyForm({ initial }: { initial?: Property }) {
 
   const save = async (preview: boolean) => {
     setSaving(true);
-    let saved: Property;
-    if (initial) {
-      await updateProperty(initial.id, form);
-      saved = { ...form, id: initial.id };
-    } else {
-      saved = await createProperty(form);
+    setSaveError('');
+    try {
+      let saved: Property;
+      if (initial) {
+        await updateProperty(initial.id, form);
+        saved = { ...form, id: initial.id };
+      } else {
+        saved = await createProperty(form);
+      }
+      if (preview) {
+        window.open(`/hu/ingatlan/${propertySlug(saved)}`, '_blank');
+      }
+      router.push('/admin/ingatlanok');
+    } catch (e) {
+      setSaveError(
+        e instanceof Error ? `Mentés sikertelen: ${e.message}` : 'Mentés sikertelen. Próbáld újra.',
+      );
+      setSaving(false);
     }
-    setSaving(false);
-    if (preview) {
-      window.open(`/hu/ingatlan/${propertySlug(saved)}`, '_blank');
-    }
-    router.push('/admin/ingatlanok');
   };
 
   // ── Shared styles ──
@@ -552,6 +560,11 @@ export default function PropertyForm({ initial }: { initial?: Property }) {
       </div>
 
       {/* Actions */}
+      {saveError && (
+        <p className="rounded-sm border border-red-300 bg-red-50 px-4 py-3 font-sans text-sm text-red-700">
+          {saveError}
+        </p>
+      )}
       <div className="flex flex-wrap gap-3">
         <button
           type="button"

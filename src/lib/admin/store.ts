@@ -20,11 +20,21 @@ export type PropertyDraft = Omit<Property, 'id'>;
 // ── Supabase-backed RPC ──────────────────────────────────────────────────────
 async function rpc<T>(action: string, payload: Record<string, unknown> = {}): Promise<T> {
   const token = typeof window !== 'undefined' ? localStorage.getItem(TOKEN_KEY) : null;
-  const res = await fetch('/api/admin', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ action, token, ...payload }),
-  });
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), 30_000);
+  let res: Response;
+  try {
+    res = await fetch('/api/admin', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action, token, ...payload }),
+      signal: controller.signal,
+    });
+  } catch {
+    throw new Error('A kérés elakadt vagy hálózati hiba történt (időtúllépés).');
+  } finally {
+    clearTimeout(timer);
+  }
   const json = await res.json();
   if (!res.ok || !json.ok) throw new Error(json.error ?? 'admin request failed');
   return json.data as T;
