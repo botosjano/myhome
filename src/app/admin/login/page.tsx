@@ -11,9 +11,9 @@ export default function AdminLoginPage() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState(false);
 
-  const submit = (e: React.FormEvent) => {
+  const submit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (login(email, password)) {
+    if (await login(email, password)) {
       router.replace('/admin');
     } else {
       setError(true);

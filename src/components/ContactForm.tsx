@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { Check, Send } from 'lucide-react';
-import { createInquiry } from '@/lib/admin/store';
 
 type Status = 'idle' | 'sending' | 'success' | 'error';
 
@@ -26,14 +25,6 @@ export default function ContactForm() {
         body: JSON.stringify({ ...data, propertyId: '', reference: '' }),
       });
       if (!res.ok) throw new Error('Request failed');
-      await createInquiry({
-        name: String(data.name ?? ''),
-        email: String(data.email ?? ''),
-        phone: String(data.phone ?? ''),
-        message: String(data.message ?? ''),
-        property_id: null,
-        property_ref: null,
-      });
       setStatus('success');
       formEl.reset();
     } catch {

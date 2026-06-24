@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { Check, Send } from 'lucide-react';
-import { createInquiry } from '@/lib/admin/store';
 
 type Status = 'idle' | 'sending' | 'success' | 'error';
 
@@ -30,15 +29,6 @@ export default function InquiryForm({
         body: JSON.stringify({ ...data, propertyId, reference }),
       });
       if (!res.ok) throw new Error('Request failed');
-      // Mirror the inquiry into the admin store (mock; replace with DB later).
-      await createInquiry({
-        name: String(data.name ?? ''),
-        email: String(data.email ?? ''),
-        phone: String(data.phone ?? ''),
-        message: String(data.message ?? ''),
-        property_id: propertyId,
-        property_ref: reference,
-      });
       setStatus('success');
       form.reset();
     } catch {
