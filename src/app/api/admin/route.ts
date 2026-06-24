@@ -59,7 +59,18 @@ export async function POST(request: Request) {
         return NextResponse.json({ ok: true, data });
       }
       case 'createProperty': {
-        const { data, error } = await db.from('properties').insert(body.draft).select().single();
+        const draft = (body.draft ?? {}) as Record<string, unknown>;
+        // Guarantee a reference number even if the client never set one — an empty
+        // reference produces a broken slug (no mh-#### prefix) and a 404 on the detail page.
+        if (!draft.reference_number || String(draft.reference_number).trim() === '') {
+          const { data: refs } = await db.from('properties').select('reference_number');
+          const max = (refs ?? [])
+            .map((r) => Number(String(r.reference_number).replace(/\D/g, '')))
+            .filter((n) => Number.isFinite(n))
+            .reduce((a, b) => Math.max(a, b), 1040);
+          draft.reference_number = `MH-${max + 1}`;
+        }
+        const { data, error } = await db.from('properties').insert(draft).select().single();
         if (error) throw error;
         revalidateTag('properties');
         return NextResponse.json({ ok: true, data });
