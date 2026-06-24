@@ -71,17 +71,20 @@ export function locationLabel(
 }
 
 /** Build the SEO-friendly detail URL slug: [reference]-[location]-[type]. */
+/** ASCII, URL-friendly slug: strips accents (kerület→kerulet, lakás→lakas) and punctuation. */
+function slugify(s: string): string {
+  return s
+    .normalize('NFD')
+    .replace(/[̀-ͯ]/g, '') // strip diacritics
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-') // non-alphanumeric → hyphen
+    .replace(/^-+|-+$/g, ''); // trim leading/trailing hyphens
+}
+
 export function propertySlug(
   p: Pick<Property, 'reference_number' | 'district' | 'type' | 'region' | 'city'>,
 ): string {
-  const loc = locationLabel(p)
-    .replace(/[().]/g, '')
-    .replace(/\s+/g, '-')
-    .toLowerCase();
-  return `${p.reference_number}-${loc}-${p.type}`
-    .replace(/[().]/g, '')
-    .replace(/\s+/g, '-')
-    .toLowerCase();
+  return slugify(`${p.reference_number}-${locationLabel(p)}-${p.type}`);
 }
 
 export function localizedType(type: PropertyType, locale: string): string {

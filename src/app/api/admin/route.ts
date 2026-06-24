@@ -60,16 +60,14 @@ export async function POST(request: Request) {
       }
       case 'createProperty': {
         const draft = (body.draft ?? {}) as Record<string, unknown>;
-        // Guarantee a reference number even if the client never set one — an empty
-        // reference produces a broken slug (no mh-#### prefix) and a 404 on the detail page.
-        if (!draft.reference_number || String(draft.reference_number).trim() === '') {
-          const { data: refs } = await db.from('properties').select('reference_number');
-          const max = (refs ?? [])
-            .map((r) => Number(String(r.reference_number).replace(/\D/g, '')))
-            .filter((n) => Number.isFinite(n))
-            .reduce((a, b) => Math.max(a, b), 1040);
-          draft.reference_number = `MH-${max + 1}`;
-        }
+        // The reference number is system-generated, sequentially — never set by the
+        // admin. Always compute the next MH-#### server-side (ignore any client value).
+        const { data: refs } = await db.from('properties').select('reference_number');
+        const max = (refs ?? [])
+          .map((r) => Number(String(r.reference_number).replace(/\D/g, '')))
+          .filter((n) => Number.isFinite(n))
+          .reduce((a, b) => Math.max(a, b), 1040);
+        draft.reference_number = `MH-${max + 1}`;
         const { data, error } = await db.from('properties').insert(draft).select().single();
         if (error) throw error;
         revalidateTag('properties');

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Eye, Languages, Loader2, MapPin, Save } from 'lucide-react';
 import {
@@ -16,7 +16,7 @@ import type {
   Property,
   PropertyType,
 } from '@/lib/types';
-import { createProperty, nextReference, updateProperty, type PropertyDraft } from '@/lib/admin/store';
+import { createProperty, updateProperty, type PropertyDraft } from '@/lib/admin/store';
 import { cn, propertySlug } from '@/lib/utils';
 import { loadGoogleMaps } from '@/lib/google-maps';
 import ImageUploader from './ImageUploader';
@@ -70,12 +70,6 @@ export default function PropertyForm({ initial }: { initial?: Property }) {
   const [geoError, setGeoError] = useState('');
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState('');
-
-  // Auto-generate a reference number for new listings.
-  useEffect(() => {
-    if (!initial) nextReference().then((ref) => set('reference_number', ref));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   const set = <K extends keyof PropertyDraft>(key: K, value: PropertyDraft[K]) =>
     setForm((f) => ({ ...f, [key]: value }));
@@ -535,10 +529,16 @@ export default function PropertyForm({ initial }: { initial?: Property }) {
           <div>
             <label className={label}>Referenciaszám</label>
             <input
-              className={field}
+              className={field + ' bg-navy/5 text-navy/60'}
               value={form.reference_number}
-              onChange={(e) => set('reference_number', e.target.value)}
+              readOnly
+              placeholder={isEdit ? '' : 'Automatikusan generálódik'}
             />
+            {!isEdit && (
+              <p className="mt-1 font-sans text-xs text-navy/45">
+                A rendszer automatikusan, sorban adja létrehozáskor.
+              </p>
+            )}
           </div>
           <div>
             <label className={label}>Státusz</label>
