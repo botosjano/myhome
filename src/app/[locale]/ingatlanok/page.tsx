@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { setRequestLocale } from 'next-intl/server';
 import { stateFromParams } from '@/lib/listing';
+import { fetchActiveProperties } from '@/lib/properties';
 import ListingClient from '@/components/listing/ListingClient';
 
 type SearchParams = { [key: string]: string | string[] | undefined };
@@ -15,7 +16,7 @@ export function generateMetadata({ params: { locale } }: { params: { locale: str
   };
 }
 
-export default function PropertiesPage({
+export default async function PropertiesPage({
   params: { locale },
   searchParams,
 }: {
@@ -32,6 +33,7 @@ export default function PropertiesPage({
   };
 
   const initialState = stateFromParams(get);
+  const properties = await fetchActiveProperties();
 
-  return <ListingClient initialState={initialState} />;
+  return <ListingClient initialState={initialState} properties={properties} />;
 }

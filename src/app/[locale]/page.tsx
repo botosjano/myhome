@@ -1,19 +1,16 @@
-import { useTranslations } from 'next-intl';
-import { setRequestLocale } from 'next-intl/server';
+import { getTranslations, setRequestLocale } from 'next-intl/server';
 import Hero from '@/components/home/Hero';
 import PropertyGrid from '@/components/home/PropertyGrid';
 import FeaturedSection from '@/components/home/FeaturedSection';
 import About from '@/components/home/About';
-import { MOCK_PROPERTIES, getFeaturedProperties } from '@/lib/mock-data';
+import { fetchActiveProperties } from '@/lib/properties';
 
-export default function HomePage({ params: { locale } }: { params: { locale: string } }) {
+export default async function HomePage({ params: { locale } }: { params: { locale: string } }) {
   setRequestLocale(locale);
 
-  const t = useTranslations('sections');
-  const latest = [...MOCK_PROPERTIES]
-    .filter((p) => p.status === 'active')
-    .sort((a, b) => +new Date(b.created_at) - +new Date(a.created_at));
-  const featured = getFeaturedProperties();
+  const t = await getTranslations('sections');
+  const latest = await fetchActiveProperties();
+  const featured = latest.filter((p) => p.featured);
 
   return (
     <>

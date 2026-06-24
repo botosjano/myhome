@@ -2,10 +2,10 @@
 --  My Home Budapest — Supabase séma
 --  Másold be ezt az egészet a Supabase → SQL Editor ablakba, és futtasd le
 --  egyszer (RUN). Létrehozza a táblákat, a megszorításokat és a biztonsági
---  szabályokat (RLS). Újrafuttatható: minden "if not exists" / "drop ... if".
+--  szabályokat (RLS). Újrafuttatható.
+--  A demó ingatlanok feltöltéséhez futtasd utána a supabase/seed.sql fájlt is.
 -- ============================================================================
 
--- A properties.id-hoz UUID generátor kell:
 create extension if not exists "pgcrypto";
 
 -- ── properties ──────────────────────────────────────────────────────────────
@@ -18,7 +18,7 @@ create table if not exists public.properties (
   price            bigint      not null default 0,
   currency         text        not null default 'HUF' check (currency in ('HUF','EUR')),
   size_m2          integer     not null default 0,
-  rooms            numeric     not null default 0,
+  rooms            real        not null default 0,
   floor            integer,
   listing_type     text        not null default 'elado' check (listing_type in ('elado','kiado')),
   region           text        not null default 'budapest' check (region in ('budapest','videk')),
@@ -66,26 +66,46 @@ create table if not exists public.inquiries (
 
 create index if not exists inquiries_created_idx on public.inquiries (created_at desc);
 
+-- ── profiles (admin/auth fázishoz; egyelőre nincs bekötve) ───────────────────
+create table if not exists public.profiles (
+  id         uuid primary key references auth.users (id) on delete cascade,
+  email      text,
+  full_name  text,
+  role       text not null default 'admin',
+  created_at timestamptz not null default now()
+);
+
+-- ── favorites (kedvencek; jelenleg a kliens localStorage-ban tárol) ──────────
+create table if not exists public.favorites (
+  id          uuid primary key default gen_random_uuid(),
+  user_id     uuid references auth.users (id) on delete cascade,
+  property_id uuid references public.properties (id) on delete cascade,
+  created_at  timestamptz not null default now(),
+  unique (user_id, property_id)
+);
+
 -- ── Row Level Security (RLS) ────────────────────────────────────────────────
--- A nyilvános oldal a publikus "anon" kulcsot használja. Ezzel a kulccsal CSAK:
---   • aktív ingatlanokat lehet OLVASNI,
---   • érdeklődést lehet BEKÜLDENI.
--- Minden admin művelet (összes ingatlan, szerkesztés, érdeklődők olvasása,
--- törlés) a szerveroldali "service_role" kulccsal megy, ami megkerüli az RLS-t,
--- és soha nem kerül a böngészőbe. Így az érdeklődők adatai privátak maradnak.
+-- A nyilvános oldal a publikus kulcsot használja. Ezzel CSAK aktív ingatlant
+-- lehet OLVASNI és érdeklődést BEKÜLDENI. Minden admin írás a szerveroldali
+-- secret (service_role) kulccsal megy, ami megkerüli az RLS-t.
 
 alter table public.properties enable row level security;
 alter table public.inquiries  enable row level security;
+alter table public.profiles   enable row level security;
+alter table public.favorites  enable row level security;
 
 drop policy if exists "public read active properties" on public.properties;
 create policy "public read active properties"
-  on public.properties for select
-  using (status = 'active');
+  on public.properties for select using (status = 'active');
 
 drop policy if exists "public submit inquiry" on public.inquiries;
 create policy "public submit inquiry"
-  on public.inquiries for insert
-  with check (true);
+  on public.inquiries for insert with check (true);
 
--- (Szándékosan NINCS publikus SELECT az inquiries táblán: az érdeklődéseket
---  csak az admin éri el a service_role kulccsal.)
+drop policy if exists "own profile" on public.profiles;
+create policy "own profile"
+  on public.profiles for select using (auth.uid() = id);
+
+drop policy if exists "own favorites" on public.favorites;
+create policy "own favorites"
+  on public.favorites for all using (auth.uid() = user_id) with check (auth.uid() = user_id);

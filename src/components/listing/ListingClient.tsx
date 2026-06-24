@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { LayoutGrid, Map as MapIcon, SlidersHorizontal, X } from 'lucide-react';
-import { MOCK_PROPERTIES } from '@/lib/mock-data';
+import type { Property } from '@/lib/types';
 import {
   applyState,
   activeFilterCount,
@@ -19,13 +19,19 @@ import PropertyMap from './PropertyMap';
 
 const PAGE_SIZE = 6;
 
-export default function ListingClient({ initialState }: { initialState: ListingState }) {
+export default function ListingClient({
+  initialState,
+  properties,
+}: {
+  initialState: ListingState;
+  properties: Property[];
+}) {
   const t = useTranslations('listing');
   const [state, setState] = useState<ListingState>(initialState);
   const [visible, setVisible] = useState(PAGE_SIZE);
   const [drawer, setDrawer] = useState(false);
 
-  const results = useMemo(() => applyState(MOCK_PROPERTIES, state), [state]);
+  const results = useMemo(() => applyState(properties, state), [state, properties]);
 
   // Keep the URL in sync (shareable) without a full navigation.
   useEffect(() => {

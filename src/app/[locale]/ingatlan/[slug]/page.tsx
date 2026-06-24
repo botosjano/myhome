@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation';
 import { setRequestLocale, getTranslations } from 'next-intl/server';
 import { ArrowLeft, MapPin } from 'lucide-react';
 import { Link } from '@/navigation';
-import { getPropertyBySlug } from '@/lib/mock-data';
+import { fetchPropertyBySlug } from '@/lib/properties';
 import { formatPrice, formatSize, isLand, localizedType, locationLabel } from '@/lib/utils';
 import Gallery from '@/components/detail/Gallery';
 import KeyStats from '@/components/detail/KeyStats';
@@ -15,8 +15,8 @@ import PropertyLocationMap from '@/components/detail/PropertyLocationMap';
 
 type Params = { locale: string; slug: string };
 
-export function generateMetadata({ params }: { params: Params }): Metadata {
-  const p = getPropertyBySlug(params.slug);
+export async function generateMetadata({ params }: { params: Params }): Promise<Metadata> {
+  const p = await fetchPropertyBySlug(params.slug);
   if (!p) return {};
   const isHu = params.locale === 'hu';
   const title = isHu ? p.title_hu : p.title_en;
@@ -38,7 +38,7 @@ export function generateMetadata({ params }: { params: Params }): Metadata {
 
 export default async function PropertyDetailPage({ params }: { params: Params }) {
   setRequestLocale(params.locale);
-  const property = getPropertyBySlug(params.slug);
+  const property = await fetchPropertyBySlug(params.slug);
   if (!property) notFound();
 
   const t = await getTranslations('detail');
