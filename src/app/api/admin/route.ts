@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { revalidateTag } from 'next/cache';
 import { supabaseAdmin } from '@/lib/supabase-admin';
 
 /**
@@ -60,21 +61,25 @@ export async function POST(request: Request) {
       case 'createProperty': {
         const { data, error } = await db.from('properties').insert(body.draft).select().single();
         if (error) throw error;
+        revalidateTag('properties');
         return NextResponse.json({ ok: true, data });
       }
       case 'updateProperty': {
         const { error } = await db.from('properties').update(body.draft).eq('id', body.id);
         if (error) throw error;
+        revalidateTag('properties');
         return NextResponse.json({ ok: true });
       }
       case 'deleteProperty': {
         const { error } = await db.from('properties').delete().eq('id', body.id);
         if (error) throw error;
+        revalidateTag('properties');
         return NextResponse.json({ ok: true });
       }
       case 'setPropertyStatus': {
         const { error } = await db.from('properties').update({ status: body.status }).eq('id', body.id);
         if (error) throw error;
+        revalidateTag('properties');
         return NextResponse.json({ ok: true });
       }
       case 'toggleFeatured': {
@@ -89,6 +94,7 @@ export async function POST(request: Request) {
           .update({ featured: !cur.featured })
           .eq('id', body.id);
         if (error) throw error;
+        revalidateTag('properties');
         return NextResponse.json({ ok: true });
       }
       case 'nextReference': {

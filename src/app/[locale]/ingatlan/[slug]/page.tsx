@@ -3,8 +3,9 @@ import { notFound } from 'next/navigation';
 import { setRequestLocale, getTranslations } from 'next-intl/server';
 import { ArrowLeft, MapPin } from 'lucide-react';
 import { Link } from '@/navigation';
-import { fetchPropertyBySlug } from '@/lib/properties';
-import { formatPrice, formatSize, isLand, localizedType, locationLabel } from '@/lib/utils';
+import { locales } from '@/i18n';
+import { fetchPropertyBySlug, fetchActiveProperties } from '@/lib/properties';
+import { formatPrice, formatSize, isLand, localizedType, locationLabel, propertySlug } from '@/lib/utils';
 import Gallery from '@/components/detail/Gallery';
 import KeyStats from '@/components/detail/KeyStats';
 import InquiryForm from '@/components/detail/InquiryForm';
@@ -15,8 +16,15 @@ import PropertyLocationMap from '@/components/detail/PropertyLocationMap';
 
 type Params = { locale: string; slug: string };
 
-// CDN-cache the page; refresh property data in the background every 60s.
-export const revalidate = 60;
+// Statically generated + revalidated on demand when a listing changes (admin
+// calls revalidateTag('properties')). The 1h revalidate is just a safety net.
+export const revalidate = 3600;
+
+/** Pre-render a detail page for every active listing in both locales. */
+export async function generateStaticParams() {
+  const properties = await fetchActiveProperties();
+  return locales.flatMap((locale) => properties.map((p) => ({ locale, slug: propertySlug(p) })));
+}
 
 export async function generateMetadata({ params }: { params: Params }): Promise<Metadata> {
   const p = await fetchPropertyBySlug(params.slug);

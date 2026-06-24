@@ -3,10 +3,10 @@ import { setRequestLocale } from 'next-intl/server';
 import { fetchActiveProperties } from '@/lib/properties';
 import ListingClient from '@/components/listing/ListingClient';
 
-// CDN-cache the page; refresh property data in the background every 60s.
-// No searchParams here on purpose — filtering is client-side, so this page stays
-// statically generated (instant from CDN) instead of rendering per request.
-export const revalidate = 60;
+// Statically generated (no searchParams — filtering is client-side), refreshed on
+// demand when a listing changes (admin calls revalidateTag('properties')). The 1h
+// revalidate is just a safety net.
+export const revalidate = 3600;
 
 export function generateMetadata({ params: { locale } }: { params: { locale: string } }): Metadata {
   return {

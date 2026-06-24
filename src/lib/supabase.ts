@@ -16,8 +16,13 @@ export const isSupabaseConfigured = Boolean(url && anonKey);
 export const supabase = isSupabaseConfigured
   ? createClient(url as string, anonKey as string, {
       auth: { persistSession: false },
-      // Cache reads in Next's data cache for 60s (fast, CDN-friendly) even on
-      // dynamic routes like the filterable listing page. Background-refreshed.
-      global: { fetch: (input, init) => fetch(input, { ...init, next: { revalidate: 60 } }) },
+      // Cache public reads in Next's data cache, tagged 'properties'. Admin writes
+      // call revalidateTag('properties') for INSTANT refresh, so the DB is hit only
+      // at build and when data actually changes. The 1h revalidate is just a safety
+      // net in case an on-demand call is ever missed.
+      global: {
+        fetch: (input, init) =>
+          fetch(input, { ...init, next: { revalidate: 3600, tags: ['properties'] } }),
+      },
     })
   : null;

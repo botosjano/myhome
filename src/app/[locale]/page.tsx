@@ -5,8 +5,9 @@ import FeaturedSection from '@/components/home/FeaturedSection';
 import About from '@/components/home/About';
 import { fetchActiveProperties } from '@/lib/properties';
 
-// CDN-cache the page; refresh property data in the background every 60s.
-export const revalidate = 60;
+// Statically generated; refreshed on demand when a listing changes (admin calls
+// revalidateTag('properties')). The 1h revalidate is just a safety net.
+export const revalidate = 3600;
 
 export default async function HomePage({ params: { locale } }: { params: { locale: string } }) {
   setRequestLocale(locale);
