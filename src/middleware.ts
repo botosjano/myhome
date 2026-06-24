@@ -9,6 +9,7 @@ export default createMiddleware({
 });
 
 export const config = {
-  // Match all paths except API routes, Next internals, and static files
-  matcher: ['/((?!api|_next|_vercel|.*\\..*).*)'],
+  // Match all paths except API routes, the (HU-only) admin panel, Next
+  // internals, and static files
+  matcher: ['/((?!api|admin|_next|_vercel|.*\\..*).*)'],
 };

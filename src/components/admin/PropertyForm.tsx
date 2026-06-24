@@ -1,0 +1,507 @@
+'use client';
+
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { Eye, Languages, Loader2, Save } from 'lucide-react';
+import {
+  DISTRICTS,
+  ENERGY_RATINGS,
+  HEATING_OPTIONS,
+  PROPERTY_TYPES,
+} from '@/lib/districts';
+import type {
+  Condition,
+  EnergyRating,
+  HeatingType,
+  Property,
+  PropertyType,
+} from '@/lib/types';
+import { createProperty, nextReference, updateProperty, type PropertyDraft } from '@/lib/admin/store';
+import { cn, propertySlug } from '@/lib/utils';
+import ImageUploader from './ImageUploader';
+
+const CONDITIONS: Condition[] = ['új', 'felújított', 'felújítandó'];
+
+function emptyDraft(): PropertyDraft {
+  return {
+    title_hu: '',
+    title_en: '',
+    description_hu: '',
+    description_en: '',
+    price: 0,
+    currency: 'HUF',
+    size_m2: 0,
+    rooms: 0,
+    floor: null,
+    listing_type: 'elado',
+    region: 'budapest',
+    district: 'I. kerület',
+    city: null,
+    type: 'lakás',
+    status: 'active',
+    featured: false,
+    images: [],
+    video_url: null,
+    lat: null,
+    lng: null,
+    reference_number: '',
+    year_built: null,
+    parking: false,
+    garden: false,
+    lift: false,
+    balcony: false,
+    ac: false,
+    heating: 'gaz',
+    energy_rating: 'A',
+    condition: 'új',
+    created_at: new Date().toISOString(),
+  };
+}
+
+export default function PropertyForm({ initial }: { initial?: Property }) {
+  const router = useRouter();
+  const isEdit = Boolean(initial);
+  const [form, setForm] = useState<PropertyDraft>(initial ?? emptyDraft());
+  const [translating, setTranslating] = useState(false);
+  const [translateNote, setTranslateNote] = useState('');
+  const [saving, setSaving] = useState(false);
+
+  // Auto-generate a reference number for new listings.
+  useEffect(() => {
+    if (!initial) nextReference().then((ref) => set('reference_number', ref));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const set = <K extends keyof PropertyDraft>(key: K, value: PropertyDraft[K]) =>
+    setForm((f) => ({ ...f, [key]: value }));
+
+  const num = (v: string): number => (v === '' ? 0 : Number(v));
+  const numOrNull = (v: string): number | null => (v === '' ? null : Number(v));
+
+  const translate = async () => {
+    if (!form.description_hu.trim()) return;
+    setTranslating(true);
+    setTranslateNote('');
+    try {
+      const res = await fetch('/api/translate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text: form.description_hu, source: 'HU', target: 'EN' }),
+      });
+      const data = await res.json();
+      if (data.configured === false) {
+        setTranslateNote('A DeepL kulcs nincs beállítva (DEEPL_API_KEY). Az angol szöveget kézzel adja meg.');
+      } else if (data.translated) {
+        set('description_en', data.translated);
+      } else {
+        setTranslateNote('A fordítás nem sikerült.');
+      }
+    } catch {
+      setTranslateNote('A fordítás nem sikerült.');
+    } finally {
+      setTranslating(false);
+    }
+  };
+
+  const save = async (preview: boolean) => {
+    setSaving(true);
+    let saved: Property;
+    if (initial) {
+      await updateProperty(initial.id, form);
+      saved = { ...form, id: initial.id };
+    } else {
+      saved = await createProperty(form);
+    }
+    setSaving(false);
+    if (preview) {
+      window.open(`/hu/ingatlan/${propertySlug(saved)}`, '_blank');
+    }
+    router.push('/admin/ingatlanok');
+  };
+
+  // ── Shared styles ──
+  const field =
+    'w-full rounded-sm border border-navy/15 bg-white px-3 py-2.5 font-sans text-sm text-navy ' +
+    'placeholder:text-navy/35 focus:border-gold focus:outline-none focus:ring-1 focus:ring-gold';
+  const label = 'mb-1.5 block font-sans text-xs font-semibold uppercase tracking-wide text-navy/55';
+  const card = 'rounded-sm border border-navy/10 bg-white p-5 shadow-card';
+  const seg = (active: boolean) =>
+    cn(
+      'rounded-sm border px-4 py-1.5 font-sans text-xs uppercase tracking-wide transition-colors',
+      active ? 'border-gold bg-gold text-navy' : 'border-navy/15 text-navy/60 hover:border-gold',
+    );
+
+  const Toggle = ({
+    value,
+    onChange,
+    yes = 'Van',
+    no = 'Nincs',
+  }: {
+    value: boolean;
+    onChange: (v: boolean) => void;
+    yes?: string;
+    no?: string;
+  }) => (
+    <div className="flex gap-2">
+      <button type="button" onClick={() => onChange(true)} className={seg(value)}>
+        {yes}
+      </button>
+      <button type="button" onClick={() => onChange(false)} className={seg(!value)}>
+        {no}
+      </button>
+    </div>
+  );
+
+  return (
+    <div className="mx-auto max-w-4xl space-y-5">
+      {/* Titles & descriptions */}
+      <div className={card}>
+        <h2 className="mb-4 font-serif text-lg text-navy">Alapadatok</h2>
+        <div className="grid gap-4 sm:grid-cols-2">
+          <div>
+            <label className={label}>Cím (magyar)</label>
+            <input className={field} value={form.title_hu} onChange={(e) => set('title_hu', e.target.value)} />
+          </div>
+          <div>
+            <label className={label}>Cím (angol)</label>
+            <input className={field} value={form.title_en} onChange={(e) => set('title_en', e.target.value)} />
+          </div>
+        </div>
+
+        <div className="mt-4">
+          <label className={label}>Leírás (magyar)</label>
+          <textarea
+            rows={5}
+            className={field}
+            value={form.description_hu}
+            onChange={(e) => set('description_hu', e.target.value)}
+          />
+        </div>
+
+        <div className="mt-4">
+          <div className="mb-1.5 flex items-center justify-between">
+            <span className={label + ' mb-0'}>Leírás (angol)</span>
+            <button
+              type="button"
+              onClick={translate}
+              disabled={translating || !form.description_hu.trim()}
+              className="flex items-center gap-1.5 rounded-sm border border-gold px-3 py-1 font-sans text-xs uppercase tracking-wide text-gold-dark transition-colors hover:bg-gold hover:text-navy disabled:opacity-40"
+            >
+              {translating ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Languages className="h-3.5 w-3.5" />}
+              Fordítás angolra
+            </button>
+          </div>
+          <textarea
+            rows={5}
+            className={field}
+            value={form.description_en}
+            onChange={(e) => set('description_en', e.target.value)}
+          />
+          {translateNote && <p className="mt-1.5 font-sans text-xs text-navy/55">{translateNote}</p>}
+        </div>
+      </div>
+
+      {/* Price & type */}
+      <div className={card}>
+        <h2 className="mb-4 font-serif text-lg text-navy">Ár és típus</h2>
+        <div className="grid gap-4 sm:grid-cols-2">
+          <div>
+            <label className={label}>Ár</label>
+            <input
+              type="number"
+              className={field}
+              value={form.price || ''}
+              onChange={(e) => set('price', num(e.target.value))}
+            />
+          </div>
+          <div>
+            <label className={label}>Pénznem</label>
+            <Toggle
+              value={form.currency === 'HUF'}
+              onChange={(v) => set('currency', v ? 'HUF' : 'EUR')}
+              yes="HUF"
+              no="EUR"
+            />
+          </div>
+          <div>
+            <label className={label}>Hirdetés típusa</label>
+            <Toggle
+              value={form.listing_type === 'elado'}
+              onChange={(v) => set('listing_type', v ? 'elado' : 'kiado')}
+              yes="Eladó"
+              no="Kiadó"
+            />
+          </div>
+          <div>
+            <label className={label}>Ingatlan típusa</label>
+            <select
+              className={field}
+              value={form.type}
+              onChange={(e) => set('type', e.target.value as PropertyType)}
+            >
+              {PROPERTY_TYPES.map((pt) => (
+                <option key={pt} value={pt}>
+                  {pt.charAt(0).toUpperCase() + pt.slice(1)}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+      </div>
+
+      {/* Location */}
+      <div className={card}>
+        <h2 className="mb-4 font-serif text-lg text-navy">Elhelyezkedés</h2>
+        <div className="grid gap-4 sm:grid-cols-2">
+          <div>
+            <label className={label}>Helyszín</label>
+            <Toggle
+              value={form.region === 'budapest'}
+              onChange={(v) =>
+                setForm((f) => ({
+                  ...f,
+                  region: v ? 'budapest' : 'videk',
+                  district: v ? 'I. kerület' : '',
+                  city: v ? null : (f.city ?? ''),
+                }))
+              }
+              yes="Budapest"
+              no="Vidék"
+            />
+          </div>
+          {form.region === 'budapest' ? (
+            <div>
+              <label className={label}>Kerület</label>
+              <select
+                className={field}
+                value={form.district}
+                onChange={(e) => set('district', e.target.value)}
+              >
+                {DISTRICTS.map((d) => (
+                  <option key={d.label} value={d.label}>
+                    {d.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+          ) : (
+            <div>
+              <label className={label}>Város / régió</label>
+              <input
+                className={field}
+                value={form.city ?? ''}
+                onChange={(e) => set('city', e.target.value)}
+                placeholder="pl. Balaton (Tihany)"
+              />
+            </div>
+          )}
+          <div>
+            <label className={label}>Földrajzi szélesség (lat)</label>
+            <input
+              type="number"
+              className={field}
+              value={form.lat ?? ''}
+              onChange={(e) => set('lat', numOrNull(e.target.value))}
+              placeholder="opcionális"
+            />
+          </div>
+          <div>
+            <label className={label}>Földrajzi hosszúság (lng)</label>
+            <input
+              type="number"
+              className={field}
+              value={form.lng ?? ''}
+              onChange={(e) => set('lng', numOrNull(e.target.value))}
+              placeholder="opcionális"
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Parameters */}
+      <div className={card}>
+        <h2 className="mb-4 font-serif text-lg text-navy">Paraméterek</h2>
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <div>
+            <label className={label}>Alapterület (m²)</label>
+            <input
+              type="number"
+              className={field}
+              value={form.size_m2 || ''}
+              onChange={(e) => set('size_m2', num(e.target.value))}
+            />
+          </div>
+          <div>
+            <label className={label}>Szobaszám (min.)</label>
+            <input
+              type="number"
+              className={field}
+              value={form.rooms || ''}
+              onChange={(e) => set('rooms', num(e.target.value))}
+            />
+          </div>
+          <div>
+            <label className={label}>Emelet</label>
+            <input
+              type="number"
+              className={field}
+              value={form.floor ?? ''}
+              onChange={(e) => set('floor', numOrNull(e.target.value))}
+            />
+          </div>
+          <div>
+            <label className={label}>Építés éve</label>
+            <input
+              type="number"
+              className={field}
+              value={form.year_built ?? ''}
+              onChange={(e) => set('year_built', numOrNull(e.target.value))}
+            />
+          </div>
+          <div>
+            <label className={label}>Állapot</label>
+            <select
+              className={field}
+              value={form.condition}
+              onChange={(e) => set('condition', e.target.value as Condition)}
+            >
+              {CONDITIONS.map((c) => (
+                <option key={c} value={c}>
+                  {c.charAt(0).toUpperCase() + c.slice(1)}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <label className={label}>Fűtés</label>
+            <select
+              className={field}
+              value={form.heating}
+              onChange={(e) => set('heating', e.target.value as HeatingType)}
+            >
+              {HEATING_OPTIONS.map((h) => (
+                <option key={h} value={h}>
+                  {h.charAt(0).toUpperCase() + h.slice(1)}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+
+        <div className="mt-4">
+          <label className={label}>Energetikai besorolás</label>
+          <div className="flex flex-wrap gap-2">
+            {ENERGY_RATINGS.map((er) => (
+              <button
+                key={er}
+                type="button"
+                onClick={() => set('energy_rating', er as EnergyRating)}
+                className={seg(form.energy_rating === er)}
+              >
+                {er}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <div>
+            <label className={label}>Parkoló</label>
+            <Toggle value={form.parking} onChange={(v) => set('parking', v)} />
+          </div>
+          <div>
+            <label className={label}>Kertkapcsolat</label>
+            <Toggle value={form.garden} onChange={(v) => set('garden', v)} />
+          </div>
+          <div>
+            <label className={label}>Lift</label>
+            <Toggle value={form.lift} onChange={(v) => set('lift', v)} />
+          </div>
+          <div>
+            <label className={label}>Erkély</label>
+            <Toggle value={form.balcony} onChange={(v) => set('balcony', v)} />
+          </div>
+          <div>
+            <label className={label}>Légkondicionáló</label>
+            <Toggle value={form.ac} onChange={(v) => set('ac', v)} />
+          </div>
+        </div>
+      </div>
+
+      {/* Media */}
+      <div className={card}>
+        <h2 className="mb-4 font-serif text-lg text-navy">Képek és videó</h2>
+        <ImageUploader images={form.images} onChange={(imgs) => set('images', imgs)} />
+        <div className="mt-4">
+          <label className={label}>Videó URL</label>
+          <input
+            className={field}
+            value={form.video_url ?? ''}
+            onChange={(e) => set('video_url', e.target.value || null)}
+            placeholder="https://…"
+          />
+        </div>
+      </div>
+
+      {/* Publishing */}
+      <div className={card}>
+        <h2 className="mb-4 font-serif text-lg text-navy">Megjelenítés</h2>
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <div>
+            <label className={label}>Referenciaszám</label>
+            <input
+              className={field}
+              value={form.reference_number}
+              onChange={(e) => set('reference_number', e.target.value)}
+            />
+          </div>
+          <div>
+            <label className={label}>Státusz</label>
+            <select
+              className={field}
+              value={form.status}
+              onChange={(e) => set('status', e.target.value as Property['status'])}
+            >
+              <option value="active">Aktív</option>
+              <option value="hidden">Rejtett</option>
+              <option value="sold">Eladva</option>
+            </select>
+          </div>
+          <div>
+            <label className={label}>Kiemelt</label>
+            <Toggle value={form.featured} onChange={(v) => set('featured', v)} yes="Igen" no="Nem" />
+          </div>
+        </div>
+      </div>
+
+      {/* Actions */}
+      <div className="flex flex-wrap gap-3">
+        <button
+          type="button"
+          onClick={() => save(false)}
+          disabled={saving}
+          className="flex items-center gap-2 rounded-sm bg-gold px-6 py-3 font-sans text-sm font-semibold uppercase tracking-wide text-navy transition-colors hover:bg-gold-light disabled:opacity-50"
+        >
+          {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
+          {isEdit ? 'Mentés' : 'Létrehozás'}
+        </button>
+        <button
+          type="button"
+          onClick={() => save(true)}
+          disabled={saving}
+          className="flex items-center gap-2 rounded-sm border border-navy/25 px-6 py-3 font-sans text-sm font-semibold uppercase tracking-wide text-navy transition-colors hover:bg-navy hover:text-white disabled:opacity-50"
+        >
+          <Eye className="h-4 w-4" />
+          Mentés és előnézet
+        </button>
+        <button
+          type="button"
+          onClick={() => router.push('/admin/ingatlanok')}
+          className="rounded-sm px-6 py-3 font-sans text-sm uppercase tracking-wide text-navy/60 transition-colors hover:text-navy"
+        >
+          Mégse
+        </button>
+      </div>
+    </div>
+  );
+}
