@@ -8,6 +8,31 @@ import { formatPrice, propertySlug } from '@/lib/utils';
 
 const API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
 
+// Dark navy map theme matching the site design.
+const MAP_STYLE = [
+  { elementType: 'geometry', stylers: [{ color: '#0a1628' }] },
+  { elementType: 'labels.text.stroke', stylers: [{ color: '#0a1628' }] },
+  { elementType: 'labels.text.fill', stylers: [{ color: '#8896ab' }] },
+  { featureType: 'poi', stylers: [{ visibility: 'off' }] },
+  { featureType: 'transit', stylers: [{ visibility: 'off' }] },
+  { featureType: 'administrative.land_parcel', stylers: [{ visibility: 'off' }] },
+  { featureType: 'administrative', elementType: 'geometry', stylers: [{ color: '#2a3a52' }] },
+  { featureType: 'administrative.locality', elementType: 'labels.text.fill', stylers: [{ color: '#C9A96E' }] },
+  { featureType: 'landscape', elementType: 'geometry', stylers: [{ color: '#0d1a2e' }] },
+  { featureType: 'road', elementType: 'geometry', stylers: [{ color: '#1b2942' }] },
+  { featureType: 'road', elementType: 'labels.text.fill', stylers: [{ color: '#6b7a93' }] },
+  { featureType: 'road.highway', elementType: 'geometry', stylers: [{ color: '#33455f' }] },
+  { featureType: 'water', elementType: 'geometry', stylers: [{ color: '#060f1d' }] },
+  { featureType: 'water', elementType: 'labels.text.fill', stylers: [{ color: '#3d4d66' }] },
+];
+
+// Gold teardrop pin with a navy centre — built as an inline SVG icon.
+const PIN_SVG =
+  '<svg xmlns="http://www.w3.org/2000/svg" width="30" height="42" viewBox="0 0 30 42">' +
+  '<path d="M15 0C6.7 0 0 6.7 0 15c0 11.25 15 27 15 27s15-15.75 15-27C30 6.7 23.3 0 15 0z" ' +
+  'fill="#C9A96E" stroke="#0a1628" stroke-width="1.5"/>' +
+  '<circle cx="15" cy="15" r="5.5" fill="#0a1628"/></svg>';
+
 // Load the Maps JS API exactly once, shared across mounts.
 let mapsPromise: Promise<void> | null = null;
 function loadMaps(): Promise<void> {
@@ -31,11 +56,12 @@ export default function PropertyMap({ properties }: { properties: Property[] }) 
   const ref = useRef<HTMLDivElement>(null);
   const [error, setError] = useState(false);
 
-  const pins = properties.filter((p) => p.lat != null && p.lng != null);
-
   useEffect(() => {
     if (!API_KEY || !ref.current) return;
     let cancelled = false;
+
+    // Skip properties without coordinates.
+    const pins = properties.filter((p) => p.lat != null && p.lng != null);
 
     loadMaps()
       .then(() => {
@@ -46,27 +72,30 @@ export default function PropertyMap({ properties }: { properties: Property[] }) 
           zoom: 12,
           mapTypeControl: false,
           streetViewControl: false,
-          styles: [{ featureType: 'poi', stylers: [{ visibility: 'off' }] }],
+          fullscreenControl: false,
+          styles: MAP_STYLE,
         });
+        const icon = {
+          url: `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(PIN_SVG)}`,
+          scaledSize: new g.maps.Size(30, 42),
+          anchor: new g.maps.Point(15, 42),
+        };
         const bounds = new g.maps.LatLngBounds();
         const info = new g.maps.InfoWindow();
+        const viewLabel = locale === 'hu' ? 'Megtekintés' : 'View';
 
         pins.forEach((p) => {
           const pos = { lat: p.lat, lng: p.lng };
           bounds.extend(pos);
-          const marker = new g.maps.Marker({
-            position: pos,
-            map,
-            title: locale === 'hu' ? p.title_hu : p.title_en,
-          });
+          const title = locale === 'hu' ? p.title_hu : p.title_en;
+          const marker = new g.maps.Marker({ position: pos, map, icon, title });
           marker.addListener('click', () => {
-            const title = locale === 'hu' ? p.title_hu : p.title_en;
             const href = `/${locale}/ingatlan/${propertySlug(p)}`;
             info.setContent(
-              `<div style="font-family:sans-serif;max-width:200px">
-                 <strong style="color:#0a1628">${title}</strong><br/>
-                 <span style="color:#a98a52">${formatPrice(p.price, p.currency, locale)}</span><br/>
-                 <a href="${href}" style="color:#c9a96e">${p.reference_number}</a>
+              `<div style="font-family:Georgia,'Times New Roman',serif;max-width:220px;padding:2px 4px 4px">
+                 <strong style="color:#0a1628;font-size:14px;line-height:1.3;display:block">${title}</strong>
+                 <span style="color:#a98a52;font-weight:600;display:block;margin:4px 0">${formatPrice(p.price, p.currency, locale, p.listing_type)}</span>
+                 <a href="${href}" style="color:#0a1628;font-weight:600;text-decoration:none;border-bottom:1px solid #C9A96E">${viewLabel} →</a>
                </div>`,
             );
             info.open(map, marker);
@@ -80,7 +109,7 @@ export default function PropertyMap({ properties }: { properties: Property[] }) 
     return () => {
       cancelled = true;
     };
-  }, [pins, locale]);
+  }, [properties, locale]);
 
   // No key configured yet → elegant placeholder.
   if (!API_KEY || error) {
@@ -93,5 +122,5 @@ export default function PropertyMap({ properties }: { properties: Property[] }) 
     );
   }
 
-  return <div ref={ref} className="min-h-[60vh] w-full rounded-sm" />;
+  return <div ref={ref} className="min-h-[60vh] w-full overflow-hidden rounded-sm" />;
 }
