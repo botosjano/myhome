@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Eye, Languages, Loader2, Save } from 'lucide-react';
+import { Eye, Languages, Loader2, MapPin, Save } from 'lucide-react';
 import {
   DISTRICTS,
   ENERGY_RATINGS,
@@ -18,6 +18,7 @@ import type {
 } from '@/lib/types';
 import { createProperty, nextReference, updateProperty, type PropertyDraft } from '@/lib/admin/store';
 import { cn, propertySlug } from '@/lib/utils';
+import { loadGoogleMaps } from '@/lib/google-maps';
 import ImageUploader from './ImageUploader';
 
 const CONDITIONS: Condition[] = ['új', 'felújított', 'felújítandó'];
@@ -64,6 +65,9 @@ export default function PropertyForm({ initial }: { initial?: Property }) {
   const [form, setForm] = useState<PropertyDraft>(initial ?? emptyDraft());
   const [translatingField, setTranslatingField] = useState<'title' | 'description' | null>(null);
   const [errorField, setErrorField] = useState<'title' | 'description' | null>(null);
+  const [addressQuery, setAddressQuery] = useState('');
+  const [geocoding, setGeocoding] = useState(false);
+  const [geoError, setGeoError] = useState('');
   const [saving, setSaving] = useState(false);
 
   // Auto-generate a reference number for new listings.
@@ -121,6 +125,29 @@ export default function PropertyForm({ initial }: { initial?: Property }) {
   };
 
   const translateError = 'Fordítás sikertelen, próbáld újra';
+
+  /** Look up coordinates for the typed address (or the district/city) via Google Geocoding. */
+  const geocode = async () => {
+    const fallback = form.region === 'budapest' ? `${form.district}, Budapest` : (form.city ?? '');
+    const query = (addressQuery.trim() || fallback).trim();
+    if (!query) {
+      setGeoError('Adj meg egy címet vagy környéket.');
+      return;
+    }
+    setGeocoding(true);
+    setGeoError('');
+    try {
+      const g = await loadGoogleMaps();
+      const { results } = await new g.maps.Geocoder().geocode({ address: `${query}, Magyarország` });
+      const loc = results?.[0]?.geometry?.location;
+      if (!loc) throw new Error('no result');
+      setForm((f) => ({ ...f, lat: Number(loc.lat().toFixed(6)), lng: Number(loc.lng().toFixed(6)) }));
+    } catch {
+      setGeoError('Nem sikerült a koordináták lekérése. Ellenőrizd a címet, vagy add meg kézzel.');
+    } finally {
+      setGeocoding(false);
+    }
+  };
 
   const save = async (preview: boolean) => {
     setSaving(true);
@@ -314,6 +341,37 @@ export default function PropertyForm({ initial }: { initial?: Property }) {
               />
             </div>
           )}
+          <div className="sm:col-span-2">
+            <label className={label}>Cím a térképhez</label>
+            <div className="flex gap-2">
+              <input
+                className={field}
+                value={addressQuery}
+                onChange={(e) => setAddressQuery(e.target.value)}
+                placeholder={
+                  form.region === 'budapest'
+                    ? 'pl. Nádor utca 5, Budapest — vagy hagyd üresen a kerülethez'
+                    : 'pl. Tihany, Kossuth utca — vagy hagyd üresen a városhoz'
+                }
+              />
+              <button
+                type="button"
+                onClick={geocode}
+                disabled={geocoding}
+                className="flex shrink-0 items-center gap-1.5 rounded-sm border border-gold px-3 py-1 font-sans text-xs uppercase tracking-wide text-gold-dark transition-colors hover:bg-gold hover:text-navy disabled:opacity-40"
+              >
+                {geocoding ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <MapPin className="h-3.5 w-3.5" />}
+                Koordináták keresése
+              </button>
+            </div>
+            {geoError ? (
+              <p className="mt-1.5 font-sans text-xs text-red-600">{geoError}</p>
+            ) : (
+              <p className="mt-1.5 font-sans text-xs text-navy/45">
+                A gomb kitölti a lenti koordinátákat. Diszkrécióhoz a kerület / környék is elég.
+              </p>
+            )}
+          </div>
           <div>
             <label className={label}>Földrajzi szélesség (lat)</label>
             <input

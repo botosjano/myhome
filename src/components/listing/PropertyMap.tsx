@@ -6,6 +6,7 @@ import { MapPin } from 'lucide-react';
 import type { Property } from '@/lib/types';
 import { formatPrice, propertySlug } from '@/lib/utils';
 import { MAP_STYLE } from '@/lib/map-style';
+import { loadGoogleMaps } from '@/lib/google-maps';
 
 const API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
 
@@ -15,23 +16,6 @@ const PIN_SVG =
   '<path d="M15 0C6.7 0 0 6.7 0 15c0 11.25 15 27 15 27s15-15.75 15-27C30 6.7 23.3 0 15 0z" ' +
   'fill="#C9A96E" stroke="#0a1628" stroke-width="1.5"/>' +
   '<circle cx="15" cy="15" r="5.5" fill="#0a1628"/></svg>';
-
-// Load the Maps JS API exactly once, shared across mounts.
-let mapsPromise: Promise<void> | null = null;
-function loadMaps(): Promise<void> {
-  if (typeof window === 'undefined') return Promise.reject();
-  if ((window as any).google?.maps) return Promise.resolve();
-  if (mapsPromise) return mapsPromise;
-  mapsPromise = new Promise<void>((resolve, reject) => {
-    const s = document.createElement('script');
-    s.src = `https://maps.googleapis.com/maps/api/js?key=${API_KEY}&v=weekly`;
-    s.async = true;
-    s.onload = () => resolve();
-    s.onerror = () => reject(new Error('Google Maps failed to load'));
-    document.head.appendChild(s);
-  });
-  return mapsPromise;
-}
 
 export default function PropertyMap({ properties }: { properties: Property[] }) {
   const t = useTranslations('listing');
@@ -46,10 +30,9 @@ export default function PropertyMap({ properties }: { properties: Property[] }) 
     // Skip properties without coordinates.
     const pins = properties.filter((p) => p.lat != null && p.lng != null);
 
-    loadMaps()
-      .then(() => {
+    loadGoogleMaps()
+      .then((g) => {
         if (cancelled || !ref.current) return;
-        const g = (window as any).google;
         const map = new g.maps.Map(ref.current, {
           center: { lat: 47.4979, lng: 19.0402 },
           zoom: 12,
