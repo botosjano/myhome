@@ -11,6 +11,7 @@ import InquiryForm from '@/components/detail/InquiryForm';
 import ShareButtons from '@/components/detail/ShareButtons';
 import PdfButton from '@/components/detail/PdfButton';
 import PrintSheet from '@/components/detail/PrintSheet';
+import PropertyLocationMap from '@/components/detail/PropertyLocationMap';
 
 type Params = { locale: string; slug: string };
 
@@ -133,6 +134,9 @@ export default async function PropertyDetailPage({ params }: { params: Params })
                 </div>
               ))}
             </div>
+
+            {/* Location map */}
+            <PropertyLocationMap property={property} locale={params.locale} heading={t('locationTitle')} />
           </div>
 
           {/* Right: sticky stats + inquiry */}

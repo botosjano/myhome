@@ -5,26 +5,9 @@ import { useLocale, useTranslations } from 'next-intl';
 import { MapPin } from 'lucide-react';
 import type { Property } from '@/lib/types';
 import { formatPrice, propertySlug } from '@/lib/utils';
+import { MAP_STYLE } from '@/lib/map-style';
 
 const API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
-
-// Dark navy map theme matching the site design.
-const MAP_STYLE = [
-  { elementType: 'geometry', stylers: [{ color: '#0a1628' }] },
-  { elementType: 'labels.text.stroke', stylers: [{ color: '#0a1628' }] },
-  { elementType: 'labels.text.fill', stylers: [{ color: '#8896ab' }] },
-  { featureType: 'poi', stylers: [{ visibility: 'off' }] },
-  { featureType: 'transit', stylers: [{ visibility: 'off' }] },
-  { featureType: 'administrative.land_parcel', stylers: [{ visibility: 'off' }] },
-  { featureType: 'administrative', elementType: 'geometry', stylers: [{ color: '#2a3a52' }] },
-  { featureType: 'administrative.locality', elementType: 'labels.text.fill', stylers: [{ color: '#C9A96E' }] },
-  { featureType: 'landscape', elementType: 'geometry', stylers: [{ color: '#0d1a2e' }] },
-  { featureType: 'road', elementType: 'geometry', stylers: [{ color: '#1b2942' }] },
-  { featureType: 'road', elementType: 'labels.text.fill', stylers: [{ color: '#6b7a93' }] },
-  { featureType: 'road.highway', elementType: 'geometry', stylers: [{ color: '#33455f' }] },
-  { featureType: 'water', elementType: 'geometry', stylers: [{ color: '#060f1d' }] },
-  { featureType: 'water', elementType: 'labels.text.fill', stylers: [{ color: '#3d4d66' }] },
-];
 
 // Gold teardrop pin with a navy centre — built as an inline SVG icon.
 const PIN_SVG =
