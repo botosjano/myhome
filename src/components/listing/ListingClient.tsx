@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { LayoutGrid, Map as MapIcon, SlidersHorizontal, X } from 'lucide-react';
 import type { Property } from '@/lib/types';
@@ -9,6 +9,7 @@ import {
   activeFilterCount,
   defaultState,
   paramsFromState,
+  stateFromParams,
   type ListingState,
   type SortKey,
 } from '@/lib/listing';
@@ -19,22 +20,29 @@ import PropertyMap from './PropertyMap';
 
 const PAGE_SIZE = 6;
 
-export default function ListingClient({
-  initialState,
-  properties,
-}: {
-  initialState: ListingState;
-  properties: Property[];
-}) {
+export default function ListingClient({ properties }: { properties: Property[] }) {
   const t = useTranslations('listing');
-  const [state, setState] = useState<ListingState>(initialState);
+  const [state, setState] = useState<ListingState>(defaultState);
   const [visible, setVisible] = useState(PAGE_SIZE);
   const [drawer, setDrawer] = useState(false);
+  const firstSync = useRef(true);
 
   const results = useMemo(() => applyState(properties, state), [state, properties]);
 
-  // Keep the URL in sync (shareable) without a full navigation.
+  // Hydrate the filter state from the URL on mount (kept client-side so the page
+  // stays statically generated and CDN-fast).
   useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    setState(stateFromParams((k) => params.get(k)));
+  }, []);
+
+  // Keep the URL in sync (shareable) without a full navigation. Skip the first
+  // run so we don't wipe the params before the mount effect has read them.
+  useEffect(() => {
+    if (firstSync.current) {
+      firstSync.current = false;
+      return;
+    }
     const qs = paramsFromState(state).toString();
     const url = qs ? `?${qs}` : window.location.pathname;
     window.history.replaceState(null, '', url);
