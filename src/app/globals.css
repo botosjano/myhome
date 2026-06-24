@@ -92,6 +92,10 @@ input[type='number'] {
 }
 
 /* Print: produce a clean one-page property sheet (used by the PDF button) */
+@page {
+  size: A4;
+  margin: 12mm;
+}
 @media print {
   header,
   footer {
@@ -102,6 +106,10 @@ input[type='number'] {
   }
   .gold-rule {
     background: #c9a96e !important;
+  }
+  /* Keep the one-page sheet from spilling onto a second page */
+  .print-sheet {
+    page-break-inside: avoid;
   }
   /* Print backgrounds/colors as shown on screen */
   * {

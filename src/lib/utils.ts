@@ -1,6 +1,12 @@
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
+import { LAND_TYPES } from './districts';
 import type { Currency, ListingType, Property, PropertyType } from './types';
+
+/** Land-like types (plot, development site) have no rooms/floor. */
+export function isLand(type: PropertyType): boolean {
+  return (LAND_TYPES as readonly string[]).includes(type);
+}
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -72,7 +78,10 @@ export function propertySlug(
     .replace(/[().]/g, '')
     .replace(/\s+/g, '-')
     .toLowerCase();
-  return `${p.reference_number}-${loc}-${p.type}`.toLowerCase();
+  return `${p.reference_number}-${loc}-${p.type}`
+    .replace(/[().]/g, '')
+    .replace(/\s+/g, '-')
+    .toLowerCase();
 }
 
 export function localizedType(type: PropertyType, locale: string): string {
@@ -82,6 +91,10 @@ export function localizedType(type: PropertyType, locale: string): string {
     villa: 'villa',
     penthouse: 'penthouse',
     telek: 'plot',
+    nyaraló: 'holiday home',
+    iroda: 'office',
+    üzlethelyiség: 'retail unit',
+    'fejlesztési terület': 'development site',
   };
   return locale === 'hu' ? type : en[type];
 }

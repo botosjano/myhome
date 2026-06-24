@@ -4,12 +4,13 @@ import { setRequestLocale, getTranslations } from 'next-intl/server';
 import { ArrowLeft, MapPin } from 'lucide-react';
 import { Link } from '@/navigation';
 import { getPropertyBySlug } from '@/lib/mock-data';
-import { formatPrice, formatSize, localizedType, locationLabel } from '@/lib/utils';
+import { formatPrice, formatSize, isLand, localizedType, locationLabel } from '@/lib/utils';
 import Gallery from '@/components/detail/Gallery';
 import KeyStats from '@/components/detail/KeyStats';
 import InquiryForm from '@/components/detail/InquiryForm';
 import ShareButtons from '@/components/detail/ShareButtons';
 import PdfButton from '@/components/detail/PdfButton';
+import PrintSheet from '@/components/detail/PrintSheet';
 
 type Params = { locale: string; slug: string };
 
@@ -71,7 +72,10 @@ export default async function PropertyDetailPage({ params }: { params: Params })
     <article className="bg-white pt-24">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
 
-      <div className="mx-auto max-w-7xl px-5 py-6 lg:px-8">
+      {/* Print-only one-page property sheet */}
+      <PrintSheet property={property} locale={params.locale} />
+
+      <div className="mx-auto max-w-7xl px-5 py-6 lg:px-8 print:hidden">
         <Link
           href="/ingatlanok"
           className="inline-flex items-center gap-2 font-sans text-sm text-navy/60 transition-colors hover:text-gold print:hidden"
@@ -118,7 +122,7 @@ export default async function PropertyDetailPage({ params }: { params: Params })
               {[
                 [t('price'), formatPrice(property.price, property.currency, params.locale, property.listing_type)],
                 [t('size'), formatSize(property.size_m2, params.locale)],
-                ...(property.type !== 'telek' ? [[t('rooms'), String(property.rooms)]] : []),
+                ...(!isLand(property.type) ? [[t('rooms'), String(property.rooms)]] : []),
                 [property.region === 'videk' ? t('location') : t('district'), locationLabel(property)],
                 ...(property.year_built ? [[t('yearBuilt'), String(property.year_built)]] : []),
                 [t('reference'), property.reference_number],

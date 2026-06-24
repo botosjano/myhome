@@ -6,7 +6,7 @@ import { motion } from 'framer-motion';
 import { BedDouble, Maximize, MapPin } from 'lucide-react';
 import { Link } from '@/navigation';
 import type { Property } from '@/lib/types';
-import { cn, formatPrice, formatSize, locationLabel, propertySlug } from '@/lib/utils';
+import { cn, formatPrice, formatSize, isLand, locationLabel, propertySlug } from '@/lib/utils';
 import FavoriteButton from './FavoriteButton';
 
 export default function PropertyCard({
@@ -89,7 +89,7 @@ export default function PropertyCard({
               <Maximize className="h-4 w-4 text-gold" />
               {formatSize(property.size_m2, locale)}
             </span>
-            {property.type !== 'telek' && (
+            {!isLand(property.type) && (
               <span className="flex items-center gap-1.5">
                 <BedDouble className="h-4 w-4 text-gold" />
                 {property.rooms} {t('rooms')}

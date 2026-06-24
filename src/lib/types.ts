@@ -2,7 +2,16 @@
 
 export type Currency = 'HUF' | 'EUR';
 
-export type PropertyType = 'lakás' | 'ház' | 'villa' | 'penthouse' | 'telek';
+export type PropertyType =
+  | 'lakás'
+  | 'ház'
+  | 'villa'
+  | 'penthouse'
+  | 'telek'
+  | 'nyaraló'
+  | 'iroda'
+  | 'üzlethelyiség'
+  | 'fejlesztési terület';
 
 export type PropertyStatus = 'active' | 'hidden' | 'sold';
 
@@ -52,6 +61,9 @@ export interface Property {
   year_built: number | null;
   parking: boolean;
   garden: boolean;
+  lift: boolean;
+  balcony: boolean;
+  ac: boolean;
   heating: HeatingType;
   energy_rating: EnergyRating;
   condition: Condition;
@@ -68,7 +80,11 @@ export interface PropertyFilters {
   maxPrice?: number;
   minSize?: number;
   maxSize?: number;
-  rooms?: number;
+  roomsMin?: number;
+  roomsMax?: number;
+  lift?: boolean;
+  balcony?: boolean;
+  ac?: boolean;
   yearMin?: number;
   yearMax?: number;
   heating?: HeatingType[];

@@ -47,7 +47,20 @@ export const PEST_DISTRICTS = [4, 5, 6, 7, 8, 9, 10, 13, 14, 15, 16, 17, 18, 19,
 // property's `city`). "Balaton" also matches "Balaton (Tihany)" etc.
 export const VIDEK_LOCATIONS = ['Balaton', 'Szentendre', 'Eger'] as const;
 
-export const PROPERTY_TYPES = ['lakás', 'ház', 'villa', 'penthouse', 'telek'] as const;
+export const PROPERTY_TYPES = [
+  'lakás',
+  'ház',
+  'villa',
+  'penthouse',
+  'telek',
+  'nyaraló',
+  'iroda',
+  'üzlethelyiség',
+  'fejlesztési terület',
+] as const;
+
+// Land-like types that have no rooms (hide room stats / filters).
+export const LAND_TYPES = ['telek', 'fejlesztési terület'] as const;
 
 export const ROOM_OPTIONS = [1, 2, 3, 4, 5] as const; // 5 = "5+"
 

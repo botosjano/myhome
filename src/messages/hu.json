@@ -14,7 +14,7 @@
   "hero": {
     "eyebrow": "Diszkrét, off-market portfólió",
     "title": "Budapest legkivételesebb otthonai",
-    "subtitle": "Exkluzív ingatlanok — sok közülük nem szerepel nyilvános portálokon — kizárólag igényes vevőink számára.",
+    "subtitle": "Exkluzív ingatlanok — sok közülük nem szerepel nyilvános portálokon — kizárólag igényes vevőink és bérlőink számára.",
     "scroll": "Görgessen tovább"
   },
   "search": {
@@ -56,8 +56,15 @@
     "energy": "Energetikai besorolás",
     "garden": "Kertkapcsolatos",
     "parking": "Parkoló",
+    "lift": "Lift",
+    "balcony": "Erkély",
+    "ac": "Légkondicionáló",
+    "roomsMin": "Min. szobaszám",
+    "roomsMax": "Max. szobaszám",
+    "roomsAnyShort": "Mindegy",
     "optYes": "Igen",
     "optAny": "Mindegy",
+    "optHas": "Van",
     "min": "Min.",
     "max": "Max."
   },
@@ -91,7 +98,11 @@
     "ház": "Ház",
     "villa": "Villa",
     "penthouse": "Penthouse",
-    "telek": "Telek"
+    "telek": "Telek",
+    "nyaraló": "Nyaraló",
+    "iroda": "Iroda",
+    "üzlethelyiség": "Üzlethelyiség",
+    "fejlesztési terület": "Fejlesztési terület"
   },
   "sections": {
     "latestTitle": "Friss ajánlataink",
@@ -132,8 +143,15 @@
     "energy": "Energetikai besorolás",
     "garden": "Kertkapcsolatos",
     "parking": "Parkoló",
+    "lift": "Lift",
+    "balcony": "Erkély",
+    "ac": "Légkondicionáló",
+    "roomsMin": "Min. szobaszám",
+    "roomsMax": "Max. szobaszám",
+    "roomsAnyShort": "Mindegy",
     "optYes": "Igen",
     "optAny": "Mindegy",
+    "optHas": "Van",
     "min": "Min.",
     "max": "Max.",
     "sortLabel": "Rendezés",
@@ -164,6 +182,8 @@
     "yearBuilt": "Építés éve",
     "parking": "Parkolás",
     "condition": "Állapot",
+    "heating": "Fűtés",
+    "energy": "Energetika",
     "yes": "Van",
     "no": "Nincs",
     "inquiryTitle": "Érdeklődöm az ingatlan iránt",
@@ -198,7 +218,7 @@
   "about": {
     "eyebrow": "Rólunk",
     "title": "Diszkréció, amelyre számíthat",
-    "body": "A My Home Budapest egy exkluzív ingatlanügynökség, amely prémium kategóriás ingatlanokra specializálódott. Ügyfeleink magyar és nemzetközi vevők, akik értékelik a diszkréciót, a személyre szabott figyelmet és a kifogástalan minőséget. Portfóliónkban sok olyan ingatlan szerepel, amely nem jelenik meg nyilvános hirdetési oldalakon.",
+    "body": "A My Home Budapest egy exkluzív ingatlanügynökség, amely prémium kategóriás ingatlanokra specializálódott. Ügyfeleink magyar és nemzetközi vevők és bérlők, valamint eladók és bérbeadók, akik értékelik a diszkréciót, a személyre szabott figyelmet és a kifogástalan minőséget. Portfóliónkban sok olyan ingatlan szerepel, amely nem jelenik meg nyilvános hirdetési oldalakon.",
     "cta": "Vegye fel velünk a kapcsolatot"
   },
   "card": {

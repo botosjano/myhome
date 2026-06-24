@@ -115,11 +115,15 @@ export default function SearchBox() {
   const [sizeOpen, setSizeOpen] = useState(false);
   const [yearMin, setYearMin] = useState('');
   const [yearMax, setYearMax] = useState('');
-  const [rooms, setRooms] = useState(0);
+  const [roomsMin, setRoomsMin] = useState(0);
+  const [roomsMax, setRoomsMax] = useState(0);
   const [heating, setHeating] = useState<string[]>([]);
   const [energy, setEnergy] = useState<string[]>([]);
   const [garden, setGarden] = useState(false);
   const [parking, setParking] = useState(false);
+  const [lift, setLift] = useState(false);
+  const [balcony, setBalcony] = useState(false);
+  const [ac, setAc] = useState(false);
   const [open, setOpen] = useState(false);
 
   const toggle = (arr: string[], v: string) =>
@@ -141,11 +145,15 @@ export default function SearchBox() {
     if (sizeMax) params.set('maxSize', sizeMax);
     if (yearMin) params.set('yearMin', yearMin);
     if (yearMax) params.set('yearMax', yearMax);
-    if (rooms > 0) params.set('rooms', String(rooms));
+    if (roomsMin > 0) params.set('roomsMin', String(roomsMin));
+    if (roomsMax > 0) params.set('roomsMax', String(roomsMax));
     if (heating.length) params.set('heating', heating.join(','));
     if (energy.length) params.set('energy', energy.join(','));
     if (garden) params.set('garden', '1');
     if (parking) params.set('parking', '1');
+    if (lift) params.set('lift', '1');
+    if (balcony) params.set('balcony', '1');
+    if (ac) params.set('ac', '1');
     router.push(`/ingatlanok?${params.toString()}`);
   };
 
@@ -337,25 +345,37 @@ export default function SearchBox() {
             </div>
           </div>
 
-          {/* Rooms */}
+          {/* Rooms min / max */}
           <div>
             <span className={legend}>{t('rooms')}</span>
-            <div className="flex gap-2">
-              {ROOM_OPTIONS.map((r) => (
-                <button
-                  key={r}
-                  type="button"
-                  onClick={() => setRooms(rooms === r ? 0 : r)}
-                  className={cn(
-                    'h-10 flex-1 rounded-sm border font-sans text-sm transition-colors',
-                    rooms === r
-                      ? 'border-gold bg-gold text-navy'
-                      : 'border-white/20 text-white/70 hover:border-gold',
-                  )}
-                >
-                  {r === 5 ? '5+' : r}
-                </button>
-              ))}
+            <div className="flex items-center gap-3">
+              <select
+                aria-label={t('roomsMin')}
+                className={field}
+                value={roomsMin || ''}
+                onChange={(e) => setRoomsMin(Number(e.target.value) || 0)}
+              >
+                <option value="">{t('roomsMin')}</option>
+                {ROOM_OPTIONS.map((r) => (
+                  <option key={r} value={r}>
+                    {r === 5 ? '5+' : r}
+                  </option>
+                ))}
+              </select>
+              <span className="text-white/40">–</span>
+              <select
+                aria-label={t('roomsMax')}
+                className={field}
+                value={roomsMax || ''}
+                onChange={(e) => setRoomsMax(Number(e.target.value) || 0)}
+              >
+                <option value="">{t('roomsMax')}</option>
+                {ROOM_OPTIONS.map((r) => (
+                  <option key={r} value={r}>
+                    {r === 5 ? '5+' : r}
+                  </option>
+                ))}
+              </select>
             </div>
           </div>
 
@@ -399,7 +419,7 @@ export default function SearchBox() {
             <span className={legend}>{t('garden')}</span>
             <div className="flex gap-2">
               <button type="button" onClick={() => setGarden(true)} className={pill(garden)}>
-                {t('optYes')}
+                {t('optHas')}
               </button>
               <button type="button" onClick={() => setGarden(false)} className={pill(!garden)}>
                 {t('optAny')}
@@ -412,9 +432,48 @@ export default function SearchBox() {
             <span className={legend}>{t('parking')}</span>
             <div className="flex gap-2">
               <button type="button" onClick={() => setParking(true)} className={pill(parking)}>
-                {t('optYes')}
+                {t('optHas')}
               </button>
               <button type="button" onClick={() => setParking(false)} className={pill(!parking)}>
+                {t('optAny')}
+              </button>
+            </div>
+          </div>
+
+          {/* Lift toggle */}
+          <div>
+            <span className={legend}>{t('lift')}</span>
+            <div className="flex gap-2">
+              <button type="button" onClick={() => setLift(true)} className={pill(lift)}>
+                {t('optHas')}
+              </button>
+              <button type="button" onClick={() => setLift(false)} className={pill(!lift)}>
+                {t('optAny')}
+              </button>
+            </div>
+          </div>
+
+          {/* Balcony toggle */}
+          <div>
+            <span className={legend}>{t('balcony')}</span>
+            <div className="flex gap-2">
+              <button type="button" onClick={() => setBalcony(true)} className={pill(balcony)}>
+                {t('optHas')}
+              </button>
+              <button type="button" onClick={() => setBalcony(false)} className={pill(!balcony)}>
+                {t('optAny')}
+              </button>
+            </div>
+          </div>
+
+          {/* Air conditioning toggle */}
+          <div>
+            <span className={legend}>{t('ac')}</span>
+            <div className="flex gap-2">
+              <button type="button" onClick={() => setAc(true)} className={pill(ac)}>
+                {t('optHas')}
+              </button>
+              <button type="button" onClick={() => setAc(false)} className={pill(!ac)}>
                 {t('optAny')}
               </button>
             </div>

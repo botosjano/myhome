@@ -2,7 +2,7 @@
 
 import { useLocale, useTranslations } from 'next-intl';
 import type { Property } from '@/lib/types';
-import { formatPrice, formatSize, locationLabel } from '@/lib/utils';
+import { formatPrice, formatSize, isLand, locationLabel } from '@/lib/utils';
 
 export default function KeyStats({ property }: { property: Property }) {
   const t = useTranslations('detail');
@@ -15,10 +15,10 @@ export default function KeyStats({ property }: { property: Property }) {
 
   const rows: Array<[string, string]> = [
     [t('size'), formatSize(property.size_m2, locale)],
-    ...(property.type !== 'telek'
+    ...(!isLand(property.type)
       ? ([[t('rooms'), String(property.rooms)]] as Array<[string, string]>)
       : []),
-    ...(property.type !== 'telek' ? ([[t('floor'), floorLabel]] as Array<[string, string]>) : []),
+    ...(!isLand(property.type) ? ([[t('floor'), floorLabel]] as Array<[string, string]>) : []),
     [property.region === 'videk' ? t('location') : t('district'), locationLabel(property)],
     [t('type'), tTypes(property.type)],
     [t('reference'), property.reference_number],

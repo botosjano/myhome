@@ -14,7 +14,7 @@
   "hero": {
     "eyebrow": "Discreet, off-market portfolio",
     "title": "Budapest’s most exceptional homes",
-    "subtitle": "Exclusive properties — many of which are not listed on public portals — reserved solely for our discerning buyers.",
+    "subtitle": "Exclusive properties — many of which are not listed on public portals — reserved solely for our discerning buyers and tenants.",
     "scroll": "Scroll to explore"
   },
   "search": {
@@ -56,8 +56,15 @@
     "energy": "Energy rating",
     "garden": "Garden access",
     "parking": "Parking",
+    "lift": "Lift",
+    "balcony": "Balcony",
+    "ac": "Air conditioning",
+    "roomsMin": "Min. rooms",
+    "roomsMax": "Max. rooms",
+    "roomsAnyShort": "Any",
     "optYes": "Yes",
     "optAny": "Any",
+    "optHas": "Yes",
     "min": "Min.",
     "max": "Max."
   },
@@ -91,7 +98,11 @@
     "ház": "House",
     "villa": "Villa",
     "penthouse": "Penthouse",
-    "telek": "Plot"
+    "telek": "Plot",
+    "nyaraló": "Holiday home",
+    "iroda": "Office",
+    "üzlethelyiség": "Retail unit",
+    "fejlesztési terület": "Development site"
   },
   "sections": {
     "latestTitle": "Latest listings",
@@ -132,8 +143,15 @@
     "energy": "Energy rating",
     "garden": "Garden access",
     "parking": "Parking",
+    "lift": "Lift",
+    "balcony": "Balcony",
+    "ac": "Air conditioning",
+    "roomsMin": "Min. rooms",
+    "roomsMax": "Max. rooms",
+    "roomsAnyShort": "Any",
     "optYes": "Yes",
     "optAny": "Any",
+    "optHas": "Yes",
     "min": "Min.",
     "max": "Max.",
     "sortLabel": "Sort by",
@@ -164,6 +182,8 @@
     "yearBuilt": "Year built",
     "parking": "Parking",
     "condition": "Condition",
+    "heating": "Heating",
+    "energy": "Energy",
     "yes": "Yes",
     "no": "No",
     "inquiryTitle": "Enquire about this property",
@@ -198,7 +218,7 @@
   "about": {
     "eyebrow": "About us",
     "title": "Discretion you can rely on",
-    "body": "My Home Budapest is an exclusive real estate agency specialising in premium properties. Our clients are Hungarian and international buyers who value discretion, personal attention and impeccable quality. Many of our properties do not appear on public listing portals.",
+    "body": "My Home Budapest is an exclusive real estate agency specialising in premium properties. Our clients are Hungarian and international buyers and tenants, as well as sellers and landlords, who value discretion, personal attention and impeccable quality. Many of our properties do not appear on public listing portals.",
     "cta": "Get in touch"
   },
   "card": {

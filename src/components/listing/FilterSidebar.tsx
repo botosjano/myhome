@@ -193,26 +193,37 @@ export default function FilterSidebar({
         </div>
       </div>
 
-      {/* Rooms */}
+      {/* Rooms min / max */}
       <div>
         <p className={legend}>{t('rooms')}</p>
-        <div className="flex gap-2">
-          {ROOM_OPTIONS.map((r) => {
-            const active = state.rooms === r;
-            return (
-              <button
-                key={r}
-                type="button"
-                onClick={() => onChange({ rooms: active ? 0 : r })}
-                className={cn(
-                  'h-10 flex-1 rounded-sm border font-sans text-sm transition-colors',
-                  active ? 'border-gold bg-gold text-navy' : 'border-white/20 text-white/70 hover:border-gold',
-                )}
-              >
+        <div className="flex items-center gap-3">
+          <select
+            aria-label={t('roomsMin')}
+            className={field}
+            value={state.roomsMin || ''}
+            onChange={(e) => onChange({ roomsMin: Number(e.target.value) || 0 })}
+          >
+            <option value="">{t('roomsMin')}</option>
+            {ROOM_OPTIONS.map((r) => (
+              <option key={r} value={r}>
                 {r === 5 ? '5+' : r}
-              </button>
-            );
-          })}
+              </option>
+            ))}
+          </select>
+          <span className="text-white/40">–</span>
+          <select
+            aria-label={t('roomsMax')}
+            className={field}
+            value={state.roomsMax || ''}
+            onChange={(e) => onChange({ roomsMax: Number(e.target.value) || 0 })}
+          >
+            <option value="">{t('roomsMax')}</option>
+            {ROOM_OPTIONS.map((r) => (
+              <option key={r} value={r}>
+                {r === 5 ? '5+' : r}
+              </option>
+            ))}
+          </select>
         </div>
       </div>
 
@@ -331,7 +342,7 @@ export default function FilterSidebar({
           <p className={legend}>{t('garden')}</p>
           <div className="flex gap-2">
             <button type="button" onClick={() => onChange({ garden: true })} className={seg(state.garden)}>
-              {t('optYes')}
+              {t('optHas')}
             </button>
             <button type="button" onClick={() => onChange({ garden: false })} className={seg(!state.garden)}>
               {t('optAny')}
@@ -340,13 +351,52 @@ export default function FilterSidebar({
         </div>
 
         {/* Parking */}
-        <div>
+        <div className="mb-6">
           <p className={legend}>{t('parking')}</p>
           <div className="flex gap-2">
             <button type="button" onClick={() => onChange({ parking: true })} className={seg(state.parking)}>
-              {t('optYes')}
+              {t('optHas')}
             </button>
             <button type="button" onClick={() => onChange({ parking: false })} className={seg(!state.parking)}>
+              {t('optAny')}
+            </button>
+          </div>
+        </div>
+
+        {/* Lift */}
+        <div className="mb-6">
+          <p className={legend}>{t('lift')}</p>
+          <div className="flex gap-2">
+            <button type="button" onClick={() => onChange({ lift: true })} className={seg(state.lift)}>
+              {t('optHas')}
+            </button>
+            <button type="button" onClick={() => onChange({ lift: false })} className={seg(!state.lift)}>
+              {t('optAny')}
+            </button>
+          </div>
+        </div>
+
+        {/* Balcony */}
+        <div className="mb-6">
+          <p className={legend}>{t('balcony')}</p>
+          <div className="flex gap-2">
+            <button type="button" onClick={() => onChange({ balcony: true })} className={seg(state.balcony)}>
+              {t('optHas')}
+            </button>
+            <button type="button" onClick={() => onChange({ balcony: false })} className={seg(!state.balcony)}>
+              {t('optAny')}
+            </button>
+          </div>
+        </div>
+
+        {/* Air conditioning */}
+        <div>
+          <p className={legend}>{t('ac')}</p>
+          <div className="flex gap-2">
+            <button type="button" onClick={() => onChange({ ac: true })} className={seg(state.ac)}>
+              {t('optHas')}
+            </button>
+            <button type="button" onClick={() => onChange({ ac: false })} className={seg(!state.ac)}>
               {t('optAny')}
             </button>
           </div>
