@@ -1,6 +1,9 @@
 import type { Metadata } from 'next';
 import { setRequestLocale } from 'next-intl/server';
+import { fetchActiveProperties } from '@/lib/properties';
 import FavoritesClient from '@/components/FavoritesClient';
+
+export const revalidate = 60;
 
 export function generateMetadata({ params: { locale } }: { params: { locale: string } }): Metadata {
   return {
@@ -9,7 +12,8 @@ export function generateMetadata({ params: { locale } }: { params: { locale: str
   };
 }
 
-export default function FavoritesPage({ params: { locale } }: { params: { locale: string } }) {
+export default async function FavoritesPage({ params: { locale } }: { params: { locale: string } }) {
   setRequestLocale(locale);
-  return <FavoritesClient />;
+  const properties = await fetchActiveProperties();
+  return <FavoritesClient properties={properties} />;
 }

@@ -3,17 +3,17 @@
 import { useTranslations } from 'next-intl';
 import { Heart } from 'lucide-react';
 import { Link } from '@/navigation';
-import { MOCK_PROPERTIES } from '@/lib/mock-data';
+import type { Property } from '@/lib/types';
 import { useFavorites } from '@/lib/useFavorites';
 import PropertyCard from './PropertyCard';
 
-export default function FavoritesClient() {
+export default function FavoritesClient({ properties }: { properties: Property[] }) {
   const t = useTranslations('favoritesPage');
   const { ids, ready } = useFavorites();
 
   // Preserve the order in which items were favorited.
   const favorites = ready
-    ? ids.map((id) => MOCK_PROPERTIES.find((p) => p.id === id)).filter(Boolean)
+    ? ids.map((id) => properties.find((p) => p.id === id)).filter(Boolean)
     : [];
 
   return (

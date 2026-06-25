@@ -3,25 +3,24 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Eye, Languages, Loader2, MapPin, Save } from 'lucide-react';
-import {
-  DISTRICTS,
-  ENERGY_RATINGS,
-  HEATING_OPTIONS,
-  PROPERTY_TYPES,
-} from '@/lib/districts';
-import type {
-  Condition,
-  EnergyRating,
-  HeatingType,
-  Property,
-  PropertyType,
-} from '@/lib/types';
+import { DISTRICTS, HEATING_OPTIONS, PROPERTY_TYPES } from '@/lib/districts';
+import type { Condition, HeatingType, Property, PropertyType } from '@/lib/types';
 import { createProperty, updateProperty, type PropertyDraft } from '@/lib/admin/store';
 import { cn, propertySlug } from '@/lib/utils';
 import { loadGoogleMaps } from '@/lib/google-maps';
 import ImageUploader from './ImageUploader';
 
 const CONDITIONS: Condition[] = ['új', 'felújított', 'felújítandó'];
+
+/** Accented Hungarian labels for the heating options (keys are ASCII). */
+const HEATING_LABELS: Record<HeatingType, string> = {
+  gaz: 'Gáz',
+  tavfutes: 'Távfűtés',
+  hoszivatyu: 'Hőszivattyú',
+  elektromos: 'Elektromos',
+  kandallo: 'Kandalló',
+  egyeb: 'Egyéb',
+};
 
 function emptyDraft(): PropertyDraft {
   return {
@@ -460,26 +459,10 @@ export default function PropertyForm({ initial }: { initial?: Property }) {
             >
               {HEATING_OPTIONS.map((h) => (
                 <option key={h} value={h}>
-                  {h.charAt(0).toUpperCase() + h.slice(1)}
+                  {HEATING_LABELS[h] ?? h}
                 </option>
               ))}
             </select>
-          </div>
-        </div>
-
-        <div className="mt-4">
-          <label className={label}>Energetikai besorolás</label>
-          <div className="flex flex-wrap gap-2">
-            {ENERGY_RATINGS.map((er) => (
-              <button
-                key={er}
-                type="button"
-                onClick={() => set('energy_rating', er as EnergyRating)}
-                className={seg(form.energy_rating === er)}
-              >
-                {er}
-              </button>
-            ))}
           </div>
         </div>
 
