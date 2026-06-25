@@ -43,6 +43,10 @@ export default function AdminLoginPage() {
         <input
           type="email"
           autoComplete="username"
+          autoCapitalize="none"
+          autoCorrect="off"
+          spellCheck={false}
+          inputMode="email"
           className={field}
           value={email}
           onChange={(e) => {
@@ -58,6 +62,9 @@ export default function AdminLoginPage() {
         <input
           type="password"
           autoComplete="current-password"
+          autoCapitalize="none"
+          autoCorrect="off"
+          spellCheck={false}
           className={field}
           value={password}
           onChange={(e) => {
