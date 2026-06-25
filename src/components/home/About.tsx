@@ -22,7 +22,13 @@ export default function About() {
           <p className="eyebrow mb-3">{t('eyebrow')}</p>
           <div className="gold-rule mb-6" />
           <h2 className="font-serif text-3xl leading-tight text-navy sm:text-4xl">{t('title')}</h2>
-          <p className="mt-6 font-sans text-base leading-relaxed text-navy/70">{t('body')}</p>
+          <div className="mt-6 space-y-3 font-sans text-base leading-relaxed text-navy/70">
+            {t('body')
+              .split('\n')
+              .map((para, i) => (
+                <p key={i}>{para}</p>
+              ))}
+          </div>
           <a href="mailto:myhome@olahkrisztina.hu" className="btn-gold mt-8">
             {t('cta')}
             <ArrowRight className="h-4 w-4" />

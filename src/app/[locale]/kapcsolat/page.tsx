@@ -1,9 +1,10 @@
 import type { Metadata } from 'next';
 import { setRequestLocale, getTranslations } from 'next-intl/server';
-import { Facebook, Instagram, Mail } from 'lucide-react';
+import { Facebook, Instagram, Mail, Phone } from 'lucide-react';
 import ContactForm from '@/components/ContactForm';
 
 const CONTACT_EMAIL = 'myhome@olahkrisztina.hu';
+const CONTACT_PHONE = '+36 30 941 4510';
 
 type Params = { locale: string };
 
@@ -44,6 +45,16 @@ export default async function ContactPage({ params }: { params: Params }) {
               <Mail className="h-5 w-5" />
             </span>
             {CONTACT_EMAIL}
+          </a>
+
+          <a
+            href={`tel:${CONTACT_PHONE.replace(/\s/g, '')}`}
+            className="mt-3 flex items-center gap-3 font-sans text-base text-navy/80 transition-colors hover:text-gold"
+          >
+            <span className="flex h-10 w-10 items-center justify-center rounded-sm bg-gold/15 text-gold-dark">
+              <Phone className="h-5 w-5" />
+            </span>
+            {CONTACT_PHONE}
           </a>
 
           <p className="mt-5 max-w-md font-sans text-sm leading-relaxed text-navy/60">{t('responseNote')}</p>

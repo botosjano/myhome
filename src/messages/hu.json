@@ -13,8 +13,8 @@
   },
   "hero": {
     "eyebrow": "Diszkrét, off-market portfólió",
-    "title": "Budapest legkivételesebb otthonai",
-    "subtitle": "Exkluzív ingatlanok — sok közülük nem szerepel nyilvános portálokon — kizárólag igényes vevőink és bérlőink számára.",
+    "title": "Exkluzív ingatlanok igényes vevőink és bérlőink számára",
+    "subtitle": "Sok közülük nem szerepel nyilvános portálokon",
     "scroll": "Görgessen tovább"
   },
   "search": {
@@ -44,7 +44,7 @@
     "submit": "Keresés",
     "roomsPlus": "{count}+",
     "advancedSearch": "Részletes keresés",
-    "locationPlaceholder": "Hol lenne az új otthonod?",
+    "locationPlaceholder": "Hol keres?",
     "pricePlaceholder": "Ár",
     "sizePlaceholder": "Alapterület",
     "sizeMin": "Min. alapterület",
@@ -218,7 +218,7 @@
   "about": {
     "eyebrow": "Rólunk",
     "title": "Diszkréció, amelyre számíthat",
-    "body": "A My Home Budapest egy exkluzív ingatlanügynökség, amely prémium kategóriás ingatlanokra specializálódott. Ügyfeleink magyar és nemzetközi vevők és bérlők, valamint eladók és bérbeadók, akik értékelik a diszkréciót, a személyre szabott figyelmet és a kifogástalan minőséget. Portfóliónkban sok olyan ingatlan szerepel, amely nem jelenik meg nyilvános hirdetési oldalakon.",
+    "body": "Oláh Krisztina vagyok, a MyHome Ingatlan Iroda tulajdonosa.\n2005 óta foglalkozom ingatlanközvetítéssel. Irodánk 2010 óta van jelen a prémium kategóriás ingatlanok piacán.\nSzámtalan külföldi és magyar ügyfelünknek segítettük megtalálni otthonukat, értékesítésnél, kiadásnál segítettük a tulajdonosokat megfelelő bérlőt, vevőt találni.\nFőként a budapesti ingatlanok területén vagyunk jártasak, de megtalálható a portfóliónkban balatoni, Pest környéki ingatlan is.\nRengeteg kizárólagos megbízásunk van. Több ügyvéd, közjegyző, profi fotós segíti munkánkat.\nCélunk, hogy a prémium ingatlanok értékesítéséhez kiemelkedő minőségű ingatlanügynökségi szolgáltatásokat nyújtsunk és levegyük ügyfeleink válláról a terhet a vétellel, eladással, vagy akár a bérléssel, kiadással kapcsolatban, és a legjobb ajánlatok megtalálásához segítsük őket.\nTöbb társirodával működünk együtt, így azok adatbázisait is megismerhetik ügyfeleink.\nA több év tapasztalat segít bennünket a sikeres ingatlanügyletek megkötésében.\nÜgyfeleinknek időt és energiát takarítunk meg azzal, hogy az igényeikre szabott ingatlanokat találjuk meg, az ingatlantulajdonosokat a felesleges telefonoktól, lakásmutatásoktól kíméljük meg.\nKeressen minket és reméljük közösen sikeresek leszünk!",
     "cta": "Vegye fel velünk a kapcsolatot"
   },
   "contact": {
@@ -227,7 +227,7 @@
     "subtitle": "Írjon nekünk, és diszkréten, személyre szabottan segítünk — vevőként, bérlőként, eladóként vagy bérbeadóként egyaránt.",
     "infoTitle": "Elérhetőség",
     "formTitle": "Írjon nekünk",
-    "messagePlaceholder": "Miben segíthetünk? Írja le röviden, mit keres…",
+    "messagePlaceholder": "Miben segíthetünk? (pl. ingatlan vásárlás, bérlet, vagy eladó ingatlannal kapcsolatos kérdés)",
     "followLabel": "Kövessen minket",
     "responseNote": "Munkanapokon általában 24 órán belül válaszolunk."
   },

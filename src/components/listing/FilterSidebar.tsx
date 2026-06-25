@@ -4,7 +4,6 @@ import { useLocale, useTranslations } from 'next-intl';
 import { X } from 'lucide-react';
 import {
   DISTRICTS,
-  ENERGY_RATINGS,
   HEATING_OPTIONS,
   PROPERTY_TYPES,
   ROOM_OPTIONS,
@@ -319,23 +318,6 @@ export default function FilterSidebar({
             ))}
           </div>
         </fieldset>
-
-        {/* Energy rating */}
-        <div className="mb-6">
-          <p className={legend}>{t('energy')}</p>
-          <div className="flex flex-wrap gap-2">
-            {ENERGY_RATINGS.map((er) => (
-              <button
-                key={er}
-                type="button"
-                onClick={() => onChange({ energyRatings: toggle(state.energyRatings, er) })}
-                className={chipBtn(state.energyRatings.includes(er))}
-              >
-                {er}
-              </button>
-            ))}
-          </div>
-        </div>
 
         {/* Garden */}
         <div className="mb-6">

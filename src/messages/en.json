@@ -13,8 +13,8 @@
   },
   "hero": {
     "eyebrow": "Discreet, off-market portfolio",
-    "title": "Budapest’s most exceptional homes",
-    "subtitle": "Exclusive properties — many of which are not listed on public portals — reserved solely for our discerning buyers and tenants.",
+    "title": "Exclusive Properties for Our Discerning Buyers and Tenants",
+    "subtitle": "Many of which are not listed on public portals",
     "scroll": "Scroll to explore"
   },
   "search": {
@@ -44,7 +44,7 @@
     "submit": "Search",
     "roomsPlus": "{count}+",
     "advancedSearch": "Advanced search",
-    "locationPlaceholder": "Where would your new home be?",
+    "locationPlaceholder": "Where are you looking?",
     "pricePlaceholder": "Price",
     "sizePlaceholder": "Floor area",
     "sizeMin": "Min. floor area",
@@ -218,7 +218,7 @@
   "about": {
     "eyebrow": "About us",
     "title": "Discretion you can rely on",
-    "body": "My Home Budapest is an exclusive real estate agency specialising in premium properties. Our clients are Hungarian and international buyers and tenants, as well as sellers and landlords, who value discretion, personal attention and impeccable quality. Many of our properties do not appear on public listing portals.",
+    "body": "I am Krisztina Oláh, owner of MyHome Real Estate Agency.\nI have been working in real estate since 2005. Our agency has been present in the premium property market since 2010.\nWe have helped countless Hungarian and international clients find their homes, and assisted property owners in finding the right tenants and buyers.\nWe specialize primarily in Budapest properties, but our portfolio also includes properties around Lake Balaton and the Pest region.\nWe have numerous exclusive mandates. Several lawyers, notaries and professional photographers support our work.\nOur goal is to provide outstanding real estate services for premium properties — taking the burden off our clients' shoulders whether buying, selling, renting or letting, and helping them find the best offers.\nWe cooperate with several partner agencies, giving our clients access to their databases as well.\nOur years of experience help us successfully close real estate transactions.\nWe save our clients time and energy by finding properties tailored to their needs, and sparing property owners from unnecessary phone calls and viewings.\nContact us — we hope to succeed together!",
     "cta": "Get in touch"
   },
   "contact": {
@@ -227,7 +227,7 @@
     "subtitle": "Write to us and we'll help discreetly and personally — whether you are a buyer, tenant, seller or landlord.",
     "infoTitle": "Contact details",
     "formTitle": "Write to us",
-    "messagePlaceholder": "How can we help? Briefly describe what you're looking for…",
+    "messagePlaceholder": "How can we help? (e.g. buying, renting, or selling a property)",
     "followLabel": "Follow us",
     "responseNote": "We usually reply within 24 hours on business days."
   },

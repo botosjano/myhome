@@ -1,9 +1,10 @@
 import { useTranslations } from 'next-intl';
-import { Facebook, Instagram, Mail } from 'lucide-react';
+import { Facebook, Instagram, Mail, Phone } from 'lucide-react';
 import { Link } from '@/navigation';
 import Logo from './Logo';
 
 const CONTACT_EMAIL = 'myhome@olahkrisztina.hu';
+const CONTACT_PHONE = '+36 30 941 4510';
 
 export default function Footer() {
   const t = useTranslations();
@@ -54,6 +55,13 @@ export default function Footer() {
             >
               <Mail className="h-4 w-4 text-gold" />
               {CONTACT_EMAIL}
+            </a>
+            <a
+              href={`tel:${CONTACT_PHONE.replace(/\s/g, '')}`}
+              className="mt-2 flex items-center gap-2 font-sans text-sm text-white/70 transition-colors hover:text-gold"
+            >
+              <Phone className="h-4 w-4 text-gold" />
+              {CONTACT_PHONE}
             </a>
             <h3 className="eyebrow mb-3 mt-6">{t('footer.follow')}</h3>
             <div className="flex gap-3">

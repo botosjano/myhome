@@ -4,8 +4,6 @@ import { useLocale } from 'next-intl';
 import { usePathname, useRouter } from '@/navigation';
 import { cn } from '@/lib/utils';
 
-const FLAGS: Record<string, string> = { hu: '🇭🇺', en: '🇬🇧' };
-
 export default function LanguageSwitcher({ light = false }: { light?: boolean }) {
   const locale = useLocale();
   const pathname = usePathname();
@@ -34,7 +32,6 @@ export default function LanguageSwitcher({ light = false }: { light?: boolean })
                   : 'text-navy/60 hover:text-navy',
             )}
           >
-            <span aria-hidden>{FLAGS[l]}</span>
             <span className="text-xs font-medium">{l.toUpperCase()}</span>
           </button>
         </span>

@@ -4,12 +4,7 @@ import { useState } from 'react';
 import { useLocale, useTranslations } from 'next-intl';
 import { ChevronDown, MapPin, Search, X } from 'lucide-react';
 import { useRouter } from '@/navigation';
-import {
-  ENERGY_RATINGS,
-  HEATING_OPTIONS,
-  PROPERTY_TYPES,
-  ROOM_OPTIONS,
-} from '@/lib/districts';
+import { HEATING_OPTIONS, PROPERTY_TYPES, ROOM_OPTIONS } from '@/lib/districts';
 import { cn } from '@/lib/utils';
 import LocationPicker from './LocationPicker';
 
@@ -118,7 +113,6 @@ export default function SearchBox() {
   const [roomsMin, setRoomsMin] = useState(0);
   const [roomsMax, setRoomsMax] = useState(0);
   const [heating, setHeating] = useState<string[]>([]);
-  const [energy, setEnergy] = useState<string[]>([]);
   const [garden, setGarden] = useState(false);
   const [parking, setParking] = useState(false);
   const [lift, setLift] = useState(false);
@@ -148,7 +142,6 @@ export default function SearchBox() {
     if (roomsMin > 0) params.set('roomsMin', String(roomsMin));
     if (roomsMax > 0) params.set('roomsMax', String(roomsMax));
     if (heating.length) params.set('heating', heating.join(','));
-    if (energy.length) params.set('energy', energy.join(','));
     if (garden) params.set('garden', '1');
     if (parking) params.set('parking', '1');
     if (lift) params.set('lift', '1');
@@ -376,23 +369,6 @@ export default function SearchBox() {
                   </option>
                 ))}
               </select>
-            </div>
-          </div>
-
-          {/* Energy rating */}
-          <div>
-            <span className={legend}>{t('energy')}</span>
-            <div className="flex flex-wrap gap-2">
-              {ENERGY_RATINGS.map((er) => (
-                <button
-                  key={er}
-                  type="button"
-                  onClick={() => setEnergy((a) => toggle(a, er))}
-                  className={pill(energy.includes(er))}
-                >
-                  {er}
-                </button>
-              ))}
             </div>
           </div>
 

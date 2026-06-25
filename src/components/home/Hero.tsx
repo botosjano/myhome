@@ -1,6 +1,5 @@
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
-import { ChevronDown } from 'lucide-react';
 import SearchBox from './SearchBox';
 
 export default function Hero() {
@@ -21,21 +20,16 @@ export default function Hero() {
 
       {/* Content */}
       <div className="relative z-10 mx-auto flex w-full max-w-5xl flex-col items-center px-5 pt-28 text-center">
-        <p className="eyebrow mb-4">{t('eyebrow')}</p>
         <h1 className="max-w-4xl font-serif text-5xl font-light leading-[1.1] tracking-wide text-white sm:text-6xl lg:text-7xl">
           {t('title')}
         </h1>
-        <p className="mx-auto mt-5 max-w-2xl font-sans text-base leading-relaxed text-white/80 sm:text-lg">
+        <p className="mx-auto mt-5 max-w-2xl font-sans text-base leading-relaxed text-gold sm:text-lg">
           {t('subtitle')}
         </p>
 
         <div className="mt-10 w-full">
           <SearchBox />
         </div>
-      </div>
-
-      <div className="absolute bottom-6 left-1/2 z-10 -translate-x-1/2 text-gold">
-        <ChevronDown className="h-7 w-7 animate-bounce" />
       </div>
     </section>
   );

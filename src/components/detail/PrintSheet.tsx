@@ -85,7 +85,7 @@ export default async function PrintSheet({
 
       {/* Contact footer */}
       <div className="mt-6 flex items-center justify-between border-t border-gold pt-3 font-sans text-[11px] text-navy/80">
-        <span>myhome@olahkrisztina.hu</span>
+        <span>myhome@olahkrisztina.hu · +36 30 941 4510</span>
         <span className="font-semibold uppercase tracking-widest text-gold-dark">My Home Budapest</span>
         <span>myhomebudapest.hu</span>
       </div>
