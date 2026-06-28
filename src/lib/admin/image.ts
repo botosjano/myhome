@@ -81,3 +81,43 @@ export async function optimizeImage(file: File): Promise<string> {
 export async function optimizeImages(files: File[]): Promise<string[]> {
   return Promise.all(files.map(optimizeImage));
 }
+
+/** An optimised image ready to upload: the encoded bytes plus their MIME type. */
+export interface OptimizedBlob {
+  blob: Blob;
+  type: string;
+}
+
+/** Promisified canvas.toBlob — resolves null if the browser can't encode the mime. */
+function canvasToBlob(canvas: HTMLCanvasElement, mime: string, quality: number): Promise<Blob | null> {
+  return new Promise((resolve) => canvas.toBlob(resolve, mime, quality));
+}
+
+/**
+ * Resize + re-encode a single file to a WebP {@link Blob} for upload to Storage.
+ * Mirrors {@link optimizeImage} but yields binary bytes (no base64 bloat) so the
+ * upload is ~33% smaller. Falls back to JPEG, then to the original file.
+ */
+export async function optimizeImageToBlob(file: File): Promise<OptimizedBlob> {
+  try {
+    const img = await loadImage(file);
+    const scale = Math.min(1, MAX_EDGE / Math.max(img.width, img.height));
+    const w = Math.max(1, Math.round(img.width * scale));
+    const h = Math.max(1, Math.round(img.height * scale));
+
+    const canvas = document.createElement('canvas');
+    canvas.width = w;
+    canvas.height = h;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return { blob: file, type: file.type || 'image/jpeg' };
+    ctx.drawImage(img, 0, 0, w, h);
+
+    const mime = canEncodeWebp() ? 'image/webp' : 'image/jpeg';
+    const blob = await canvasToBlob(canvas, mime, WEBP_QUALITY);
+    if (blob) return { blob, type: mime };
+    return { blob: file, type: file.type || 'image/jpeg' };
+  } catch {
+    // HEIC or anything the browser can't decode — keep the original rather than lose it.
+    return { blob: file, type: file.type || 'image/jpeg' };
+  }
+}

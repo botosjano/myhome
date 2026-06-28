@@ -8,6 +8,8 @@ const nextConfig = {
     remotePatterns: [
       { protocol: 'https', hostname: 'images.unsplash.com' },
       { protocol: 'https', hostname: 'plus.unsplash.com' },
+      // Supabase Storage (property-images bucket) — public photo URLs
+      { protocol: 'https', hostname: '*.supabase.co' },
       // Cloudflare R2 bucket (configure later)
       { protocol: 'https', hostname: '*.r2.dev' },
     ],

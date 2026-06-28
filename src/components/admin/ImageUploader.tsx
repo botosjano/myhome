@@ -3,14 +3,16 @@
 import { useRef, useState } from 'react';
 import { ImagePlus, Loader2, Star, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { optimizeImages } from '@/lib/admin/image';
+import { optimizeImageToBlob } from '@/lib/admin/image';
+
+const TOKEN_KEY = 'mh_admin_token';
 
 /**
- * Drag & drop, reorderable image uploader. Dropped images are resized and
- * re-encoded to WebP (~300 KB) in the browser before storage — see
- * {@link optimizeImages}. Stored as data URLs for the mock phase (swap for
- * Supabase Storage uploads later). The first image is the main/cover photo.
- * Reorder by dragging the thumbnails.
+ * Drag & drop, reorderable image uploader. Each dropped image is resized and
+ * re-encoded to WebP (~300 KB) in the browser, then uploaded to Supabase Storage
+ * via /api/upload-image. We store the returned permanent public URL in the
+ * property's `images[]` (not a base64 data URL). The first image is the cover
+ * photo. Reorder by dragging the thumbnails.
  */
 export default function ImageUploader({
   images,
@@ -22,18 +24,48 @@ export default function ImageUploader({
   const inputRef = useRef<HTMLInputElement>(null);
   const [dragOver, setDragOver] = useState(false);
   const [processing, setProcessing] = useState(false);
+  const [progress, setProgress] = useState<{ done: number; total: number } | null>(null);
+  const [error, setError] = useState<string | null>(null);
   const dragIndex = useRef<number | null>(null);
+
+  // Optimise then upload one file to Storage; returns its public URL.
+  const uploadOne = async (file: File): Promise<string> => {
+    const { blob, type } = await optimizeImageToBlob(file);
+    const token = typeof window !== 'undefined' ? localStorage.getItem(TOKEN_KEY) ?? '' : '';
+    const form = new FormData();
+    const ext = type === 'image/webp' ? 'webp' : type === 'image/png' ? 'png' : 'jpg';
+    form.append('file', blob, `photo.${ext}`);
+    form.append('token', token);
+    const res = await fetch('/api/upload-image', { method: 'POST', body: form });
+    const json = await res.json().catch(() => ({}));
+    if (!res.ok || !json.ok || !json.url) {
+      throw new Error(json.error || 'A kép feltöltése nem sikerült.');
+    }
+    return json.url as string;
+  };
 
   const addFiles = async (files: FileList | null) => {
     if (!files) return;
     const imageFiles = Array.from(files).filter((f) => f.type.startsWith('image/'));
     if (imageFiles.length === 0) return;
+    setError(null);
     setProcessing(true);
+    setProgress({ done: 0, total: imageFiles.length });
+    // Upload sequentially so progress is meaningful and we don't hammer the route.
+    const uploaded: string[] = [];
     try {
-      const urls = await optimizeImages(imageFiles);
-      onChange([...images, ...urls]);
+      for (const file of imageFiles) {
+        uploaded.push(await uploadOne(file));
+        setProgress((p) => (p ? { ...p, done: p.done + 1 } : p));
+      }
+      onChange([...images, ...uploaded]);
+    } catch (e) {
+      // Keep whatever uploaded successfully before the failure.
+      if (uploaded.length) onChange([...images, ...uploaded]);
+      setError(e instanceof Error ? e.message : 'A kép feltöltése nem sikerült.');
     } finally {
       setProcessing(false);
+      setProgress(null);
     }
   };
 
@@ -74,7 +106,7 @@ export default function ImageUploader({
         )}
         <p className="font-sans text-sm text-navy/70">
           {processing ? (
-            'Képek feldolgozása…'
+            progress ? `Feltöltés… (${progress.done}/${progress.total})` : 'Képek feldolgozása…'
           ) : (
             <>
               Húzza ide a képeket, vagy <span className="text-gold underline">tallózzon</span>
@@ -96,6 +128,10 @@ export default function ImageUploader({
           }}
         />
       </div>
+
+      {error && (
+        <p className="mt-2 font-sans text-sm text-red-600">{error}</p>
+      )}
 
       {/* Thumbnails */}
       {images.length > 0 && (
