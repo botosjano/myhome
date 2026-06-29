@@ -13,6 +13,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
       { url: `${BASE}/${locale}`, changeFrequency: 'weekly', priority: 1 },
       { url: `${BASE}/${locale}/ingatlanok`, changeFrequency: 'daily', priority: 0.9 },
       { url: `${BASE}/${locale}/kapcsolat`, changeFrequency: 'monthly', priority: 0.5 },
+      {
+        url: `${BASE}/${locale}/${locale === 'hu' ? 'adatkezeles' : 'privacy-policy'}`,
+        changeFrequency: 'yearly',
+        priority: 0.2,
+      },
     );
 
     for (const p of MOCK_PROPERTIES) {

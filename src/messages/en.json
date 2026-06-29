@@ -246,6 +246,15 @@
     "intentElado": "I want to sell my property",
     "intentBerbeado": "I want to let my property"
   },
+  "cookie": {
+    "title": "We use cookies",
+    "text": "Our website uses cookies to improve your experience. By clicking ‘Accept’, you consent to the use of cookies.",
+    "accept": "Accept",
+    "privacy": "Privacy Policy"
+  },
+  "privacy": {
+    "link": "Privacy Policy"
+  },
   "card": {
     "featured": "Featured",
     "forSale": "For sale",

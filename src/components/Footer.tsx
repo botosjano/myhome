@@ -1,4 +1,4 @@
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import { Facebook, Instagram, Mail, Phone } from 'lucide-react';
 import { Link } from '@/navigation';
 import Logo from './Logo';
@@ -8,6 +8,8 @@ const CONTACT_PHONE = '+36 30 941 4510';
 
 export default function Footer() {
   const t = useTranslations();
+  const locale = useLocale();
+  const privacyHref = locale === 'hu' ? '/adatkezeles' : '/privacy-policy';
 
   const links = [
     { href: '/', label: t('nav.home') },
@@ -83,7 +85,13 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="mt-14 border-t border-white/10 pt-6">
+        <div className="mt-14 flex flex-col items-center gap-2 border-t border-white/10 pt-6">
+          <Link
+            href={privacyHref}
+            className="font-sans text-xs text-white/50 transition-colors hover:text-gold"
+          >
+            {t('privacy.link')}
+          </Link>
           <p className="text-center font-sans text-xs text-white/40">
             {t('footer.rights')} / All rights reserved.
           </p>

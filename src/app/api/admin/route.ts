@@ -115,24 +115,6 @@ export async function POST(request: Request) {
           .reduce((a, b) => Math.max(a, b), 1040);
         return NextResponse.json({ ok: true, data: `MH-${max + 1}` });
       }
-      case 'listInquiries': {
-        const { data, error } = await db
-          .from('inquiries')
-          .select('*')
-          .order('created_at', { ascending: false });
-        if (error) throw error;
-        return NextResponse.json({ ok: true, data });
-      }
-      case 'setInquiryRead': {
-        const { error } = await db.from('inquiries').update({ read: body.read }).eq('id', body.id);
-        if (error) throw error;
-        return NextResponse.json({ ok: true });
-      }
-      case 'deleteInquiry': {
-        const { error } = await db.from('inquiries').delete().eq('id', body.id);
-        if (error) throw error;
-        return NextResponse.json({ ok: true });
-      }
       default:
         return NextResponse.json({ ok: false, error: 'unknown action' }, { status: 400 });
     }

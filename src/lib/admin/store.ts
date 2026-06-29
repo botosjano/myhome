@@ -1,6 +1,6 @@
 'use client';
 
-import type { Inquiry, Property, PropertyStatus } from '../types';
+import type { Property, PropertyStatus } from '../types';
 import { MOCK_PROPERTIES } from '../mock-data';
 
 /**
@@ -8,10 +8,12 @@ import { MOCK_PROPERTIES } from '../mock-data';
  * /api/admin RPC (which writes with the secret key); otherwise it falls back to
  * a localStorage mock so local dev without keys still works. Same async API
  * either way, so the UI is unchanged.
+ *
+ * Leads/inquiries are NOT handled here — they go straight to the GoHighLevel CRM
+ * via the Cloudflare Worker (see src/lib/lead.ts).
  */
 
 const PKEY = 'mh_admin_properties_v1';
-const IKEY = 'mh_admin_inquiries_v1';
 const TOKEN_KEY = 'mh_admin_token';
 const useApi = Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL);
 
@@ -41,8 +43,6 @@ async function rpc<T>(action: string, payload: Record<string, unknown> = {}): Pr
 }
 
 // ── localStorage fallback helpers ────────────────────────────────────────────
-const SEED_INQUIRIES: Inquiry[] = [];
-
 function read<T>(key: string, seed: T[]): T[] {
   if (typeof window === 'undefined') return seed;
   const raw = window.localStorage.getItem(key);
@@ -138,49 +138,4 @@ export async function nextReference(): Promise<string> {
     .filter((n) => Number.isFinite(n))
     .reduce((a, b) => Math.max(a, b), 1040);
   return `MH-${max + 1}`;
-}
-
-// ── Inquiries ────────────────────────────────────────────────────────────────
-export async function listInquiries(): Promise<Inquiry[]> {
-  if (useApi) return (await rpc<Inquiry[]>('listInquiries')) ?? [];
-  return read<Inquiry>(IKEY, SEED_INQUIRIES).sort(
-    (a, b) => +new Date(b.created_at) - +new Date(a.created_at),
-  );
-}
-
-/** Public inquiry submission persists via /api/inquiry; this is the localStorage fallback only. */
-export async function createInquiry(
-  draft: Omit<Inquiry, 'id' | 'created_at' | 'read'>,
-): Promise<void> {
-  if (useApi) return; // handled server-side by /api/inquiry
-  const list = read<Inquiry>(IKEY, SEED_INQUIRIES);
-  const inquiry: Inquiry = {
-    ...draft,
-    id: genId('q'),
-    created_at: new Date().toISOString(),
-    read: false,
-  };
-  write(IKEY, [inquiry, ...list]);
-}
-
-export async function setInquiryRead(id: string, read_: boolean): Promise<void> {
-  if (useApi) {
-    await rpc('setInquiryRead', { id, read: read_ });
-    return;
-  }
-  write(
-    IKEY,
-    read<Inquiry>(IKEY, SEED_INQUIRIES).map((q) => (q.id === id ? { ...q, read: read_ } : q)),
-  );
-}
-
-export async function deleteInquiry(id: string): Promise<void> {
-  if (useApi) {
-    await rpc('deleteInquiry', { id });
-    return;
-  }
-  write(
-    IKEY,
-    read<Inquiry>(IKEY, SEED_INQUIRIES).filter((q) => q.id !== id),
-  );
 }

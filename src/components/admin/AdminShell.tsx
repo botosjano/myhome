@@ -3,14 +3,13 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { Building2, LayoutDashboard, LogOut, Mail, Menu, X } from 'lucide-react';
+import { Building2, LayoutDashboard, LogOut, Menu, X } from 'lucide-react';
 import { logout } from '@/lib/admin/auth';
 import { cn } from '@/lib/utils';
 
 const NAV = [
   { href: '/admin', label: 'Áttekintés', icon: LayoutDashboard, exact: true },
   { href: '/admin/ingatlanok', label: 'Ingatlanok', icon: Building2, exact: false },
-  { href: '/admin/erdeklodok', label: 'Érdeklődők', icon: Mail, exact: false },
 ];
 
 export default function AdminShell({ children }: { children: React.ReactNode }) {

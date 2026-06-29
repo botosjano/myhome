@@ -246,6 +246,15 @@
     "intentElado": "Eladnám az ingatlanom",
     "intentBerbeado": "Bérbeadnám az ingatlanom"
   },
+  "cookie": {
+    "title": "Sütiket használunk",
+    "text": "Weboldalunk sütiket (cookie-kat) használ a jobb felhasználói élmény érdekében. Az „Elfogadom” gombra kattintva hozzájárul a sütik használatához.",
+    "accept": "Elfogadom",
+    "privacy": "Adatkezelési tájékoztató"
+  },
+  "privacy": {
+    "link": "Adatkezelési tájékoztató"
+  },
   "card": {
     "featured": "Kiemelt",
     "forSale": "Eladó",

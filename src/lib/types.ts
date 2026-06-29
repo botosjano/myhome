@@ -70,18 +70,6 @@ export interface Property {
   created_at: string; // ISO
 }
 
-export interface Inquiry {
-  id: string;
-  created_at: string; // ISO
-  name: string;
-  email: string;
-  phone: string;
-  property_id: string | null;
-  property_ref: string | null; // reference number, for display
-  message: string;
-  read: boolean;
-}
-
 export interface PropertyFilters {
   type?: PropertyType | '';
   listingType?: ListingType | '';
