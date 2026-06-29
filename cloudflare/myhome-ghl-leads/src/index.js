@@ -20,7 +20,7 @@ const VERSION = '2021-07-28';
 // pipelineType → GHL pipeline id
 const PIPELINES = {
   vevo: 'BbOiPfaGrNjmYsDgS8ih', // Vevők
-  berlo: '2u0QVPbHogIFRBblsfr7', // Bérlők
+  berlo: '2u0QVPbHogIFRBbIsfr7', // Bérlők
   elado: 'nbc1tbFh05O0G6tYhiUo', // Eladók
   berbeado: '78CABqULTMkN29iWKvrS', // Bérbeadók
 };
@@ -222,6 +222,7 @@ export default {
     const cors = corsHeaders(origin);
 
     if (request.method === 'OPTIONS') return new Response(null, { status: 204, headers: cors });
+
     if (request.method !== 'POST') {
       return json({ ok: false, error: 'method not allowed' }, 405, cors);
     }
