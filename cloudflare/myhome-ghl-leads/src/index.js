@@ -107,6 +107,7 @@ async function loadStages(env) {
 async function loadFields(env) {
   if (fieldCache) return fieldCache;
   const map = {};
+  let complete = true; // only cache a fully-loaded map — never a partial one
   for (const model of ['contact', 'opportunity']) {
     try {
       const res = await fetchWithRetry(
@@ -115,6 +116,7 @@ async function loadFields(env) {
       );
       if (!res.ok) {
         console.log(`customFields(${model}) ${res.status}: ${await res.text()}`);
+        complete = false;
         continue;
       }
       const data = await res.json();
@@ -123,9 +125,12 @@ async function loadFields(env) {
       }
     } catch (e) {
       console.log(`customFields(${model}) error: ${e.message}`);
+      complete = false;
     }
   }
-  fieldCache = map;
+  // If a model failed, use this map for the current request but don't cache it,
+  // so the next request retries instead of being stuck with a partial map.
+  if (complete) fieldCache = map;
   return map;
 }
 
