@@ -161,14 +161,46 @@ function parseJsonLoose(text) {
   }
 }
 
+// Per-pipeline framing so Gemini interprets the message in the right role:
+// a buyer/renter describes what they're LOOKING FOR (max budget), a seller/
+// landlord describes their OWN property (asking/expected price + condition).
+const EXTRACT_CONTEXT = {
+  vevo: {
+    role: 'A felhasználó ingatlant KERES MEGVÁSÁRLÁSRA (ő a vevő).',
+    arDesc: 'a maximális vételár, amennyit szánna rá',
+    wantAllapot: false,
+  },
+  berlo: {
+    role: 'A felhasználó ingatlant KERES BÉRLÉSRE (ő a bérlő).',
+    arDesc: 'a maximális havi bérleti díj, amennyit vállalna',
+    wantAllapot: false,
+  },
+  elado: {
+    role: 'A felhasználó EL AKARJA ADNI a saját ingatlanát (ő az eladó).',
+    arDesc: 'a kért vagy becsült eladási ár',
+    wantAllapot: true,
+  },
+  berbeado: {
+    role: 'A felhasználó BÉRBE AKARJA ADNI a saját ingatlanát (ő a bérbeadó).',
+    arDesc: 'az elvárt havi bérleti díj',
+    wantAllapot: true,
+  },
+};
+
 /**
- * Extract structured property data from a free-text message with Gemini Flash.
- * Returns { tipus, meret_m2, ar, helyszin, allapot } or null on ANY failure
- * (missing key, HTTP error, bad JSON) — the caller then just saves the message.
+ * Extract structured property data from a free-text message with Gemini Flash,
+ * framed for the given pipelineType. Returns { tipus, meret_m2, ar, helyszin,
+ * allapot? } or null on ANY failure (missing key, HTTP error, bad JSON) — the
+ * caller then just saves the message.
  */
-async function extractWithGemini(env, message) {
-  if (!env.GEMINI_API_KEY || !message) return null;
-  const prompt = `Az alábbi üzenetből szedd ki az ingatlan adatokat JSON formátumban.
+async function extractWithGemini(env, message, pipelineType) {
+  const ctx = EXTRACT_CONTEXT[pipelineType];
+  if (!env.GEMINI_API_KEY || !message || !ctx) return null;
+  const allapotLine = ctx.wantAllapot
+    ? ',\n  "allapot": "Új/Felújított/Felújítandó vagy null"'
+    : '';
+  const prompt = `${ctx.role}
+Az alábbi üzenetből szedd ki az ingatlan adatokat JSON formátumban.
 Ha valamit nem találsz, az értéke legyen null.
 Csak JSON-t adj vissza, semmi mást.
 
@@ -178,9 +210,8 @@ Válasz formátuma:
 {
   "tipus": "Lakás/Ház/Villa/Penthouse/Telek/Nyaraló/Iroda/Üzlethelyiség/Fejlesztési terület vagy null",
   "meret_m2": szám vagy null,
-  "ar": "szöveg vagy null (pl. 150 MFt vagy 200000 EUR)",
-  "helyszin": "szöveg vagy null (pl. II. kerület vagy Balaton)",
-  "allapot": "Új/Felújított/Felújítandó vagy null"
+  "ar": "szöveg vagy null — ${ctx.arDesc} (pl. 150 MFt vagy 200000 EUR)",
+  "helyszin": "szöveg vagy null (pl. II. kerület vagy Balaton)"${allapotLine}
 }`;
   try {
     const res = await fetch(
@@ -332,7 +363,9 @@ export default {
       // so the lead is still created, just without the extracted fields.
       const [contactId, extracted] = await Promise.all([
         upsertContact(env, body, fields),
-        body.formType === 'contact' ? extractWithGemini(env, body.message) : Promise.resolve(null),
+        body.formType === 'contact'
+          ? extractWithGemini(env, body.message, body.pipelineType)
+          : Promise.resolve(null),
       ]);
       if (!contactId) throw new Error('contact upsert returned no id');
       const opportunityId = await createOpportunity(env, body, contactId, stages, fields, extracted);
