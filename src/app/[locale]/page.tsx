@@ -3,6 +3,7 @@ import Hero from '@/components/home/Hero';
 import PropertyGrid from '@/components/home/PropertyGrid';
 import FeaturedSection from '@/components/home/FeaturedSection';
 import About from '@/components/home/About';
+import CtaSection from '@/components/home/CtaSection';
 import { fetchActiveProperties } from '@/lib/properties';
 
 // Statically generated; refreshed on demand when a listing changes (admin calls
@@ -34,6 +35,8 @@ export default async function HomePage({ params: { locale } }: { params: { local
       <FeaturedSection properties={featured} />
 
       <About />
+
+      <CtaSection />
     </>
   );
 }

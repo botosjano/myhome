@@ -246,6 +246,13 @@
     "intentElado": "I want to sell my property",
     "intentBerbeado": "I want to let my property"
   },
+  "homeCta": {
+    "eyebrow": "Contact",
+    "title": "Let’s talk about your home",
+    "text": "Whether you are buying, selling, renting or letting — we help discreetly and personally. Get in touch and we’ll be in touch shortly.",
+    "button": "Get in touch",
+    "phoneLabel": "Or call us"
+  },
   "cookie": {
     "title": "We use cookies",
     "text": "Our website uses cookies to improve your experience. By clicking ‘Accept’, you consent to the use of cookies.",

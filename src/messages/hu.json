@@ -246,6 +246,13 @@
     "intentElado": "Eladnám az ingatlanom",
     "intentBerbeado": "Bérbeadnám az ingatlanom"
   },
+  "homeCta": {
+    "eyebrow": "Kapcsolat",
+    "title": "Beszéljünk az otthonáról",
+    "text": "Akár vásárolna, eladna, bérelne vagy bérbe adna — diszkréten és személyre szabottan segítünk. Vegye fel velünk a kapcsolatot, és hamarosan jelentkezünk.",
+    "button": "Kapcsolatfelvétel",
+    "phoneLabel": "Vagy hívjon minket"
+  },
   "cookie": {
     "title": "Sütiket használunk",
     "text": "Weboldalunk sütiket (cookie-kat) használ a jobb felhasználói élmény érdekében. Az „Elfogadom” gombra kattintva hozzájárul a sütik használatához.",

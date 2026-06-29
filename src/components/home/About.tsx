@@ -1,6 +1,7 @@
 import { useTranslations } from 'next-intl';
 import Image from 'next/image';
 import { ArrowRight } from 'lucide-react';
+import { Link } from '@/navigation';
 
 export default function About() {
   const t = useTranslations('about');
@@ -29,10 +30,10 @@ export default function About() {
                 <p key={i}>{para}</p>
               ))}
           </div>
-          <a href="mailto:myhome@olahkrisztina.hu" className="btn-gold mt-8">
+          <Link href="/kapcsolat" className="btn-gold mt-8">
             {t('cta')}
             <ArrowRight className="h-4 w-4" />
-          </a>
+          </Link>
         </div>
       </div>
     </section>
