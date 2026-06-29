@@ -80,7 +80,8 @@ export default async function ContactPage({ params }: { params: Params }) {
 
         {/* Form */}
         <div className="rounded-sm border border-navy/10 bg-cream p-6 shadow-card sm:p-8">
-          <h2 className="mb-5 font-serif text-2xl text-navy">{t('formTitle')}</h2>
+          <h2 className="mb-2 font-serif text-2xl text-navy">{t('formTitle')}</h2>
+          <p className="mb-5 font-sans text-sm leading-relaxed text-navy/60">{t('formIntro')}</p>
           <ContactForm />
         </div>
       </div>
