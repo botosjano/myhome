@@ -24,7 +24,18 @@ never have to paste field ids. Field names must match exactly (e.g.
 | Name | Type | Value |
 |------|------|-------|
 | `GHL_TOKEN` | **Secret** | GHL Private Integration token |
-| `GHL_LOCATION_ID` | Variable | `B1iKfxKj65UywKnJvYHz` |
+| `GHL_LOCATION_ID` | Variable | `B1iKfxKj65UywKnJvYHz` (no trailing space!) |
+| `GEMINI_API_KEY` | **Secret** | Google Gemini API key (for AI extraction) |
+
+## AI extraction (Gemini Flash)
+
+For the **contact form only** (`formType: "contact"`), the message is sent to
+**gemini-2.0-flash** to extract `{ tipus, meret_m2, ar, helyszin, allapot }`,
+which is mapped to per-pipeline GHL custom fields (e.g. `Eladó - Becsült ár`,
+`Vevő - Keresett helyszín`). Property inquiries skip this (the data is already
+known). If Gemini fails or returns invalid JSON, the lead is still created — just
+without the extracted fields. The Gemini call runs in parallel with the contact
+upsert, so it adds little latency.
 
 ## Deploy
 
