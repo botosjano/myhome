@@ -62,10 +62,34 @@ function ghlHeaders(env) {
   };
 }
 
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+
+/**
+ * fetch with automatic retry on TRANSIENT failures (network error, 429, 5xx),
+ * so a momentary GHL hiccup never drops a lead. 4xx are returned immediately
+ * (retrying won't help). Backoff grows: 400ms, 1000ms before the 2nd/3rd try.
+ */
+async function fetchWithRetry(url, init, attempts = 3) {
+  let last;
+  for (let i = 0; i < attempts; i++) {
+    try {
+      const res = await fetch(url, init);
+      if (res.status < 500 && res.status !== 429) return res; // success or non-retryable
+      last = res;
+    } catch (e) {
+      last = e;
+      if (i === attempts - 1) throw e;
+    }
+    if (i < attempts - 1) await sleep(i === 0 ? 400 : 1000);
+  }
+  if (last instanceof Response) return last; // exhausted: hand back the 5xx/429
+  throw last;
+}
+
 /** Resolve the first stage id of every pipeline (cached). */
 async function loadStages(env) {
   if (stageCache) return stageCache;
-  const res = await fetch(`${GHL}/opportunities/pipelines?locationId=${env.GHL_LOCATION_ID}`, {
+  const res = await fetchWithRetry(`${GHL}/opportunities/pipelines?locationId=${env.GHL_LOCATION_ID}`, {
     headers: ghlHeaders(env),
   });
   if (!res.ok) throw new Error(`pipelines fetch ${res.status}: ${await res.text()}`);
@@ -85,7 +109,7 @@ async function loadFields(env) {
   const map = {};
   for (const model of ['contact', 'opportunity']) {
     try {
-      const res = await fetch(
+      const res = await fetchWithRetry(
         `${GHL}/locations/${env.GHL_LOCATION_ID}/customFields?model=${model}`,
         { headers: ghlHeaders(env) },
       );
@@ -134,7 +158,7 @@ async function upsertContact(env, body, fields) {
     customFields,
   };
 
-  const res = await fetch(`${GHL}/contacts/upsert`, {
+  const res = await fetchWithRetry(`${GHL}/contacts/upsert`, {
     method: 'POST',
     headers: ghlHeaders(env),
     body: JSON.stringify(payload),
@@ -319,7 +343,7 @@ async function createOpportunity(env, body, contactId, stages, fields, extracted
     customFields: opportunityFields(body, fields, extracted),
   };
 
-  const res = await fetch(`${GHL}/opportunities/`, {
+  const res = await fetchWithRetry(`${GHL}/opportunities/`, {
     method: 'POST',
     headers: ghlHeaders(env),
     body: JSON.stringify(payload),
