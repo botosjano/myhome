@@ -15,7 +15,9 @@
     "eyebrow": "Discreet, off-market portfolio",
     "title": "Exclusive Properties for Our Discerning Buyers and Tenants",
     "subtitle": "Many of which are not listed on public portals",
-    "scroll": "Scroll to explore"
+    "scroll": "Scroll to explore",
+    "ctaText": "Can’t find what you’re looking for?",
+    "ctaButton": "Get in touch"
   },
   "search": {
     "title": "Search the portfolio",

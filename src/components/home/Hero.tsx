@@ -1,5 +1,7 @@
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
+import { ArrowRight } from 'lucide-react';
+import { Link } from '@/navigation';
 import SearchBox from './SearchBox';
 
 export default function Hero() {
@@ -29,6 +31,18 @@ export default function Hero() {
 
         <div className="mt-10 w-full">
           <SearchBox />
+        </div>
+
+        {/* Secondary CTA — for visitors who'd rather reach out than search. */}
+        <div className="mt-7 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
+          <span className="font-sans text-sm text-white/70">{t('ctaText')}</span>
+          <Link
+            href="/kapcsolat"
+            className="inline-flex items-center gap-2 rounded-sm border border-gold/50 px-5 py-2.5 font-sans text-sm text-white transition-colors hover:bg-gold hover:text-navy"
+          >
+            {t('ctaButton')}
+            <ArrowRight className="h-4 w-4" />
+          </Link>
         </div>
       </div>
     </section>

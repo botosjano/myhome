@@ -15,7 +15,9 @@
     "eyebrow": "Diszkrét, off-market portfólió",
     "title": "Exkluzív ingatlanok igényes vevőink és bérlőink számára",
     "subtitle": "Sok közülük nem szerepel nyilvános portálokon",
-    "scroll": "Görgessen tovább"
+    "scroll": "Görgessen tovább",
+    "ctaText": "Nem találja, amit keres?",
+    "ctaButton": "Kapcsolatfelvétel"
   },
   "search": {
     "title": "Keresés a portfólióban",
