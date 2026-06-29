@@ -231,6 +231,21 @@
     "followLabel": "Kövessen minket",
     "responseNote": "Munkanapokon általában 24 órán belül válaszolunk."
   },
+  "lead": {
+    "sourceLabel": "Honnan talált ránk?",
+    "sourcePlaceholder": "Kérjük, válasszon…",
+    "sourceGoogle": "Google",
+    "sourceFacebook": "Facebook",
+    "sourceInstagram": "Instagram",
+    "sourceReferral": "Ajánlás",
+    "sourceOther": "Egyéb",
+    "intentLabel": "Miben segíthetünk?",
+    "intentPlaceholder": "Kérjük, válasszon…",
+    "intentVevo": "Vásárolnék",
+    "intentBerlo": "Bérelnék",
+    "intentElado": "Eladnám az ingatlanom",
+    "intentBerbeado": "Bérbeadnám az ingatlanom"
+  },
   "card": {
     "featured": "Kiemelt",
     "forSale": "Eladó",

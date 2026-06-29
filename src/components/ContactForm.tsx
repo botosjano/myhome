@@ -3,28 +3,41 @@
 import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { Check, Send } from 'lucide-react';
+import { LEAD_SOURCES, submitLead, type PipelineType } from '@/lib/lead';
+import { sourceLabel } from '@/components/detail/InquiryForm';
 
 type Status = 'idle' | 'sending' | 'success' | 'error';
+
+const INTENTS: { value: PipelineType; key: string }[] = [
+  { value: 'vevo', key: 'intentVevo' },
+  { value: 'berlo', key: 'intentBerlo' },
+  { value: 'elado', key: 'intentElado' },
+  { value: 'berbeado', key: 'intentBerbeado' },
+];
 
 /** General (non-property) contact form for the /kapcsolat page. */
 export default function ContactForm() {
   const t = useTranslations('detail');
   const tc = useTranslations('contact');
+  const tl = useTranslations('lead');
   const [status, setStatus] = useState<Status>('idle');
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setStatus('sending');
     const formEl = e.currentTarget;
-    const data = Object.fromEntries(new FormData(formEl).entries());
+    const data = Object.fromEntries(new FormData(formEl).entries()) as Record<string, string>;
 
     try {
-      const res = await fetch('/api/inquiry', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...data, propertyId: '', reference: '' }),
+      await submitLead({
+        formType: 'contact',
+        pipelineType: data.pipelineType as PipelineType,
+        name: data.name,
+        email: data.email,
+        phone: data.phone,
+        message: data.message ?? '',
+        source: data.source || undefined,
       });
-      if (!res.ok) throw new Error('Request failed');
       setStatus('success');
       formEl.reset();
     } catch {
@@ -52,6 +65,28 @@ export default function ContactForm() {
         <input name="phone" type="tel" required placeholder={t('inquiryPhone')} className={field} />
       </div>
       <input name="email" type="email" required placeholder={t('inquiryEmail')} className={field} />
+      <div className="grid gap-3 sm:grid-cols-2">
+        <select name="pipelineType" required defaultValue="" className={field} aria-label={tl('intentLabel')}>
+          <option value="" disabled>
+            {tl('intentLabel')}
+          </option>
+          {INTENTS.map(({ value, key }) => (
+            <option key={value} value={value}>
+              {tl(key)}
+            </option>
+          ))}
+        </select>
+        <select name="source" required defaultValue="" className={field} aria-label={tl('sourceLabel')}>
+          <option value="" disabled>
+            {tl('sourceLabel')}
+          </option>
+          {LEAD_SOURCES.map((value) => (
+            <option key={value} value={value}>
+              {sourceLabel(tl, value)}
+            </option>
+          ))}
+        </select>
+      </div>
       <textarea
         name="message"
         rows={5}

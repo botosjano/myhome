@@ -231,6 +231,21 @@
     "followLabel": "Follow us",
     "responseNote": "We usually reply within 24 hours on business days."
   },
+  "lead": {
+    "sourceLabel": "How did you find us?",
+    "sourcePlaceholder": "Please select…",
+    "sourceGoogle": "Google",
+    "sourceFacebook": "Facebook",
+    "sourceInstagram": "Instagram",
+    "sourceReferral": "Referral",
+    "sourceOther": "Other",
+    "intentLabel": "How can we help?",
+    "intentPlaceholder": "Please select…",
+    "intentVevo": "I want to buy",
+    "intentBerlo": "I want to rent",
+    "intentElado": "I want to sell my property",
+    "intentBerbeado": "I want to let my property"
+  },
   "card": {
     "featured": "Featured",
     "forSale": "For sale",

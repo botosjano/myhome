@@ -155,7 +155,11 @@ export default async function PropertyDetailPage({ params }: { params: Params })
             <div className="sticky top-24 space-y-6 print:hidden">
               <KeyStats property={property} />
               <div className="rounded-sm border border-navy/10 bg-cream p-6">
-                <InquiryForm propertyId={property.id} reference={property.reference_number} />
+                <InquiryForm
+                  reference={property.reference_number}
+                  listingType={property.listing_type}
+                  propertyName={title}
+                />
               </div>
             </div>
           </aside>

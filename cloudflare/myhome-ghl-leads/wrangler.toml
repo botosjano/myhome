@@ -1,0 +1,11 @@
+name = "myhome-ghl-leads"
+main = "src/index.js"
+compatibility_date = "2024-09-23"
+
+# Plaintext var (already set in the dashboard; declared here for `wrangler deploy`).
+[vars]
+GHL_LOCATION_ID = "B1iKfxKj65UywKnJvYHz"
+
+# GHL_TOKEN is a SECRET — never put it here. Set it with:
+#   wrangler secret put GHL_TOKEN
+# (or in the dashboard: Settings → Variables and Secrets → add as Secret)
