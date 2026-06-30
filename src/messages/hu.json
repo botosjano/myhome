@@ -249,6 +249,10 @@
     "intentElado": "Eladnám az ingatlanom",
     "intentBerbeado": "Bérbeadnám az ingatlanom"
   },
+  "validation": {
+    "required": "Kérjük, töltse ki ezt a mezőt.",
+    "email": "Kérjük, adjon meg egy érvényes e-mail címet."
+  },
   "homeCta": {
     "eyebrow": "Kapcsolat",
     "title": "Beszéljünk az otthonáról",

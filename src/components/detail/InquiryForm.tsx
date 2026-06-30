@@ -5,6 +5,7 @@ import { useTranslations } from 'next-intl';
 import { Check, Send } from 'lucide-react';
 import type { ListingType } from '@/lib/types';
 import { LEAD_SOURCES, submitLead, type PipelineType } from '@/lib/lead';
+import { validationHandlers } from '@/lib/form-validation';
 
 type Status = 'idle' | 'sending' | 'success' | 'error';
 
@@ -22,6 +23,8 @@ export default function InquiryForm({
 }) {
   const t = useTranslations('detail');
   const tl = useTranslations('lead');
+  const tv = useTranslations('validation');
+  const vh = validationHandlers(tv);
   const [status, setStatus] = useState<Status>('idle');
 
   const pipelineType: PipelineType = listingType === 'kiado' ? 'berlo' : 'vevo';
@@ -68,18 +71,18 @@ export default function InquiryForm({
   return (
     <form onSubmit={onSubmit} className="space-y-3">
       <h3 className="font-serif text-lg text-navy">{t('inquiryTitle')}</h3>
-      <input name="name" required placeholder={t('inquiryName')} className={field} />
-      <input name="phone" type="tel" required placeholder={t('inquiryPhone')} className={field} />
-      <input name="email" type="email" required placeholder={t('inquiryEmail')} className={field} />
+      <input name="name" required {...vh} placeholder={`${t('inquiryName')} *`} className={field} />
+      <input name="phone" type="tel" required {...vh} placeholder={`${t('inquiryPhone')} *`} className={field} />
+      <input name="email" type="email" required {...vh} placeholder={`${t('inquiryEmail')} *`} className={field} />
       <textarea
         name="message"
         rows={3}
         placeholder={t('inquiryMessagePlaceholder')}
         className={field}
       />
-      <select name="source" required defaultValue="" className={field} aria-label={tl('sourceLabel')}>
+      <select name="source" required {...vh} defaultValue="" className={field} aria-label={tl('sourceLabel')}>
         <option value="" disabled>
-          {tl('sourceLabel')}
+          {`${tl('sourceLabel')} *`}
         </option>
         {LEAD_SOURCES.map((value) => (
           <option key={value} value={value}>

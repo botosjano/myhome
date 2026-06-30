@@ -249,6 +249,10 @@
     "intentElado": "I want to sell my property",
     "intentBerbeado": "I want to let my property"
   },
+  "validation": {
+    "required": "Please fill out this field.",
+    "email": "Please enter a valid email address."
+  },
   "homeCta": {
     "eyebrow": "Contact",
     "title": "Let’s talk about your home",

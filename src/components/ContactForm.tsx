@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { Check, Send } from 'lucide-react';
 import { LEAD_SOURCES, submitLead, type PipelineType } from '@/lib/lead';
+import { validationHandlers } from '@/lib/form-validation';
 import { sourceLabel } from '@/components/detail/InquiryForm';
 
 type Status = 'idle' | 'sending' | 'success' | 'error';
@@ -20,6 +21,8 @@ export default function ContactForm() {
   const t = useTranslations('detail');
   const tc = useTranslations('contact');
   const tl = useTranslations('lead');
+  const tv = useTranslations('validation');
+  const vh = validationHandlers(tv);
   const [status, setStatus] = useState<Status>('idle');
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -61,14 +64,14 @@ export default function ContactForm() {
   return (
     <form onSubmit={onSubmit} className="space-y-3">
       <div className="grid gap-3 sm:grid-cols-2">
-        <input name="name" required placeholder={t('inquiryName')} className={field} />
-        <input name="phone" type="tel" required placeholder={t('inquiryPhone')} className={field} />
+        <input name="name" required {...vh} placeholder={`${t('inquiryName')} *`} className={field} />
+        <input name="phone" type="tel" required {...vh} placeholder={`${t('inquiryPhone')} *`} className={field} />
       </div>
-      <input name="email" type="email" required placeholder={t('inquiryEmail')} className={field} />
+      <input name="email" type="email" required {...vh} placeholder={`${t('inquiryEmail')} *`} className={field} />
       <div className="grid gap-3 sm:grid-cols-2">
-        <select name="pipelineType" required defaultValue="" className={field} aria-label={tl('intentLabel')}>
+        <select name="pipelineType" required {...vh} defaultValue="" className={field} aria-label={tl('intentLabel')}>
           <option value="" disabled>
-            {tl('intentLabel')}
+            {`${tl('intentLabel')} *`}
           </option>
           {INTENTS.map(({ value, key }) => (
             <option key={value} value={value}>
@@ -76,9 +79,9 @@ export default function ContactForm() {
             </option>
           ))}
         </select>
-        <select name="source" required defaultValue="" className={field} aria-label={tl('sourceLabel')}>
+        <select name="source" required {...vh} defaultValue="" className={field} aria-label={tl('sourceLabel')}>
           <option value="" disabled>
-            {tl('sourceLabel')}
+            {`${tl('sourceLabel')} *`}
           </option>
           {LEAD_SOURCES.map((value) => (
             <option key={value} value={value}>
@@ -91,7 +94,8 @@ export default function ContactForm() {
         name="message"
         rows={5}
         required
-        placeholder={tc('messagePlaceholder')}
+        {...vh}
+        placeholder={`${tc('messagePlaceholder')} *`}
         className={field}
       />
       {status === 'error' && <p className="font-sans text-xs text-red-600">{t('inquiryError')}</p>}
