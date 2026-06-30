@@ -30,7 +30,6 @@ export default function Navbar() {
     { href: '/', label: t('home') },
     { href: '/ingatlanok', label: t('properties') },
     { href: '/#about', label: t('about') },
-    { href: '/kapcsolat', label: t('contact') },
   ];
 
   return (
@@ -65,6 +64,12 @@ export default function Navbar() {
             {t('favorites')}
           </Link>
           <LanguageSwitcher light />
+          <Link
+            href="/kapcsolat"
+            className="rounded-sm bg-gold px-4 py-2 font-sans text-sm uppercase tracking-widest text-navy transition-colors hover:bg-gold-dark"
+          >
+            {t('contact')}
+          </Link>
         </div>
 
         {/* Mobile toggle */}
@@ -92,6 +97,13 @@ export default function Navbar() {
                 {l.label}
               </Link>
             ))}
+            <Link
+              href="/kapcsolat"
+              onClick={() => setOpen(false)}
+              className="mt-1 rounded-sm bg-gold px-2 py-3 text-center font-sans text-sm uppercase tracking-widest text-navy transition-colors hover:bg-gold-dark"
+            >
+              {t('contact')}
+            </Link>
             <div className="px-2 py-3">
               <LanguageSwitcher light />
             </div>
