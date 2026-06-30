@@ -53,6 +53,18 @@
   }
 }
 
+/* iOS Safari auto-zooms into a focused field whose font-size is < 16px. Force at
+   least 16px on form controls on small screens so tapping the search price/size
+   (and any other) inputs no longer zooms the page. Desktop keeps the finer
+   text-sm sizing. !important is needed to beat the Tailwind text-sm class. */
+@media (max-width: 767px) {
+  input,
+  select,
+  textarea {
+    font-size: 16px !important;
+  }
+}
+
 /* Remove the up/down spinner from number inputs — values are typed by hand */
 input[type='number']::-webkit-outer-spin-button,
 input[type='number']::-webkit-inner-spin-button {
