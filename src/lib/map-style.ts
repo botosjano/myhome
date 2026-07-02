@@ -18,7 +18,7 @@ export const MAP_STYLE: StyleEntry[] = [
   { featureType: 'transit', stylers: [{ visibility: 'off' }] },
   { featureType: 'administrative.land_parcel', stylers: [{ visibility: 'off' }] },
   { featureType: 'administrative', elementType: 'geometry', stylers: [{ color: '#2a3a52' }] },
-  { featureType: 'administrative.locality', elementType: 'labels.text.fill', stylers: [{ color: '#C9A96E' }] },
+  { featureType: 'administrative.locality', elementType: 'labels.text.fill', stylers: [{ color: '#af8369' }] },
   { featureType: 'landscape', elementType: 'geometry', stylers: [{ color: '#0d1a2e' }] },
   { featureType: 'road', elementType: 'geometry', stylers: [{ color: '#1b2942' }] },
   { featureType: 'road', elementType: 'labels.text.fill', stylers: [{ color: '#6b7a93' }] },

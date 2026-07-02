@@ -44,14 +44,14 @@ export default function ScrollToTopButton() {
         {/* Navy disc */}
         <circle cx="28" cy="28" r="26" className="fill-navy" />
         {/* Track ring */}
-        <circle cx="28" cy="28" r={RADIUS} fill="none" stroke="#C9A96E" strokeOpacity="0.25" strokeWidth="2.5" />
+        <circle cx="28" cy="28" r={RADIUS} fill="none" stroke="#af8369" strokeOpacity="0.25" strokeWidth="2.5" />
         {/* Progress ring */}
         <circle
           cx="28"
           cy="28"
           r={RADIUS}
           fill="none"
-          stroke="#C9A96E"
+          stroke="#af8369"
           strokeWidth="2.5"
           strokeLinecap="round"
           strokeDasharray={CIRCUMFERENCE}

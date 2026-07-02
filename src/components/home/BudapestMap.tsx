@@ -84,7 +84,7 @@ export default function BudapestMap({
                 'transition-colors',
                 active ? 'fill-gold' : 'fill-[#142845] hover:fill-[#1c3556]',
               )}
-              stroke={active ? '#C9A96E' : 'rgba(255,255,255,0.18)'}
+              stroke={active ? '#af8369' : 'rgba(255,255,255,0.18)'}
               strokeWidth="1"
             />
             <text

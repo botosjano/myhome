@@ -41,12 +41,24 @@ export default function Navbar() {
     >
       <nav className="mx-auto flex max-w-7xl items-center justify-between px-5 py-3 lg:px-8">
         <Link href="/" aria-label="My Home Budapest" className="relative z-10 flex items-center">
-          {/* Wide horizontal lockup — sized by height so it stays slim in the bar */}
-          <Logo priority className="h-11 w-auto sm:h-14" />
+          {/* Over the hero video the logo sits on a rounded navy plate; once the
+              navy bar slides in on scroll the plate is dropped and only the logo stays. */}
+          <span
+            className={cn(
+              // Border is always present (width never animates) so its colour can
+              // fade to transparent instead of flashing white on the scroll transition.
+              'inline-flex items-center rounded-2xl border transition-all duration-300',
+              solid
+                ? 'border-transparent bg-transparent px-0 py-0'
+                : 'border-gold/25 bg-navy/85 px-3.5 py-1 shadow-lg backdrop-blur-sm',
+            )}
+          >
+            <Logo priority className="h-11 w-auto sm:h-14" />
+          </span>
         </Link>
 
-        {/* Desktop links */}
-        <div className="hidden items-center gap-8 md:flex">
+        {/* Desktop links — subtle shadow keeps the white text legible at the top over the video */}
+        <div className="hidden items-center gap-8 md:flex md:drop-shadow-[0_1px_6px_rgba(10,22,40,0.6)]">
           {links.map((l) => (
             <Link
               key={l.href}

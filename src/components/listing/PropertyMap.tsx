@@ -14,7 +14,7 @@ const API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
 const PIN_SVG =
   '<svg xmlns="http://www.w3.org/2000/svg" width="30" height="42" viewBox="0 0 30 42">' +
   '<path d="M15 0C6.7 0 0 6.7 0 15c0 11.25 15 27 15 27s15-15.75 15-27C30 6.7 23.3 0 15 0z" ' +
-  'fill="#C9A96E" stroke="#0a1628" stroke-width="1.5"/>' +
+  'fill="#af8369" stroke="#0a1628" stroke-width="1.5"/>' +
   '<circle cx="15" cy="15" r="5.5" fill="#0a1628"/></svg>';
 
 export default function PropertyMap({ properties }: { properties: Property[] }) {
@@ -60,8 +60,8 @@ export default function PropertyMap({ properties }: { properties: Property[] }) 
             info.setContent(
               `<div style="font-family:Georgia,'Times New Roman',serif;max-width:220px;padding:2px 4px 4px">
                  <strong style="color:#0a1628;font-size:14px;line-height:1.3;display:block">${title}</strong>
-                 <span style="color:#a98a52;font-weight:600;display:block;margin:4px 0">${formatPrice(p.price, p.currency, locale, p.listing_type)}</span>
-                 <a href="${href}" style="color:#0a1628;font-weight:600;text-decoration:none;border-bottom:1px solid #C9A96E">${viewLabel} →</a>
+                 <span style="color:#8f6952;font-weight:600;display:block;margin:4px 0">${formatPrice(p.price, p.currency, locale, p.listing_type)}</span>
+                 <a href="${href}" style="color:#0a1628;font-weight:600;text-decoration:none;border-bottom:1px solid #af8369">${viewLabel} →</a>
                </div>`,
             );
             info.open(map, marker);

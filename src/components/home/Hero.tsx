@@ -11,15 +11,15 @@ export default function Hero() {
     <section className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden">
       {/* Poster + desktop-only video */}
       <HeroBackground />
-      {/* Overlay — kept strong enough to keep white text legible over bright footage */}
-      <div className="absolute inset-0 bg-gradient-to-b from-navy/80 via-navy/60 to-navy/90" />
 
       {/* Content */}
       <div className="relative z-10 mx-auto flex w-full max-w-5xl flex-col items-center px-5 pt-28 text-center">
-        <h1 className="max-w-4xl font-serif text-5xl font-light leading-[1.1] tracking-wide text-white sm:text-6xl lg:text-7xl">
+        <h1 className="max-w-4xl font-serif text-5xl font-light leading-[1.1] tracking-wide text-white drop-shadow-[0_2px_18px_rgba(10,22,40,0.9)] sm:text-6xl lg:text-7xl">
           {t('title')}
         </h1>
-        <p className="mx-auto mt-5 max-w-2xl font-sans text-base leading-relaxed text-gold sm:text-lg">
+        {/* Thin rule under the title */}
+        <div className="mx-auto mt-6 h-px w-20 bg-white/70" />
+        <p className="mx-auto mt-6 max-w-2xl font-sans text-base leading-relaxed text-white drop-shadow-[0_1px_12px_rgba(10,22,40,0.85)] sm:text-lg">
           {t('subtitle')}
         </p>
 

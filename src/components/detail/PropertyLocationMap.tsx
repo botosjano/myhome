@@ -19,7 +19,7 @@ function GoldPin() {
     <svg width="30" height="42" viewBox="0 0 30 42" className="drop-shadow-md">
       <path
         d="M15 0C6.7 0 0 6.7 0 15c0 11.25 15 27 15 27s15-15.75 15-27C30 6.7 23.3 0 15 0z"
-        fill="#C9A96E"
+        fill="#af8369"
         stroke="#0a1628"
         strokeWidth="1.5"
       />

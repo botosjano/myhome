@@ -15,12 +15,17 @@ const config: Config = {
           700: '#142845',
           600: '#1c3556',
         },
+        // Rose-gold — the exact tone from the logo lockup (#af8369)
         gold: {
-          DEFAULT: '#C9A96E',
-          light: '#dcc394',
-          dark: '#a98a52',
+          DEFAULT: '#af8369',
+          light: '#c7a38c',
+          dark: '#8f6952',
         },
         cream: '#F5F5F5',
+      },
+      borderRadius: {
+        // Softer default corners on buttons, inputs, the search box and cards
+        sm: '0.5rem',
       },
       fontFamily: {
         // Cormorant Garamond everywhere — headings and body share one typeface.
