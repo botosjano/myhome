@@ -25,7 +25,7 @@ export default function Footer() {
         <div className="grid gap-12 md:grid-cols-4">
           {/* Brand */}
           <div className="md:col-span-2">
-            <Logo className="h-36 w-auto" />
+            <Logo className="h-16 w-auto" />
             <p className="mt-5 max-w-sm font-sans text-sm leading-relaxed text-white/60">
               {t('footer.tagline')}
             </p>

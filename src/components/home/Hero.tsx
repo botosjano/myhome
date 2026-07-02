@@ -1,24 +1,18 @@
-import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 import { ArrowRight } from 'lucide-react';
 import { Link } from '@/navigation';
 import SearchBox from './SearchBox';
+import HeroBackground from './HeroBackground';
 
 export default function Hero() {
   const t = useTranslations('hero');
 
   return (
     <section className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden">
-      {/* Background image */}
-      <Image
-        src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=2400&q=80"
-        alt="Luxury property in Budapest"
-        fill
-        priority
-        sizes="100vw"
-        className="object-cover"
-      />
-      <div className="absolute inset-0 bg-gradient-to-b from-navy/80 via-navy/50 to-navy/85" />
+      {/* Poster + desktop-only video */}
+      <HeroBackground />
+      {/* Overlay — kept strong enough to keep white text legible over bright footage */}
+      <div className="absolute inset-0 bg-gradient-to-b from-navy/80 via-navy/60 to-navy/90" />
 
       {/* Content */}
       <div className="relative z-10 mx-auto flex w-full max-w-5xl flex-col items-center px-5 pt-28 text-center">

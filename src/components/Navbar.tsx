@@ -41,8 +41,8 @@ export default function Navbar() {
     >
       <nav className="mx-auto flex max-w-7xl items-center justify-between px-5 py-3 lg:px-8">
         <Link href="/" aria-label="My Home Budapest" className="relative z-10 flex items-center">
-          {/* 2× size — intentionally overflows the navbar (negative margin keeps the bar slim) */}
-          <Logo priority className="h-28 w-auto sm:h-32 -my-8" />
+          {/* Wide horizontal lockup — sized by height so it stays slim in the bar */}
+          <Logo priority className="h-11 w-auto sm:h-14" />
         </Link>
 
         {/* Desktop links */}

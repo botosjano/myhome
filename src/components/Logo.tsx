@@ -2,9 +2,10 @@ import Image from 'next/image';
 import { cn } from '@/lib/utils';
 
 /**
- * The official My Home Budapest logo (rose-gold lockup on transparent bg).
- * Source file: /public/logo.png (500×500). Size it via the `className`
- * (e.g. "h-14 w-auto") at each call site.
+ * The official My Home Budapest logo — a wide rose-gold lockup ("My Home |
+ * PREMIUM REAL ESTATE") on a transparent background. Source: /public/logo.webp
+ * (1206×404, ~3:1). Because it's a horizontal lockup, size it by HEIGHT via the
+ * `className` (e.g. "h-12 w-auto") at each call site.
  */
 export default function Logo({
   className,
@@ -15,10 +16,10 @@ export default function Logo({
 }) {
   return (
     <Image
-      src="/logo.png"
+      src="/logo.webp"
       alt="My Home Budapest — Premium Real Estate"
-      width={500}
-      height={500}
+      width={1206}
+      height={404}
       priority={priority}
       className={cn('w-auto select-none', className)}
     />

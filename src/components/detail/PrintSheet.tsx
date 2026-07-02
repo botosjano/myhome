@@ -52,7 +52,7 @@ export default async function PrintSheet({
           <p className="mt-1 font-sans text-sm text-navy/70">{location}</p>
         </div>
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/logo.png" alt="My Home Budapest" className="h-20 w-20 shrink-0 object-contain" />
+        <img src="/logo.webp" alt="My Home Budapest" className="h-14 w-auto shrink-0 object-contain" />
       </div>
 
       {/* Price */}

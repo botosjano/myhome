@@ -51,7 +51,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
     <div className="flex h-full flex-col">
       <Link href="/admin" onClick={() => setOpen(false)} className="flex items-center gap-3 px-2 py-1">
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/logo.png" alt="My Home Budapest" className="h-11 w-11 object-contain" />
+        <img src="/logo.webp" alt="My Home Budapest" className="h-8 w-auto object-contain" />
         <div className="leading-tight">
           <p className="font-serif text-lg text-white">My Home</p>
           <p className="font-sans text-[10px] uppercase tracking-widest text-gold">Admin</p>
@@ -82,7 +82,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
       <div className="flex items-center justify-between bg-navy-900 px-4 py-3 lg:hidden">
         <Link href="/admin" className="flex items-center gap-2">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/logo.png" alt="My Home Budapest" className="h-8 w-8 object-contain" />
+          <img src="/logo.webp" alt="My Home Budapest" className="h-6 w-auto object-contain" />
           <span className="font-serif text-base text-white">Admin</span>
         </Link>
         <button type="button" onClick={() => setOpen(true)} aria-label="Menü" className="text-white">

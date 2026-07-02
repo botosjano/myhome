@@ -30,7 +30,9 @@ export const metadata: Metadata = {
   openGraph: {
     type: 'website',
     siteName: 'My Home Budapest',
-    images: ['/logo.png'],
+    images: [
+      { url: '/og-image.png', width: 1200, height: 630, alt: 'My Home Budapest — Premium Real Estate' },
+    ],
   },
 };
 

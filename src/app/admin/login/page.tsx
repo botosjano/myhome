@@ -32,7 +32,7 @@ export default function AdminLoginPage() {
       >
         <div className="mb-6 text-center">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/logo.png" alt="My Home Budapest" className="mx-auto h-16 w-16 object-contain" />
+          <img src="/logo.webp" alt="My Home Budapest" className="mx-auto h-12 w-auto object-contain" />
           <h1 className="mt-3 font-serif text-2xl text-navy">Admin belépés</h1>
           <p className="mt-1 font-sans text-xs uppercase tracking-widest text-gold">My Home Budapest</p>
         </div>
