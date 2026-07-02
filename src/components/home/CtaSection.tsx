@@ -22,15 +22,17 @@ export default function CtaSection() {
         alt=""
         fill
         sizes="100vw"
-        className="object-cover opacity-40"
+        className="object-cover"
       />
-      <div className="absolute inset-0 bg-gradient-to-b from-navy/90 via-navy/85 to-navy/95" />
+      <div className="absolute inset-0 bg-gradient-to-b from-navy/55 via-navy/40 to-navy/70" />
 
       <div className="relative z-10 mx-auto max-w-3xl px-5 py-24 text-center lg:py-32">
         <p className="font-sans text-xs uppercase tracking-[0.22em] text-gold">{t('eyebrow')}</p>
         <div className="mx-auto gold-rule my-5" />
-        <h2 className="font-serif text-3xl text-white sm:text-4xl lg:text-5xl">{t('title')}</h2>
-        <p className="mx-auto mt-5 max-w-xl font-sans text-base leading-relaxed text-white/70">
+        <h2 className="font-serif text-3xl text-white drop-shadow-[0_2px_20px_rgba(10,22,40,0.98)] sm:text-4xl lg:text-5xl">
+          {t('title')}
+        </h2>
+        <p className="mx-auto mt-5 max-w-xl font-sans text-base leading-relaxed text-white/90 drop-shadow-[0_1px_14px_rgba(10,22,40,0.95)]">
           {t('text')}
         </p>
 
