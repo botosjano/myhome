@@ -10,6 +10,25 @@ import { fetchActiveProperties } from '@/lib/properties';
 // revalidateTag('properties')). The 1h revalidate is just a safety net.
 export const revalidate = 3600;
 
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://myhomebudapest.hu';
+
+// Local-SEO structured data — helps Google associate the site with the agency.
+const businessJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'RealEstateAgent',
+  name: 'My Home Ingatlan Iroda Budapest',
+  url: SITE_URL,
+  image: `${SITE_URL}/logo.png`,
+  telephone: '+36309414510',
+  email: 'myhome@olahkrisztina.hu',
+  areaServed: 'Budapest',
+  address: {
+    '@type': 'PostalAddress',
+    addressLocality: 'Budapest',
+    addressCountry: 'HU',
+  },
+};
+
 export default async function HomePage({ params: { locale } }: { params: { locale: string } }) {
   setRequestLocale(locale);
 
@@ -19,6 +38,10 @@ export default async function HomePage({ params: { locale } }: { params: { local
 
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(businessJsonLd) }}
+      />
       <Hero />
 
       <section className="bg-white py-20 lg:py-28">

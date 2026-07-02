@@ -1,11 +1,13 @@
 import type { MetadataRoute } from 'next';
 import { locales } from '@/i18n';
-import { MOCK_PROPERTIES } from '@/lib/mock-data';
+import { fetchActiveProperties } from '@/lib/properties';
 import { propertySlug } from '@/lib/utils';
 
 const BASE = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://myhomebudapest.hu';
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  // Real, active listings from Supabase (falls back to mock if unconfigured).
+  const properties = await fetchActiveProperties();
   const entries: MetadataRoute.Sitemap = [];
 
   for (const locale of locales) {
@@ -20,8 +22,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       },
     );
 
-    for (const p of MOCK_PROPERTIES) {
-      if (p.status !== 'active') continue;
+    for (const p of properties) {
       entries.push({
         url: `${BASE}/${locale}/ingatlan/${propertySlug(p)}`,
         lastModified: new Date(p.created_at),
