@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { setRequestLocale } from 'next-intl/server';
 import { fetchActiveProperties } from '@/lib/properties';
+import { seoAlternates } from '@/lib/seo';
 import ListingClient from '@/components/listing/ListingClient';
 
 // Statically generated (no searchParams — filtering is client-side), refreshed on
@@ -15,6 +16,7 @@ export function generateMetadata({ params: { locale } }: { params: { locale: str
       locale === 'hu'
         ? 'Diszkrét, off-market luxusingatlanok Budapesten — szűrhető portfólió.'
         : 'Discreet, off-market luxury real estate in Budapest — filterable portfolio.',
+    alternates: seoAlternates(locale, '/ingatlanok'),
   };
 }
 

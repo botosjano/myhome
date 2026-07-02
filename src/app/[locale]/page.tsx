@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import Hero from '@/components/home/Hero';
 import PropertyGrid from '@/components/home/PropertyGrid';
@@ -5,6 +6,11 @@ import FeaturedSection from '@/components/home/FeaturedSection';
 import About from '@/components/home/About';
 import CtaSection from '@/components/home/CtaSection';
 import { fetchActiveProperties } from '@/lib/properties';
+import { seoAlternates } from '@/lib/seo';
+
+export function generateMetadata({ params: { locale } }: { params: { locale: string } }): Metadata {
+  return { alternates: seoAlternates(locale, '') };
+}
 
 // Statically generated; refreshed on demand when a listing changes (admin calls
 // revalidateTag('properties')). The 1h revalidate is just a safety net.

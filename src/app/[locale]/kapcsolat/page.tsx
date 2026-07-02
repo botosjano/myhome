@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { setRequestLocale, getTranslations } from 'next-intl/server';
 import { Facebook, Instagram, Mail, Phone } from 'lucide-react';
 import ContactForm from '@/components/ContactForm';
+import { seoAlternates } from '@/lib/seo';
 
 const CONTACT_EMAIL = 'myhome@olahkrisztina.hu';
 const CONTACT_PHONE = '+36 30 941 4510';
@@ -13,7 +14,7 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
   return {
     title: t('title'),
     description: t('subtitle'),
-    alternates: { canonical: `/${params.locale}/kapcsolat` },
+    alternates: seoAlternates(params.locale, '/kapcsolat'),
   };
 }
 

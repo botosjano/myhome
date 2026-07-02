@@ -5,6 +5,7 @@ import { ArrowLeft, MapPin } from 'lucide-react';
 import { Link } from '@/navigation';
 import { locales } from '@/i18n';
 import { fetchPropertyBySlug, fetchActiveProperties } from '@/lib/properties';
+import { seoAlternates } from '@/lib/seo';
 import { formatPrice, formatSize, isLand, localizedType, locationLabel, propertySlug } from '@/lib/utils';
 import Gallery from '@/components/detail/Gallery';
 import KeyStats from '@/components/detail/KeyStats';
@@ -41,9 +42,7 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
       images: p.images.length ? [{ url: p.images[0] }] : undefined,
       type: 'website',
     },
-    alternates: {
-      canonical: `/${params.locale}/ingatlan/${params.slug}`,
-    },
+    alternates: seoAlternates(params.locale, `/ingatlan/${params.slug}`),
   };
 }
 

@@ -30,6 +30,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: 'website',
     siteName: 'My Home Budapest',
+    images: ['/logo.png'],
   },
 };
 
